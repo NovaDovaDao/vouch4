@@ -1,0 +1,29 @@
+{
+  "tasks": {
+    "start:backend": "deno run -A backend/run.ts",
+    "start:frontend": "cd frontend && npm install && npm run dev",
+    "dev": "deno task start:backend & deno task start:frontend"
+  },
+  "exclude": [
+    "node_modules/",
+    "frontend/node_modules/"
+  ],
+  "imports": {
+    "jsr:@danet/": "jsr:@danet/",
+    "pg/": "https://deno.land/x/postgres@v0.19.2/"
+  },
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "strict": true,
+    "lib": [
+      "deno.window",
+      "deno.unstable"
+    ],
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
+  },
+  "workspace": [
+    "backend",
+    "frontend"
+  ]
+}
