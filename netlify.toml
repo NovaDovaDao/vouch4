@@ -10,7 +10,7 @@
 
   # Publish directory: The directory that contains the deployable assets after the build.
   # Vite typically outputs to a 'dist' folder inside your project.
-  publish = "frontend/dist"
+  publish = "dist"
 
 # Redirects for Single-Page Application (SPA) functionality
 # This rule ensures that all paths that don't match an existing file
