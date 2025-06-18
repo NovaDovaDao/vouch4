@@ -1,0 +1,38 @@
+[build]
+  # Base directory: Netlify will change into this directory before running commands.
+  # This tells Netlify where your frontend project lives within the monorepo.
+  base = "frontend/"
+
+  # Build command: Commands to run to build your frontend.
+  # "npm install" installs frontend dependencies.
+  # "npm run build" runs the build script defined in frontend/package.json (Vite's default).
+  command = "npm install && npm run build"
+
+  # Publish directory: The directory that contains the deployable assets after the build.
+  # Vite typically outputs to a 'dist' folder inside your project.
+  publish = "frontend/dist"
+
+# Redirects for Single-Page Application (SPA) functionality
+# This rule ensures that all paths that don't match an existing file
+# on the server will fall back to index.html. This is crucial for
+# client-side routing (like React Router) to work correctly.
+[[redirects]]
+  from = "/*" # Catch all paths
+  to = "/index.html" # Redirect to index.html
+  status = 200 # Return a 200 OK status code, keeping the original URL in the browser
+
+# Optional: Environment variables
+# If your frontend needs any environment variables (e.g., API_URL for your backend),
+# you can set them here or in Netlify's UI under Site settings > Build & deploy > Environment.
+# [build.environment]
+#   VITE_API_BASE_URL = "https://your-danet-backend.deno.dev" # Replace with your deployed backend URL
+
+# Context-specific settings (optional)
+# You can define different build settings for different deploy contexts (e.g., production, deploy previews)
+# [context.production]
+#   # Example: different variables for production
+#   # VITE_SOME_VAR = "production_value"
+
+# [context.deploy-preview]
+#   # Example: different variables for deploy previews
+#   # VITE_SOME_VAR = "preview_value"
