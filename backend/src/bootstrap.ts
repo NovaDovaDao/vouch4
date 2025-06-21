@@ -15,7 +15,7 @@ export const bootstrap = async () => {
   await SwaggerModule.setup("api", application, document);
   application.addGlobalMiddlewares(loggerMiddleware);
   application.enableCors({
-    origin: "http://localhost:5173",
+    origin: ["http://localhost:5173", "https://vouch.netlify.app/"],
     allowMethods: ["GET, POST, PUT, DELETE, OPTIONS"],
     allowHeaders: ["Content-Type, Authorization"],
   });
