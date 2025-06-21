@@ -23,22 +23,14 @@ jobs:
         with:
           deno-version: v2.x
 
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
-
-      - name: Install step
-        run: "cd frontend && npm ci"
-
       - name: Build step
-        run: "cd frontend && npm run build"
+        run: "cd backend && deno task prisma:generate"
 
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
         with:
           project: "vouch"
-          entrypoint: "https://deno.land/std@0.188.0/http/file_server.ts"
-          root: "frontend/dist"
-          
-          
+          entrypoint: "/backend/run.ts"
+          root: ""
+          include: /backend
+          exclude: /frontend
