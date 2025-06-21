@@ -46,13 +46,13 @@ const LoginPage: React.FC = () => {
     onSuccess: (data) => {
       // Assuming backend returns { username, role, accessToken }
       setLogin(data.accessToken, { username: data.username, role: data.role });
-      toast("Login Successful!", {
+      toast.success("Login Successful!", {
         description: `Welcome, ${data.username}`,
       });
       navigate("/dashboard"); // Redirect to dashboard after successful login
     },
     onError: (error) => {
-      toast("Login Error", {
+      toast.error("Login Error", {
         description: error.message || "An unexpected error occurred.",
       });
     },

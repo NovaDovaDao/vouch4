@@ -21,7 +21,6 @@ export class AuthService {
   async login(loginDto: LoginDto): Promise<LoginResponseDto | null> {
     const user = await this.validateUser(loginDto.username, loginDto.password);
     if (!user) {
-      console.log("oh no");
       return null; // Authentication failed
     }
     // For MVP, you can return a simple "token" or just the user info.

@@ -1,5 +1,4 @@
-// frontend/src/App.tsx
-import React, { useEffect } from "react";
+import React from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -9,8 +8,12 @@ import {
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useAuthStore } from "./store/authStore.ts";
 import LoginPage from "./pages/LoginPage.tsx";
-import DashboardPage from "./pages/DashboardPage.tsx"; // Your dashboard page
-import { Toaster } from "./components/ui/sonner.tsx"; // Shadcn Toaster
+import DashboardPage from "./pages/DashboardPage.tsx";
+import MembersPage from "./pages/MembersPage.tsx";
+import NewMemberPage from "./pages/NewMemberPage.tsx";
+import AdminLayout from "./components/layout/AdminLayout.tsx";
+import { Toaster } from "./components/ui/sonner.tsx";
+import MemberDetailPage from "./pages/MemberDetailPage.tsx";
 
 const queryClient = new QueryClient();
 
@@ -23,39 +26,32 @@ const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({
 };
 
 function App() {
-  const initializeAuth = useAuthStore((state) => state.initializeAuth);
-
-  useEffect(() => {
-    initializeAuth(); // Initialize auth state from local storage on app load
-  }, [initializeAuth]);
-
   return (
     <QueryClientProvider client={queryClient}>
       <Router>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
-          <Route
-            path="/dashboard"
-            element={
-              <PrivateRoute>
-                <DashboardPage />
-              </PrivateRoute>
-            }
-          />
-          {/* Default route redirects to login or dashboard based on auth state */}
+
+          {/* Nested Routes within AdminLayout */}
           <Route
             path="/"
             element={
-              <Navigate
-                to={
-                  useAuthStore.getState().isLoggedIn ? "/dashboard" : "/login"
-                }
-                replace
-              />
+              <PrivateRoute>
+                <AdminLayout />{" "}
+                {/* Admin layout wraps dashboard and other admin pages */}
+              </PrivateRoute>
             }
-          />
-          {/* Add more private routes here later */}
-          {/* <Route path="/members" element={<PrivateRoute><MembersPage /></PrivateRoute>} /> */}
+          >
+            <Route index element={<Navigate to="/dashboard" replace />} />{" "}
+            {/* Default child route */}
+            <Route path="dashboard" element={<DashboardPage />} />
+            <Route path="members" element={<MembersPage />} />
+            <Route path="members/new" element={<NewMemberPage />} />
+            <Route path="members/:id" element={<MemberDetailPage />} />
+          </Route>
+
+          {/* Fallback for unauthenticated or non-matching routes */}
+          <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </Router>
       <Toaster /> {/* Shadcn Toaster component */}

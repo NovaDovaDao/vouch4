@@ -20,8 +20,8 @@ export class MembersController {
   }
 
   @Get(":id")
-  findById(@Param("id") id: number) {
-    return this.membersService.findOne(id);
+  findById(@Param("id") id: string) {
+    return this.membersService.findOne(Number(id));
   }
 
   @Post()
