@@ -1,93 +1,81 @@
-import { Injectable } from "jsr:@danet/core";
-
-// Mock data
-const mockMembers = [
-  {
-    id: "mem_123",
-    name: "Alice Smith",
-    email: "alice@example.com",
-    walletAddress: "0x1A2b3C4d5E6F7A8B9C0D1E2F3A4B5C6D7E8F9A0B",
-    membershipStatus: "Active",
-    membershipType: "Monthly Unlimited",
-    membershipNftId: "0xabc123...", // Placeholder
-    waiverStatus: "Signed (Blockchain Verified)",
-    profilePicUrl: "https://i.pravatar.cc/150?img=1",
-  },
-  {
-    id: "mem_456",
-    name: "Bob Johnson",
-    email: "bob@example.com",
-    walletAddress: "0xBbCcDdEeFf00112233445566778899AaBbCcDdEe",
-    membershipStatus: "Pending",
-    membershipType: "10-Visit Pass",
-    membershipNftId: null,
-    waiverStatus: "Pending Signature",
-    profilePicUrl: "https://i.pravatar.cc/150?img=2",
-  },
-  // Add more mock members as needed
-];
+// backend/src/members/members.service.ts
+import { Injectable, NotFoundException } from "jsr:@danet/core";
+import { PrismaService } from "../shared/prisma.service.ts"; // Adjust path
+import { CreateMemberDto, UpdateMemberDto, Member } from "./member.model.ts";
+import { CheckIn } from "../../prisma/client.ts";
 
 @Injectable()
 export class MembersService {
-  findAll() {
-    return mockMembers;
+  constructor(private readonly prisma: PrismaService) {}
+
+  async findAll(): Promise<Member[]> {
+    const members = await this.prisma.client.member.findMany();
+    return members as Member[];
   }
 
-  findById(id: string) {
-    return mockMembers.find((member) => member.id === id);
-  }
-
-  findByWalletAddress(walletAddress: string) {
-    // Simulate finding a member by their wallet address for check-in
-    return mockMembers.find(
-      (member) =>
-        member.walletAddress.toLowerCase() === walletAddress.toLowerCase()
-    );
-  }
-
-  // Simulate a check-in operation
-  checkIn(memberId: string) {
-    const member = this.findById(memberId);
-    if (member) {
-      // In a real app, this would involve more complex logic,
-      // potentially an on-chain check via a Deno utility
-      // For MVP, just simulate success
-      console.log(`Member ${member.name} checked in!`);
-      return { success: true, message: `Welcome, ${member.name}!` };
+  async findOne(id: number): Promise<Member> {
+    const member = await this.prisma.client.member.findUnique({
+      where: { id: id },
+    });
+    if (!member) {
+      throw new NotFoundException();
     }
-    return { success: false, message: "Member not found." };
+    return member as Member;
   }
 
-  // Simulate updating a member's waiver status
-  updateWaiverStatus(memberId: string, status: string) {
-    const member = this.findById(memberId);
-    if (member) {
-      member.waiverStatus = status; // Mock update
-      // In a real scenario, this would involve calculating hash and sending tx
-      return {
-        success: true,
-        message: `Waiver status updated for ${member.name}`,
-      };
-    }
-    return { success: false, message: "Member not found." };
+  async findOneByWalletAddress(walletAddress: string): Promise<Member | null> {
+    const member = await this.prisma.client.member.findUnique({
+      where: { walletAddress: walletAddress },
+    });
+    return member as Member | null;
   }
 
-  // Simulate signing up a new member
-  async createMember(newMemberData: any) {
-    // In a real app, this would involve minting an NFT,
-    // recording waiver hash, etc.
-    const newMember = {
-      id: `mem_${Date.now()}`, // Simple ID generation
-      membershipStatus: "Active",
-      membershipType: "Trial Pass", // Default for new signups
-      membershipNftId: "0x" + Math.random().toString(16).substring(2, 12), // Mock NFT ID
-      waiverStatus: "Pending Signature",
-      profilePicUrl:
-        "https://i.pravatar.cc/150?img=" + Math.floor(Math.random() * 70),
-      ...newMemberData,
-    };
-    mockMembers.push(newMember);
-    console.log(`New member signed up: ${newMember.name}`);
-    return newMember;
+  async create(createMemberDto: CreateMemberDto): Promise<Member> {
+    const newMember = await this.prisma.client.member.create({
+      data: {
+        name: createMemberDto.name,
+        email: createMemberDto.email,
+        phoneNumber: createMemberDto.phoneNumber,
+        walletAddress: createMemberDto.walletAddress,
+        membershipStatus: createMemberDto.membershipStatus || "Pending", // Default if not provided
+        membershipType: createMemberDto.membershipType,
+        membershipNftId: createMemberDto.membershipNftId,
+        waiverStatus: createMemberDto.waiverStatus || "Pending Signature", // Default if not provided
+        waiverHash: createMemberDto.waiverHash,
+        profilePicUrl: createMemberDto.profilePicUrl,
+      },
+    });
+    return newMember as Member;
+  }
+
+  async update(id: number, updateMemberDto: UpdateMemberDto): Promise<Member> {
+    const updatedMember = await this.prisma.client.member.update({
+      where: { id: id },
+      data: {
+        ...updateMemberDto,
+        updatedAt: new Date(), // Manually update updatedAt or rely on Prisma's @updatedAt
+      },
+    });
+    return updatedMember as Member;
+  }
+
+  async remove(id: number): Promise<void> {
+    await this.prisma.client.member.delete({
+      where: { id: id },
+    });
+  }
+
+  // --- Check-in related methods ---
+  async recordCheckIn(memberId: number): Promise<CheckIn> {
+    const checkIn = await this.prisma.client.checkIn.create({
+      data: {
+        member: { connect: { id: memberId } }, // Connects to existing member
+        timestamp: new Date(),
+      },
+      include: {
+        member: true, // Include member details in the response
+      },
+    });
+    return checkIn;
   }
 }

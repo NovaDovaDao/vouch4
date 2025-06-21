@@ -1,0 +1,59 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  binaryTargets   = ["native", "darwin-arm64"]
+  provider        = "prisma-client-js"
+  previewFeatures = ["deno"]
+  output          = "./generated/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  username     String   @unique
+  passwordHash String   @map("password_hash") // Map to password_hash column in DB
+  role         String   @default("staff") // 'admin', 'staff'
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("users") // Map model name 'User' to table name 'users'
+}
+
+model Member {
+  id               Int       @id @default(autoincrement())
+  name             String
+  email            String    @unique
+  phoneNumber      String?   @map("phone_number") // Optional field
+  walletAddress    String    @unique @map("wallet_address")
+  membershipStatus String    @default("Pending") @map("membership_status")
+  membershipType   String?   @map("membership_type")
+  membershipNftId  String?   @map("membership_nft_id") // Storing as string
+  waiverStatus     String    @default("Pending Signature") @map("waiver_status")
+  waiverHash       String?   @map("waiver_hash") // Optional, hash of the signed waiver
+  profilePicUrl    String?   @map("profile_pic_url")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+  CheckIn          CheckIn[]
+
+  @@map("members") // Map model name 'Member' to table name 'members'
+}
+
+model CheckIn {
+  id        Int      @id @default(autoincrement())
+  memberId  Int      @map("member_id")
+  member    Member   @relation(fields: [memberId], references: [id]) // Establishes a relation to the Member model
+  timestamp DateTime @default(now())
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("check_ins") // Map model name to table name
+}
+
+// Add other models like 'Product', 'Class', 'CheckIn' here as you expand
