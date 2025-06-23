@@ -6,7 +6,7 @@
   # Build command: Commands to run to build your frontend.
   # "npm install" installs frontend dependencies.
   # "npm run build" runs the build script defined in frontend/package.json (Vite's default).
-  command = "npm i && npm run build"
+  command = "npm install --workspace=frontend && npm run build:frontend"
 
   # Publish directory: The directory that contains the deployable assets after the build.
   # Vite typically outputs to a 'dist' folder inside your project.
