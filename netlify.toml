@@ -1,16 +1,19 @@
 [build]
   # Base directory: Netlify will change into this directory before running commands.
   # This tells Netlify where your frontend project lives within the monorepo.
-  # base = ""
+  base = "frontend"
 
   # Build command: Commands to run to build your frontend.
-  # "npm install" installs frontend dependencies.
-  # "npm run build" runs the build script defined in frontend/package.json (Vite's default).
-  command = "npm install --workspace=frontend && npm run build:frontend"
+  # Now that Netlify has already changed into the 'frontend' directory,
+  # these commands are run relative to 'frontend/'.
+  # "npm install" will install frontend's dependencies (because it's in the 'frontend' dir).
+  # "npm run build" will run the 'build' script defined in frontend/package.json.
+  command = "npm install && npm run build" # <--- SIMPLIFIED COMMAND
 
   # Publish directory: The directory that contains the deployable assets after the build.
-  # Vite typically outputs to a 'dist' folder inside your project.
-  publish = "frontend/dist"
+  # Since 'base' is 'frontend', 'dist' is now relative to 'frontend/'.
+  publish = "dist" # <--- CORRECTED: Now relative to the 'frontend' base directory
+
 
 # Redirects for Single-Page Application (SPA) functionality
 # This rule ensures that all paths that don't match an existing file
