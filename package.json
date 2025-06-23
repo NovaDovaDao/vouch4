@@ -1,6 +1,6 @@
 {
-    "name": "@vouch4/monorepo",
     "version": "1.0.0",
+    "private": true,
     "description": "Gym Management Application (Node.js Backend & React Frontend)",
     "scripts": {
         "install:all": "npm install --workspaces",
