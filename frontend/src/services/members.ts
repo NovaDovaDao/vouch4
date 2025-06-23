@@ -40,7 +40,10 @@ export const getMembers = async (): Promise<Member[]> => {
 
 export const getMemberById = async (id: number): Promise<Member> => {
   const response = await fetch(`${API_BASE_URL}/members/${id}`, {
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      authorization: "bearer " + localStorage.getItem("authToken") || "",
+    },
   });
   if (!response.ok) {
     throw new Error(`Failed to fetch member with ID ${id}`);
@@ -55,7 +58,7 @@ export const createMember = async (
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      // 'X-Access-Token': localStorage.getItem('authToken') || '',
+      authorization: "bearer " + localStorage.getItem("authToken") || "",
     },
     body: JSON.stringify(memberData),
   });
@@ -74,7 +77,7 @@ export const updateMember = async (
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      // 'X-Access-Token': localStorage.getItem('authToken') || '',
+      authorization: "bearer " + localStorage.getItem("authToken") || "",
     },
     body: JSON.stringify(memberData),
   });
@@ -89,7 +92,7 @@ export const deleteMember = async (id: number): Promise<void> => {
   const response = await fetch(`${API_BASE_URL}/members/${id}`, {
     method: "DELETE",
     headers: {
-      // 'X-Access-Token': localStorage.getItem('authToken') || '',
+      authorization: "bearer " + localStorage.getItem("authToken") || "",
     },
   });
   if (!response.ok) {
@@ -103,7 +106,7 @@ export const checkInMember = async (memberId: number): Promise<Member> => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      // 'X-Access-Token': localStorage.getItem('authToken') || '',
+      authorization: "bearer " + localStorage.getItem("authToken") || "",
     },
   });
   if (!response.ok) {
