@@ -1,9 +1,8 @@
-import { Module } from "@danet/core";
-import { UsersService } from "./users.service.ts";
-import { PrismaService } from "../shared/prisma.service.ts";
+import { Module } from '@nestjs/common';
+import { UsersService } from './users.service';
 
 @Module({
-  controllers: [],
-  injectables: [UsersService, PrismaService],
+  providers: [UsersService],
+  exports: [UsersService],
 })
 export class UsersModule {}

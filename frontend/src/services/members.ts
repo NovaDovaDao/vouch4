@@ -29,8 +29,7 @@ export const getMembers = async (): Promise<Member[]> => {
   const response = await fetch(`${API_BASE_URL}/members`, {
     headers: {
       "Content-Type": "application/json",
-      // Add Authorization header if you implement it (next step after this one)
-      // 'X-Access-Token': localStorage.getItem('authToken') || '',
+      authorization: "bearer " + localStorage.getItem("authToken") || "",
     },
   });
   if (!response.ok) {

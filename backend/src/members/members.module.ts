@@ -1,10 +1,11 @@
-import { Module } from "jsr:@danet/core";
-import { MembersService } from "./members.service.ts";
-import { MembersController } from "./members.controller.ts";
-import { PrismaService } from "../shared/prisma.service.ts";
+import { Module } from '@nestjs/common';
+import { MembersService } from './members.service';
+import { MembersController } from './members.controller';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
+  imports: [AuthModule],
+  providers: [MembersService],
   controllers: [MembersController],
-  injectables: [MembersService, PrismaService],
 })
-export class MemberModule {}
+export class MembersModule {}

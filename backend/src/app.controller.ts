@@ -1,12 +1,12 @@
-import { Controller, Get } from '@danet/core';
+import { Controller, Get } from '@nestjs/common';
+import { AppService } from './app.service';
 
-@Controller('')
+@Controller()
 export class AppController {
-  constructor() {
-  }
+  constructor(private readonly appService: AppService) {}
 
   @Get()
-  helloWorld() {
-    return 'Hello World';
+  getHello(): string {
+    return this.appService.getHello();
   }
 }

@@ -1,16 +1,19 @@
 import {
-  Controller,
-  Get,
-  Post,
-  Param,
   Body,
-  Put,
+  Controller,
   Delete,
-} from "jsr:@danet/core";
-import { MembersService } from "./members.service.ts";
-import { CreateMemberDto, UpdateMemberDto } from "./member.model.ts";
+  Get,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
+import { MembersService } from './members.service';
+import { CreateMemberDto, UpdateMemberDto } from './member.model';
+import { AuthGuard } from '../auth/auth.guard';
 
-@Controller("members")
+@UseGuards(AuthGuard)
+@Controller('members')
 export class MembersController {
   constructor(private readonly membersService: MembersService) {}
 
@@ -19,8 +22,8 @@ export class MembersController {
     return this.membersService.findAll();
   }
 
-  @Get(":id")
-  findById(@Param("id") id: string) {
+  @Get(':id')
+  findById(@Param('id') id: string) {
     return this.membersService.findOne(Number(id));
   }
 
@@ -29,18 +32,18 @@ export class MembersController {
     return this.membersService.create(createMemberDto);
   }
 
-  @Put(":id")
-  update(@Param("id") id: string, @Body() updateMemberDto: UpdateMemberDto) {
+  @Put(':id')
+  update(@Param('id') id: string, @Body() updateMemberDto: UpdateMemberDto) {
     return this.membersService.update(Number(id), updateMemberDto);
   }
 
-  @Delete(":id")
-  remove(@Param("id") id: string) {
+  @Delete(':id')
+  remove(@Param('id') id: string) {
     return this.membersService.remove(Number(id));
   }
 
-  @Post(":id/checkin")
-  checkInMember(@Param("id") id: string) {
+  @Post(':id/checkin')
+  checkInMember(@Param('id') id: string) {
     return this.membersService.recordCheckIn(Number(id));
   }
 }
