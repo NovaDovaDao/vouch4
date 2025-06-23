@@ -2,7 +2,7 @@
 base = "frontend"
 # IMPORTANT: Switch from 'npm' to 'yarn' commands for the frontend build.
 # 'yarn install --frozen-lockfile' ensures a clean and reproducible install from yarn.lock.
-command = "npm install && npm run build"
+command = "npm install && npm install --save-dev @rollup/rollup-linux-x64-gnu && npm run build"
 
 publish = "dist"
 
