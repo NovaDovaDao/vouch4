@@ -1,41 +1,12 @@
 [build]
-  # Base directory: Netlify will change into this directory before running commands.
-  # This tells Netlify where your frontend project lives within the monorepo.
-  base = "frontend"
+base = "frontend"
+# IMPORTANT: Switch from 'npm' to 'yarn' commands for the frontend build.
+# 'yarn install --frozen-lockfile' ensures a clean and reproducible install from yarn.lock.
+command = "npm install && npm run build"
 
-  # Build command: Commands to run to build your frontend.
-  # Now that Netlify has already changed into the 'frontend' directory,
-  # these commands are run relative to 'frontend/'.
-  # "npm install" will install frontend's dependencies (because it's in the 'frontend' dir).
-  # "npm run build" will run the 'build' script defined in frontend/package.json.
-  command = "npm install && npm run build" # <--- SIMPLIFIED COMMAND
+publish = "dist"
 
-  # Publish directory: The directory that contains the deployable assets after the build.
-  # Since 'base' is 'frontend', 'dist' is now relative to 'frontend/'.
-  publish = "dist" # <--- CORRECTED: Now relative to the 'frontend' base directory
-
-
-# Redirects for Single-Page Application (SPA) functionality
-# This rule ensures that all paths that don't match an existing file
-# on the server will fall back to index.html. This is crucial for
-# client-side routing (like React Router) to work correctly.
 [[redirects]]
-  from = "/*" # Catch all paths
-  to = "/index.html" # Redirect to index.html
-  status = 200 # Return a 200 OK status code, keeping the original URL in the browser
-
-# Optional: Environment variables
-# If your frontend needs any environment variables (e.g., API_URL for your backend),
-# you can set them here or in Netlify's UI under Site settings > Build & deploy > Environment.
-# [build.environment]
-#   VITE_API_BASE_URL = "https://your-danet-backend.deno.dev" # Replace with your deployed backend URL
-
-# Context-specific settings (optional)
-# You can define different build settings for different deploy contexts (e.g., production, deploy previews)
-# [context.production]
-#   # Example: different variables for production
-#   # VITE_SOME_VAR = "production_value"
-
-# [context.deploy-preview]
-#   # Example: different variables for deploy previews
-#   # VITE_SOME_VAR = "preview_value"
+from = "/*"
+to = "/index.html"
+status = 200
