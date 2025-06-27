@@ -1,11 +1,17 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
+type User = {
+  id: string;
+  email: string;
+  isSuperUser: boolean;
+  tenancyId?: string;
+};
 interface AuthState {
   token: string | null;
-  user: { username: string; role: string } | null;
+  user: User | null;
   isLoggedIn: boolean;
-  setLogin: (token: string, user: { username: string; role: string }) => void;
+  setLogin: (token: string, user: User) => void;
   setLogout: () => void;
 }
 

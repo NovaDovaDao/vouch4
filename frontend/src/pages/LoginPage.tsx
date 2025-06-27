@@ -19,14 +19,25 @@ import { Button } from "../components/ui/button.tsx";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api"; // Make sure this matches your backend URL
 
+type MutationInput = { email: string; password: string };
+type MutationResponse = {
+  user: {
+    id: string;
+    email: string;
+    isSuperUser: boolean;
+    tenancyId?: string;
+  };
+  accessToken: string;
+};
+
 const LoginPage: React.FC = () => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const setLogin = useAuthStore((state) => state.setLogin);
 
-  const loginMutation = useMutation({
-    mutationFn: async (credentials: { username: string; password: string }) => {
+  const loginMutation = useMutation<MutationResponse, Error, MutationInput>({
+    mutationFn: async (credentials) => {
       const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: "POST",
         headers: {
@@ -45,9 +56,9 @@ const LoginPage: React.FC = () => {
     },
     onSuccess: (data) => {
       // Assuming backend returns { username, role, accessToken }
-      setLogin(data.accessToken, { username: data.username, role: data.role });
+      setLogin(data.accessToken, data.user);
       toast.success("Login Successful!", {
-        description: `Welcome, ${data.username}`,
+        description: `Welcome, ${data.user.email}`,
       });
       navigate("/dashboard"); // Redirect to dashboard after successful login
     },
@@ -60,7 +71,7 @@ const LoginPage: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    loginMutation.mutate({ username, password });
+    loginMutation.mutate({ email, password });
   };
 
   return (
@@ -83,8 +94,8 @@ const LoginPage: React.FC = () => {
                 type="email" // Use type email if your username is email
                 placeholder="admin@climbinggym.com"
                 required
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div className="grid gap-2">
