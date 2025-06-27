@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CheckIn, Member } from '../../generated/prisma';
+import { CheckIn, User } from '../../generated/prisma';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateMemberDto, UpdateMemberDto } from './member.model';
 
@@ -7,72 +7,71 @@ import { CreateMemberDto, UpdateMemberDto } from './member.model';
 export class MembersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(): Promise<Member[]> {
-    const members = await this.prisma.member.findMany();
-    return members as Member[];
+  async findAll(): Promise<User[]> {
+    return this.prisma.user.findMany({
+      where: { category: 'MEMBER' },
+    });
   }
 
-  async findOne(id: number): Promise<Member> {
-    const member = await this.prisma.member.findUnique({
-      where: { id: id },
+  async findOne(id: string): Promise<User> {
+    const member = await this.prisma.user.findUnique({
+      where: { id },
     });
     if (!member) {
       throw new NotFoundException();
     }
-    return member as Member;
+    return member;
   }
 
-  async findOneByWalletAddress(walletAddress: string): Promise<Member | null> {
-    const member = await this.prisma.member.findUnique({
+  async findOneByWalletAddress(walletAddress: string): Promise<User | null> {
+    const member = await this.prisma.user.findUnique({
       where: { walletAddress: walletAddress },
     });
-    return member as Member | null;
+    return member;
   }
 
-  async create(createMemberDto: CreateMemberDto): Promise<Member> {
-    const newMember = await this.prisma.member.create({
+  async create(createMemberDto: CreateMemberDto): Promise<User> {
+    const newMember = await this.prisma.user.create({
       data: {
-        name: createMemberDto.name,
+        firstName: createMemberDto.firstName,
+        lastName: createMemberDto.lastName,
         email: createMemberDto.email,
         phoneNumber: createMemberDto.phoneNumber,
         walletAddress: createMemberDto.walletAddress,
-        membershipStatus: createMemberDto.membershipStatus || 'Pending', // Default if not provided
-        membershipType: createMemberDto.membershipType,
-        membershipNftId: createMemberDto.membershipNftId,
-        waiverStatus: createMemberDto.waiverStatus || 'Pending Signature', // Default if not provided
-        waiverHash: createMemberDto.waiverHash,
         profilePicUrl: createMemberDto.profilePicUrl,
+        category: 'MEMBER',
       },
     });
-    return newMember as Member;
+    return newMember;
   }
 
-  async update(id: number, updateMemberDto: UpdateMemberDto): Promise<Member> {
-    const updatedMember = await this.prisma.member.update({
-      where: { id: id },
+  async update(id: string, updateMemberDto: UpdateMemberDto): Promise<User> {
+    const updatedMember = await this.prisma.user.update({
+      where: { id },
       data: {
         ...updateMemberDto,
         updatedAt: new Date(), // Manually update updatedAt or rely on Prisma's @updatedAt
       },
     });
-    return updatedMember as Member;
+    return updatedMember;
   }
 
-  async remove(id: number): Promise<void> {
-    await this.prisma.member.delete({
-      where: { id: id },
+  async remove(id: string): Promise<void> {
+    await this.prisma.user.delete({
+      where: { id },
     });
   }
 
   // --- Check-in related methods ---
-  async recordCheckIn(memberId: number): Promise<CheckIn> {
+  async recordCheckIn(memberId: string): Promise<CheckIn> {
     const checkIn = await this.prisma.checkIn.create({
       data: {
-        member: { connect: { id: memberId } }, // Connects to existing member
+        user: { connect: { id: memberId } }, // Connects to existing member
         timestamp: new Date(),
+        gym: {},
       },
       include: {
-        member: true, // Include member details in the response
+        user: true, // Include member details in the response,
       },
     });
     return checkIn;

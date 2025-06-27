@@ -1,6 +1,7 @@
 export interface Member {
   id: number;
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   phoneNumber?: string | null;
   walletAddress: string;
@@ -15,9 +16,10 @@ export interface Member {
 }
 
 export class CreateMemberDto
-  implements Omit<Member, "id" | "createdAt" | "updatedAt">
+  implements Omit<Member, 'id' | 'createdAt' | 'updatedAt'>
 {
-  name!: string;
+  firstName!: string;
+  lastName!: string;
   email!: string;
   phoneNumber?: string;
   walletAddress!: string;
@@ -30,9 +32,10 @@ export class CreateMemberDto
 }
 
 export class UpdateMemberDto
-  implements Partial<Omit<Member, "id" | "createdAt" | "updatedAt">>
+  implements Partial<Omit<Member, 'id' | 'createdAt' | 'updatedAt'>>
 {
-  name?: string;
+  firstName!: string;
+  lastName!: string;
   email?: string; // Making email optional for update
   phoneNumber?: string | null;
   walletAddress?: string;

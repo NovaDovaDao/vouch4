@@ -10,9 +10,9 @@ import {
 } from '@nestjs/common';
 import { MembersService } from './members.service';
 import { CreateMemberDto, UpdateMemberDto } from './member.model';
-import { AuthGuard } from '../auth/auth.guard';
+import { AuthGuard } from '@nestjs/passport';
 
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard('jwt'))
 @Controller('members')
 export class MembersController {
   constructor(private readonly membersService: MembersService) {}
@@ -24,7 +24,7 @@ export class MembersController {
 
   @Get(':id')
   findById(@Param('id') id: string) {
-    return this.membersService.findOne(Number(id));
+    return this.membersService.findOne(id);
   }
 
   @Post()
@@ -34,16 +34,16 @@ export class MembersController {
 
   @Put(':id')
   update(@Param('id') id: string, @Body() updateMemberDto: UpdateMemberDto) {
-    return this.membersService.update(Number(id), updateMemberDto);
+    return this.membersService.update(id, updateMemberDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.membersService.remove(Number(id));
+    return this.membersService.remove(id);
   }
 
   @Post(':id/checkin')
   checkInMember(@Param('id') id: string) {
-    return this.membersService.recordCheckIn(Number(id));
+    return this.membersService.recordCheckIn(id);
   }
 }
