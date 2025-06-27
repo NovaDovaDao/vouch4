@@ -1,9 +1,10 @@
-import { IsEmail, IsStrongPassword } from 'class-validator';
+import { IsEmail, IsString, MinLength } from '@nestjs/class-validator';
 
 export class LoginDto {
   @IsEmail()
   email!: string;
 
-  @IsStrongPassword()
+  @IsString()
+  @MinLength(8)
   password!: string;
 }
