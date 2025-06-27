@@ -30,7 +30,8 @@ const NewMemberPage: React.FC = () => {
 
   // State to hold form data
   const [formData, setFormData] = useState<CreateMemberDto>({
-    name: "",
+    firstName: "",
+    lastName: "",
     email: "",
     phoneNumber: "",
     walletAddress: "",
@@ -92,7 +93,7 @@ const NewMemberPage: React.FC = () => {
               id="name"
               type="text"
               required
-              value={formData.name}
+              value={formData.firstName}
               onChange={handleChange}
             />
           </div>

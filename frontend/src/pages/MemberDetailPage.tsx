@@ -1,4 +1,3 @@
-// frontend/src/pages/MemberDetailPage.tsx
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -48,7 +47,10 @@ const MemberDetailPage: React.FC = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const [formData, setFormData] = useState<UpdateMemberDto>({}); // Use UpdateMemberDto for form
+  const [formData, setFormData] = useState<UpdateMemberDto>({
+    firstName: "",
+    lastName: "",
+  }); // Use UpdateMemberDto for form
 
   // Fetch member data
   const {
@@ -66,7 +68,8 @@ const MemberDetailPage: React.FC = () => {
   useEffect(() => {
     if (member) {
       setFormData({
-        name: member.name,
+        firstName: member.name,
+        lastName: member.name,
         email: member.email,
         phoneNumber: member.phoneNumber,
         walletAddress: member.walletAddress,
@@ -197,7 +200,7 @@ const MemberDetailPage: React.FC = () => {
                 id="name"
                 type="text"
                 required
-                value={formData.name || ""}
+                value={formData.firstName}
                 onChange={handleChange}
               />
             </div>
@@ -207,7 +210,7 @@ const MemberDetailPage: React.FC = () => {
                 id="email"
                 type="email"
                 required
-                value={formData.email || ""}
+                value={formData.email}
                 onChange={handleChange}
               />
             </div>
