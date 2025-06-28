@@ -1,30 +1,37 @@
-// frontend/src/pages/DashboardPage.tsx
-import React from "react";
-import { useAuthStore } from "../store/authStore.ts";
-import { useNavigate } from "react-router-dom";
-import { Button } from "../components/ui/button.tsx";
+import { AppSidebar } from "@/components/app-sidebar";
+import { ChartAreaInteractive } from "@/components/chart-area-interactive";
+import { DataTable } from "@/components/data-table";
+import { SectionCards } from "@/components/section-cards";
+import { SiteHeader } from "@/components/site-header";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
-const DashboardPage: React.FC = () => {
-  const { user, setLogout } = useAuthStore();
-  const navigate = useNavigate();
+import data from "../app/dashboard/data.json";
 
-  const handleLogout = () => {
-    setLogout();
-    navigate("/login");
-  };
-
+export default function DashboardPage() {
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Welcome, {user?.email}!</h1>
-        <Button onClick={handleLogout}>Logout</Button>
-      </div>
-      <p className="text-lg">
-        This is your admin dashboard. More content coming soon!
-      </p>
-      {/* Placeholder for future admin components */}
-    </div>
+    <SidebarProvider
+      style={
+        {
+          "--sidebar-width": "calc(var(--spacing) * 72)",
+          "--header-height": "calc(var(--spacing) * 12)",
+        } as React.CSSProperties
+      }
+    >
+      <AppSidebar variant="inset" />
+      <SidebarInset>
+        <SiteHeader />
+        <div className="flex flex-1 flex-col">
+          <div className="@container/main flex flex-1 flex-col gap-2">
+            <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+              <SectionCards />
+              <div className="px-4 lg:px-6">
+                <ChartAreaInteractive />
+              </div>
+              <DataTable data={data} />
+            </div>
+          </div>
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
   );
-};
-
-export default DashboardPage;
+}

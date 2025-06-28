@@ -5,17 +5,22 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+import { AuthProvider } from "./contexts/AuthContext";
+// import ProtectedRoute from "./components/common/ProtectedRoute";
+// import DashboardLayout from "./layouts/DashboardLayout";
+// import NotFoundPage from "./pages/NotFoundPage"; // This will also be NotFoundPage.tsx
+
 import { useAuthStore } from "./store/authStore.ts";
 import LoginPage from "./pages/LoginPage.tsx";
-import DashboardPage from "./pages/DashboardPage.tsx";
-import MembersPage from "./pages/MembersPage.tsx";
-import NewMemberPage from "./pages/NewMemberPage.tsx";
-import AdminLayout from "./components/layout/AdminLayout.tsx";
+// import DashboardPage from "./pages/DashboardPage.tsx";
+// import MembersPage from "./pages/MembersPage.tsx";
+// import NewMemberPage from "./pages/NewMemberPage.tsx";
+// import AdminLayout from "./components/layout/AdminLayout.tsx";
 import { Toaster } from "./components/ui/sonner.tsx";
-import MemberDetailPage from "./pages/MemberDetailPage.tsx";
-
-const queryClient = new QueryClient();
+import DashboardPage from "./pages/DashboardPage.tsx";
+import AdminLayout from "./components/layout/AdminLayout.tsx";
+// import MemberDetailPage from "./pages/MemberDetailPage.tsx";
 
 // PrivateRoute component to protect routes
 const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({
@@ -27,35 +32,41 @@ const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
+    <>
       <Router>
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
+        <AuthProvider>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/login" element={<LoginPage />} />
+            {/* <Route path="/set-password" element={<SetPasswordPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} /> */}
+            <Route path="/" element={<LoginPage />} />
 
-          {/* Nested Routes within AdminLayout */}
-          <Route
-            path="/"
-            element={
-              <PrivateRoute>
-                <AdminLayout />{" "}
-                {/* Admin layout wraps dashboard and other admin pages */}
-              </PrivateRoute>
-            }
-          >
-            <Route index element={<Navigate to="/dashboard" replace />} />{" "}
-            {/* Default child route */}
-            <Route path="dashboard" element={<DashboardPage />} />
-            <Route path="members" element={<MembersPage />} />
+            {/* Nested Routes within AdminLayout */}
+            <Route
+              path="/"
+              element={
+                <PrivateRoute>
+                  <AdminLayout />
+                  {/* Admin layout wraps dashboard and other admin pages */}
+                </PrivateRoute>
+              }
+            >
+              <Route index element={<Navigate to="/dashboard" replace />} />
+              {/* Default child route */}
+              <Route path="dashboard" element={<DashboardPage />} />
+              {/* <Route path="members" element={<MembersPage />} />
             <Route path="members/new" element={<NewMemberPage />} />
-            <Route path="members/:id" element={<MemberDetailPage />} />
-          </Route>
+            <Route path="members/:id" element={<MemberDetailPage />} /> */}
+            </Route>
 
-          {/* Fallback for unauthenticated or non-matching routes */}
-          <Route path="*" element={<Navigate to="/login" replace />} />
-        </Routes>
+            {/* Fallback for unauthenticated or non-matching routes */}
+            <Route path="*" element={<Navigate to="/login" replace />} />
+          </Routes>
+        </AuthProvider>
       </Router>
       <Toaster /> {/* Shadcn Toaster component */}
-    </QueryClientProvider>
+    </>
   );
 }
 
