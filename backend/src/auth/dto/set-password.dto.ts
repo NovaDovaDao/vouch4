@@ -1,12 +1,11 @@
-import { IsNotEmpty, IsString, MinLength } from '@nestjs/class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
+import { IsStrongPassword } from 'class-validator';
 
 export class SetPasswordDto {
   @IsNotEmpty()
   @IsString()
   token: string;
 
-  @IsNotEmpty()
-  @IsString()
-  @MinLength(8, { message: 'Password must be at least 8 characters long' })
+  @IsStrongPassword()
   newPassword: string;
 }
