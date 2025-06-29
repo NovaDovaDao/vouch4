@@ -11,7 +11,6 @@ import { AuthProvider } from "./contexts/AuthContext";
 // import DashboardLayout from "./layouts/DashboardLayout";
 // import NotFoundPage from "./pages/NotFoundPage"; // This will also be NotFoundPage.tsx
 
-import { useAuthStore } from "./store/authStore.ts";
 import LoginPage from "./pages/LoginPage.tsx";
 // import DashboardPage from "./pages/DashboardPage.tsx";
 // import MembersPage from "./pages/MembersPage.tsx";
@@ -19,16 +18,7 @@ import LoginPage from "./pages/LoginPage.tsx";
 // import AdminLayout from "./components/layout/AdminLayout.tsx";
 import { Toaster } from "./components/ui/sonner.tsx";
 import DashboardPage from "./pages/DashboardPage.tsx";
-import AdminLayout from "./components/layout/AdminLayout.tsx";
 // import MemberDetailPage from "./pages/MemberDetailPage.tsx";
-
-// PrivateRoute component to protect routes
-const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
-  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
-  return isLoggedIn ? <>{children}</> : <Navigate to="/login" replace />;
-};
 
 function App() {
   return (
@@ -43,15 +33,7 @@ function App() {
             <Route path="/" element={<LoginPage />} />
 
             {/* Nested Routes within AdminLayout */}
-            <Route
-              path="/"
-              element={
-                <PrivateRoute>
-                  <AdminLayout />
-                  {/* Admin layout wraps dashboard and other admin pages */}
-                </PrivateRoute>
-              }
-            >
+            <Route path="/">
               <Route index element={<Navigate to="/dashboard" replace />} />
               {/* Default child route */}
               <Route path="dashboard" element={<DashboardPage />} />

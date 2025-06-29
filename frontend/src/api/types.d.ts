@@ -121,9 +121,51 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        LoginDto: Record<string, never>;
-        InviteUserDto: Record<string, never>;
-        SetPasswordDto: Record<string, never>;
+        LoginDto: {
+            /** Format: email */
+            email: string;
+            password: string;
+        };
+        UserLoginResponseDto: {
+            /**
+             * @description Unique identifier of the user
+             * @example clxzyzqr00000abcde12345
+             */
+            id: string;
+            /**
+             * @description Email address of the user
+             * @example user@example.com
+             */
+            email: string;
+            /**
+             * @description Indicates if the user is a super administrator
+             * @example false
+             */
+            isSuperUser: boolean;
+            /**
+             * @description The ID of the tenancy the user belongs to (if applicable)
+             * @example clxzyzqr00001abcde67890
+             */
+            tenancyId: string | null;
+        };
+        LoginResponseDto: {
+            /** @description User details after successful login */
+            user: components["schemas"]["UserLoginResponseDto"];
+            /**
+             * @description JWT access token for authentication
+             * @example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+             */
+            accessToken: string;
+        };
+        InviteUserDto: {
+            /** Format: email */
+            email: string;
+            category: Record<string, never>;
+        };
+        SetPasswordDto: {
+            token: string;
+            newPassword: string;
+        };
         CreateMemberDto: Record<string, never>;
         UpdateMemberDto: Record<string, never>;
     };
@@ -169,7 +211,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["LoginResponseDto"];
+                };
             };
         };
     };

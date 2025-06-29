@@ -1,7 +1,16 @@
-import { User } from '../../../generated/prisma';
-import { UserJwtResponse } from '../auth-jwt.interface';
+import { ApiProperty } from '@nestjs/swagger';
+import { UserLoginResponseDto } from './user-login-response.dto';
 
-export class LoginResponseDto implements UserJwtResponse {
-  user: Pick<User, 'id' | 'email' | 'isSuperUser' | 'tenancyId'>;
+export class LoginResponseDto {
+  @ApiProperty({
+    description: 'User details after successful login',
+    type: UserLoginResponseDto, // Crucial: Link to the nested DTO
+  })
+  user: UserLoginResponseDto; // Use the new DTO type here
+
+  @ApiProperty({
+    description: 'JWT access token for authentication',
+    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+  })
   accessToken: string;
 }

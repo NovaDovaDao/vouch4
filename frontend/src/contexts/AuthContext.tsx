@@ -1,7 +1,7 @@
 import { useState, useEffect, type ReactNode } from "react";
 import { getCurrentUser, loginUser, logoutUser } from "../services/auth";
-import { User, AuthState } from "../types"; // Import your types
-import { AuthContext } from "./useAuth";
+import { AuthContext, type AuthState } from "./useAuth";
+import type { User } from "@/api/client";
 
 const TOKEN_KEY = "jwt_token";
 const USER_KEY = "user_data";
@@ -81,19 +81,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // Helper functions for roles
-  const isSuperAdmin = user?.category === "SUPER_ADMIN"; // Or user?.isSuperUser === true; depending on your DTO
-  const isTenantOwner = user?.isTenantOwner === true;
-  const isStaff = user?.category === "STAFF";
-  const isMember = user?.category === "MEMBER";
+  // const isSuperAdmin = user?.category === "SUPER_ADMIN"; // Or user?.isSuperUser === true; depending on your DTO
+  // const isTenantOwner = user?.isTenantOwner === true;
+  // const isStaff = user?.category === "STAFF";
+  // const isMember = user?.category === "MEMBER";
 
   const canAccess = (
     requiredRoles: Array<"SUPER_ADMIN" | "TENANT_OWNER" | "STAFF" | "MEMBER">
   ): boolean => {
+    console.log({ requiredRoles });
     if (!user) return false;
-    if (requiredRoles.includes("SUPER_ADMIN") && isSuperAdmin) return true;
-    if (requiredRoles.includes("TENANT_OWNER") && isTenantOwner) return true;
-    if (requiredRoles.includes("STAFF") && isStaff) return true;
-    if (requiredRoles.includes("MEMBER") && isMember) return true;
+    // if (requiredRoles.includes("SUPER_ADMIN") && isSuperAdmin) return true;
+    // if (requiredRoles.includes("TENANT_OWNER") && isTenantOwner) return true;
+    // if (requiredRoles.includes("STAFF") && isStaff) return true;
+    // if (requiredRoles.includes("MEMBER") && isMember) return true;
     return false;
   };
 
@@ -103,10 +104,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     loading,
     login,
     logout,
-    isSuperAdmin,
-    isTenantOwner,
-    isStaff,
-    isMember,
+    isSuperAdmin: false,
+    isTenantOwner: false,
+    isStaff: false,
+    isMember: false,
     canAccess,
   };
 
