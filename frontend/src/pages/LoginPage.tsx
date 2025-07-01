@@ -1,11 +1,7 @@
-// frontend/src/pages/LoginPage.tsx
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
-import { useAuthStore } from "../store/authStore.ts"; // Adjust path as needed
+import { Navigate, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
-// Shadcn UI components (ensure these are imported/available in your project)
 import {
   Card,
   CardContent,
@@ -16,66 +12,44 @@ import {
 import { Label } from "@/components/ui/label.tsx";
 import { Input } from "../components/ui/input.tsx";
 import { Button } from "../components/ui/button.tsx";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api"; // Make sure this matches your backend URL
-
-type MutationInput = { email: string; password: string };
-type MutationResponse = {
-  user: {
-    id: string;
-    email: string;
-    isSuperUser: boolean;
-    tenancyId?: string;
-  };
-  accessToken: string;
-};
+import { $api, handleApiErrorMessage } from "@/api/client.ts";
+import { useAuth } from "@/contexts/useAuth.ts";
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const setLogin = useAuthStore((state) => state.setLogin);
 
-  const loginMutation = useMutation<MutationResponse, Error, MutationInput>({
-    mutationFn: async (credentials) => {
-      const response = await fetch(`${API_BASE_URL}/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(credentials),
-      });
+  const { setLogin, user } = useAuth();
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Login failed");
-      }
-
-      const data = await response.json();
-      return data;
-    },
+  const loginMutation = $api.useMutation("post", "/auth/login", {
     onSuccess: (data) => {
-      // Assuming backend returns { username, role, accessToken }
-      setLogin(data.accessToken, data.user);
-      toast.success("Login Successful!", {
-        description: `Welcome, ${data.user.email}`,
-      });
-      navigate("/dashboard"); // Redirect to dashboard after successful login
+      if (data) {
+        toast.success("Login Successful!", {
+          description: `Welcome, ${data.user.email}`,
+        });
+        setLogin(data.user, data.accessToken);
+        navigate("/dashboard"); // Redirect to dashboard after successful login
+      }
     },
-    onError: (error) => {
-      toast.error("Login Error", {
-        description: error.message || "An unexpected error occurred.",
+    onError: (err) => {
+      toast.error(err.error ?? "Login Error", {
+        description: handleApiErrorMessage(err),
       });
     },
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    loginMutation.mutate({ email, password });
+    loginMutation.mutate({ body: { email, password } });
   };
 
+  if (user) {
+    return <Navigate to="/" />;
+  }
+
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex items-center justify-center min-h-screen ">
       <Card className="w-[350px]">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">
@@ -117,7 +91,7 @@ const LoginPage: React.FC = () => {
             </Button>
             {loginMutation.isError && (
               <p className="text-red-500 text-sm text-center mt-2">
-                {loginMutation.error?.message}
+                {String(loginMutation.error.message)}
               </p>
             )}
           </form>

@@ -4,28 +4,13 @@ import { createContext, useContext } from "react";
 export interface AuthState {
   user: User | null;
   token: string | null;
-  loading: boolean;
-  login: (
-    email: string,
-    password: string
-  ) => Promise<
-    | {
-        success: boolean;
-        message?: undefined;
-      }
-    | {
-        success: boolean;
-        message: string;
-      }
-  >;
+  setLogin: (user: User, token: string) => void;
   logout: () => void;
   isSuperAdmin: boolean;
   isTenantOwner: boolean;
   isStaff: boolean;
   isMember: boolean;
-  canAccess: (
-    requiredRoles: Array<"SUPER_ADMIN" | "TENANT_OWNER" | "STAFF" | "MEMBER">
-  ) => boolean;
+  canAccess: (requiredRoles: User["category"][]) => boolean;
 }
 
 export const AuthContext = createContext<AuthState | null>(null);

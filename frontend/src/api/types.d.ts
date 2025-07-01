@@ -128,6 +128,12 @@ export interface components {
         };
         UserLoginResponseDto: {
             /**
+             * @description Type of user
+             * @example STAFF
+             * @enum {string}
+             */
+            category: "MEMBER" | "STAFF";
+            /**
              * @description Unique identifier of the user
              * @example clxzyzqr00000abcde12345
              */
@@ -157,6 +163,11 @@ export interface components {
              */
             accessToken: string;
         };
+        ErrorDto: {
+            error: string;
+            message: string[];
+            status: number;
+        };
         InviteUserDto: {
             /** Format: email */
             email: string;
@@ -165,6 +176,9 @@ export interface components {
         SetPasswordDto: {
             token: string;
             newPassword: string;
+        };
+        SetPasswordResponseDto: {
+            message: string;
         };
         CreateMemberDto: Record<string, never>;
         UpdateMemberDto: Record<string, never>;
@@ -215,6 +229,14 @@ export interface operations {
                     "application/json": components["schemas"]["LoginResponseDto"];
                 };
             };
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
         };
     };
     AuthController_inviteUser: {
@@ -251,11 +273,21 @@ export interface operations {
             };
         };
         responses: {
-            200: {
+            201: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["SetPasswordResponseDto"];
+                };
+            };
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
             };
         };
     };

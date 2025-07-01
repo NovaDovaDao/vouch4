@@ -1,12 +1,18 @@
-// frontend/src/api/client.ts
-import createClient from "openapi-fetch";
+import createFetchClient from "openapi-fetch";
+import createClient from "openapi-react-query";
 import type { paths, components } from "./types"; // Generated from openapi-typescript
 
-// This creates a client for your API with type-safety based on your OpenAPI spec.
-// Adjust the baseUrl to your actual backend API URL.
-export const apiClient = createClient<paths>({
-  baseUrl: "/api",
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api"; // Make sure this matches your backend URL
+
+const fetchClient = createFetchClient<paths>({
+  baseUrl: API_BASE_URL,
 });
+export const $api = createClient(fetchClient);
+
+export const handleApiErrorMessage = (err: components["schemas"]["ErrorDto"]) =>
+  Array.isArray(err.message)
+    ? err.message.join(". ")
+    : err.message || "An unexpected error occurred.";
 
 // You can also export common types for convenience
 export type User = components["schemas"]["UserLoginResponseDto"]; // Example: Assuming a UserDto schema exists

@@ -1,5 +1,10 @@
-import { useState, useEffect, type ReactNode } from "react";
-import { getCurrentUser, loginUser, logoutUser } from "../services/auth";
+import {
+  useState,
+  useEffect,
+  type ReactNode,
+  useMemo,
+  useCallback,
+} from "react";
 import { AuthContext, type AuthState } from "./useAuth";
 import type { User } from "@/api/client";
 
@@ -50,64 +55,55 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     fetchAndSetUser();
   }, [token, user]); // Re-run if token or user state changes (e.g., after login/logout)
 
-  const login = async (email: string, password: string) => {
-    setLoading(true);
-    try {
-      const response = await loginUser(email, password);
-      if (response.success && response.user && response.token) {
-        setUser(response.user);
-        setToken(response.token);
-        // localStorage storing is handled within loginUser, but redundant setting here is fine
-        return { success: true };
-      } else {
-        return { success: false, message: response.message || "Login failed." };
-      }
-    } catch (error) {
-      return {
-        success: false,
-        message:
-          (error as Error).message ||
-          "An unexpected error occurred during login.",
-      };
-    } finally {
-      setLoading(false);
-    }
+  const setLogin = (user: User, token: string) => {
+    localStorage.setItem(TOKEN_KEY, token);
+    localStorage.setItem(USER_KEY, JSON.stringify(user));
+    setUser(user);
+    setToken(token);
   };
 
   const logout = () => {
-    logoutUser(); // Clears localStorage
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
     setUser(null);
     setToken(null);
   };
 
   // Helper functions for roles
-  // const isSuperAdmin = user?.category === "SUPER_ADMIN"; // Or user?.isSuperUser === true; depending on your DTO
-  // const isTenantOwner = user?.isTenantOwner === true;
-  // const isStaff = user?.category === "STAFF";
-  // const isMember = user?.category === "MEMBER";
+  const { isMember, isStaff, isSuperAdmin, isTenantOwner } = useMemo(() => {
+    const isSuperAdmin = user?.isSuperUser ?? false;
+    const isTenantOwner = !!user?.tenancyId;
+    const isStaff = user?.category === "STAFF";
+    const isMember = user?.category === "MEMBER";
+    return {
+      isMember,
+      isStaff,
+      isSuperAdmin,
+      isTenantOwner,
+    };
+  }, [user]);
 
-  const canAccess = (
-    requiredRoles: Array<"SUPER_ADMIN" | "TENANT_OWNER" | "STAFF" | "MEMBER">
-  ): boolean => {
-    console.log({ requiredRoles });
-    if (!user) return false;
-    // if (requiredRoles.includes("SUPER_ADMIN") && isSuperAdmin) return true;
-    // if (requiredRoles.includes("TENANT_OWNER") && isTenantOwner) return true;
-    // if (requiredRoles.includes("STAFF") && isStaff) return true;
-    // if (requiredRoles.includes("MEMBER") && isMember) return true;
-    return false;
-  };
+  const canAccess = useCallback(
+    (requiredRoles: User["category"][]): boolean => {
+      console.log({ requiredRoles });
+      if (!user) return false;
+      if (isSuperAdmin) return true;
+      if (requiredRoles.includes("STAFF") && isStaff) return true;
+      if (requiredRoles.includes("MEMBER") && isMember) return true;
+      return false;
+    },
+    [isMember, isStaff, isSuperAdmin, user]
+  );
 
   const authState: AuthState = {
     user,
     token,
-    loading,
-    login,
+    setLogin,
     logout,
-    isSuperAdmin: false,
-    isTenantOwner: false,
-    isStaff: false,
-    isMember: false,
+    isSuperAdmin,
+    isTenantOwner,
+    isStaff,
+    isMember,
     canAccess,
   };
 
@@ -122,4 +118,51 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   return (
     <AuthContext.Provider value={authState}>{children}</AuthContext.Provider>
   );
+};
+
+const getCurrentUser = async (): Promise<User | null> => {
+  const token = localStorage.getItem(TOKEN_KEY);
+  if (!token) return null;
+
+  const storedUser = localStorage.getItem(USER_KEY);
+  if (storedUser) {
+    try {
+      // Return immediately if user data is in local storage and is valid
+      const user = JSON.parse(storedUser) as User;
+      // You might add a lightweight token validation here (e.g., check expiry if token is JWT)
+      return user;
+    } catch (e) {
+      console.error("Failed to parse stored user data:", e);
+      localStorage.removeItem(USER_KEY); // Clear corrupt data
+    }
+  }
+
+  // If no user data or invalid, attempt to fetch profile using the token
+  try {
+    return null;
+    // This assumes you have a /auth/profile or /users/me endpoint
+    // and that openapi-fetch will automatically add the Authorization header
+    // from a configured `auth` method if you set it up.
+    // For simplicity here, we're assuming the token grants access to a profile endpoint.
+    // const { data, error, response } = await apiClient.GET("/auth/profile", {
+    //   headers: {
+    //     Authorization: `Bearer ${token}`,
+    //   },
+    // });
+    // if (response.ok && data) {
+    //   const user = data as User; // Cast to your local User type
+    //   localStorage.setItem(USER_KEY, JSON.stringify(user)); // Update stored user data
+    //   return user;
+    // } else {
+    //   console.error("Failed to fetch user profile:", error);
+    //   localStorage.removeItem(TOKEN_KEY); // Clear invalid token
+    //   localStorage.removeItem(USER_KEY);
+    //   return null;
+    // }
+  } catch (err) {
+    console.error("Get current user API call failed:", err);
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
+    return null;
+  }
 };

@@ -57,6 +57,7 @@ export class AuthService {
     const payload = {
       id: user.id,
       email: user.email,
+      category: user.category,
       isSuperUser: user.isSuperUser,
       tenancyId: user.tenancyId,
     } satisfies UserJwtResponse['user'];

@@ -1,6 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { UserJwt } from '../auth-jwt.interface';
+import { $Enums } from 'generated/prisma';
 
-export class UserLoginResponseDto {
+export class UserLoginResponseDto implements UserJwt {
+  @ApiProperty({
+    description: 'Type of user',
+    example: 'STAFF',
+    enum: $Enums.UserCategory,
+  })
+  category: $Enums.UserCategory;
+
   @ApiProperty({
     description: 'Unique identifier of the user',
     example: 'clxzyzqr00000abcde12345',

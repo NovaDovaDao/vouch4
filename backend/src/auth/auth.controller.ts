@@ -2,8 +2,6 @@ import {
   Controller,
   Post,
   Body,
-  HttpCode,
-  HttpStatus,
   ValidationPipe,
   Request,
   UseGuards,
@@ -15,14 +13,17 @@ import { UserJwtResponse } from './auth-jwt.interface';
 import { InviteUserDto } from './dto/invite-user.dto';
 import { SetPasswordDto } from './dto/set-password.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiDefaultResponse } from '@nestjs/swagger';
+import { SetPasswordResponseDto } from './dto/set-password-response.dto';
+import { ErrorDto } from './dto/error.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
-  @ApiResponse({ status: 201, type: LoginResponseDto })
+  @ApiCreatedResponse({ type: LoginResponseDto })
+  @ApiDefaultResponse({ type: ErrorDto })
   async login(@Body(ValidationPipe) loginDto: LoginDto) {
     return this.authService.login(loginDto);
   }
@@ -42,9 +43,9 @@ export class AuthController {
     );
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Post('set-password')
-  @HttpCode(HttpStatus.OK) // Ensure it returns 200 OK on success
+  @ApiCreatedResponse({ type: SetPasswordResponseDto })
+  @ApiDefaultResponse({ type: ErrorDto })
   setUserPassword(@Body(ValidationPipe) setPasswordDto: SetPasswordDto) {
     return this.authService.setUserPassword(
       setPasswordDto.token,
