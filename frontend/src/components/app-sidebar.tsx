@@ -1,13 +1,10 @@
 import * as React from "react";
 import {
   IconCamera,
-  IconChartBar,
   IconDashboard,
   IconDatabase,
   IconFileAi,
   IconFileDescription,
-  IconFileWord,
-  IconFolder,
   IconHelp,
   IconListDetails,
   IconReport,
@@ -35,28 +32,23 @@ const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "#",
+      url: "/",
       icon: IconDashboard,
     },
     {
-      title: "Lifecycle",
-      url: "#",
-      icon: IconListDetails,
-    },
-    {
-      title: "Analytics",
-      url: "#",
-      icon: IconChartBar,
-    },
-    {
-      title: "Projects",
-      url: "#",
-      icon: IconFolder,
-    },
-    {
-      title: "Team",
-      url: "#",
+      title: "Members",
+      url: "/members",
       icon: IconUsers,
+    },
+    {
+      title: "Staff",
+      url: "/staff",
+      icon: IconUsers,
+    },
+    {
+      title: "Classes",
+      url: "/classes",
+      icon: IconListDetails,
     },
   ],
   navClouds: [
@@ -110,35 +102,30 @@ const data = {
   navSecondary: [
     {
       title: "Settings",
-      url: "#",
+      url: "/settings",
       icon: IconSettings,
     },
     {
       title: "Get Help",
-      url: "#",
+      url: "/help",
       icon: IconHelp,
     },
     {
       title: "Search",
-      url: "#",
+      url: "/search",
       icon: IconSearch,
     },
   ],
   documents: [
     {
-      name: "Data Library",
-      url: "#",
+      name: "Contracts",
+      url: "/reports/contracts",
       icon: IconDatabase,
     },
     {
-      name: "Reports",
-      url: "#",
+      name: "Memberships",
+      url: "/reports/memberships",
       icon: IconReport,
-    },
-    {
-      name: "Word Assistant",
-      url: "#",
-      icon: IconFileWord,
     },
   ],
 };

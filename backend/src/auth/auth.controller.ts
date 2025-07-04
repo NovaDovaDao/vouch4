@@ -15,7 +15,7 @@ import { SetPasswordDto } from './dto/set-password.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiCreatedResponse, ApiDefaultResponse } from '@nestjs/swagger';
 import { SetPasswordResponseDto } from './dto/set-password-response.dto';
-import { ErrorDto } from './dto/error.dto';
+import { ErrorDto } from '../error.dto';
 
 @Controller('auth')
 export class AuthController {

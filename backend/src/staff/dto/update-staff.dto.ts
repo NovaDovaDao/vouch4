@@ -1,27 +1,35 @@
 import {
   IsEmail,
-  IsEthereumAddress,
   IsOptional,
   IsPhoneNumber,
   IsString,
   IsUrl,
+  IsUUID,
 } from 'class-validator';
 import { User } from '../../../generated/prisma';
 
-export class UpdateMemberDto
+export class UpdateStaffDto
   implements
     Partial<
       Pick<
         User,
+        | 'id'
+        | 'isActive'
+        | 'phoneNumber'
         | 'firstName'
         | 'lastName'
         | 'email'
-        | 'phoneNumber'
-        | 'walletAddress'
         | 'profilePicUrl'
       >
     >
 {
+  @IsUUID()
+  id!: string;
+
+  @IsPhoneNumber()
+  @IsOptional()
+  phoneNumber: string | null;
+
   @IsString()
   @IsOptional()
   firstName!: string;
@@ -32,15 +40,7 @@ export class UpdateMemberDto
 
   @IsEmail()
   @IsOptional()
-  email?: string;
-
-  @IsPhoneNumber()
-  @IsOptional()
-  phoneNumber?: string | null;
-
-  @IsEthereumAddress()
-  @IsOptional()
-  walletAddress?: string;
+  email!: string;
 
   @IsUrl()
   @IsOptional()

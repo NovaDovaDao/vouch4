@@ -6,6 +6,9 @@ import { MembersModule } from './members/members.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { MailModule } from './mail/mail.module';
 import { ConfigAppModule } from './config/config.module';
+import { StaffModule } from './staff/staff.module';
+import { ClassesModule } from './classes/classes.module';
+import { ContractsModule } from './contracts/contracts.module';
 
 @Module({
   imports: [
@@ -14,6 +17,9 @@ import { ConfigAppModule } from './config/config.module';
     MembersModule,
     PrismaModule,
     MailModule,
+    StaffModule,
+    ClassesModule,
+    ContractsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

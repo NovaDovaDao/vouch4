@@ -1,59 +1,66 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CheckIn, User } from '../../generated/prisma';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateMemberDto, UpdateMemberDto } from './member.model';
+import { MemberDto } from './dto/member.dto';
+import { CreateMemberDto } from './dto/create-member.dto';
+import { UpdateMemberDto } from './dto/update-member.dto';
 
 @Injectable()
 export class MembersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(): Promise<User[]> {
-    return this.prisma.user.findMany({
+  async findAll(): Promise<MemberDto[]> {
+    const users = await this.prisma.user.findMany({
       where: { category: 'MEMBER' },
     });
+    return users.map(parseUser);
   }
 
-  async findOne(id: string): Promise<User> {
-    const member = await this.prisma.user.findUnique({
+  async findOne(id: string): Promise<MemberDto> {
+    const user = await this.prisma.user.findUnique({
       where: { id },
     });
-    if (!member) {
+    if (!user) {
       throw new NotFoundException();
     }
-    return member;
+    return parseUser(user);
   }
 
-  async findOneByWalletAddress(walletAddress: string): Promise<User | null> {
-    const member = await this.prisma.user.findUnique({
+  async findOneByWalletAddress(
+    walletAddress: string,
+  ): Promise<MemberDto | null> {
+    const user = await this.prisma.user.findUnique({
       where: { walletAddress: walletAddress },
     });
-    return member;
+    return parseUser(user!);
   }
 
-  async create(createMemberDto: CreateMemberDto): Promise<User> {
-    const newMember = await this.prisma.user.create({
+  async create(createMemberDto: CreateMemberDto): Promise<MemberDto> {
+    const newUser = await this.prisma.user.create({
       data: {
         firstName: createMemberDto.firstName,
         lastName: createMemberDto.lastName,
         email: createMemberDto.email,
         phoneNumber: createMemberDto.phoneNumber,
         walletAddress: createMemberDto.walletAddress,
-        profilePicUrl: createMemberDto.profilePicUrl,
         category: 'MEMBER',
       },
     });
-    return newMember;
+    return parseUser(newUser);
   }
 
-  async update(id: string, updateMemberDto: UpdateMemberDto): Promise<User> {
-    const updatedMember = await this.prisma.user.update({
+  async update(
+    id: string,
+    updateMemberDto: UpdateMemberDto,
+  ): Promise<MemberDto> {
+    const updatedUser = await this.prisma.user.update({
       where: { id },
       data: {
         ...updateMemberDto,
         updatedAt: new Date(), // Manually update updatedAt or rely on Prisma's @updatedAt
       },
     });
-    return updatedMember;
+    return parseUser(updatedUser);
   }
 
   async remove(id: string): Promise<void> {
@@ -76,4 +83,18 @@ export class MembersService {
     });
     return checkIn;
   }
+}
+
+function parseUser(user: User): MemberDto {
+  return {
+    email: user.email,
+    firstName: user.firstName,
+    id: user.id,
+    isActive: user.isActive,
+    lastName: user.lastName,
+    phoneNumber: user.phoneNumber,
+    profilePicUrl: user.profilePicUrl,
+    updatedAt: user.updatedAt,
+    walletAddress: user.walletAddress,
+  };
 }

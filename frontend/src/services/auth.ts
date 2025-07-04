@@ -1,4 +1,29 @@
-import { $api } from "../api/client"; // Your openapi-fetch client
+import { $api, type User } from "../api/client";
+
+export class AuthService {
+  private readonly TOKEN_KEY = "jwt_token";
+  private readonly USER_KEY = "user_data";
+
+  get user(): User | null {
+    const storedUser = localStorage.getItem(this.USER_KEY);
+    return storedUser ? JSON.parse(storedUser) : null;
+  }
+  set user(user: User) {
+    localStorage.setItem(this.USER_KEY, JSON.stringify(user));
+  }
+
+  get token(): string | null {
+    return localStorage.getItem(this.TOKEN_KEY);
+  }
+  set token(token: string) {
+    localStorage.setItem(this.TOKEN_KEY, token);
+  }
+
+  clear() {
+    localStorage.removeItem(this.USER_KEY);
+    localStorage.removeItem(this.TOKEN_KEY);
+  }
+}
 
 export const setPassword = async (
   token: string,

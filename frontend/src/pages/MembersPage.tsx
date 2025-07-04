@@ -1,37 +1,32 @@
-// frontend/src/pages/MembersPage.tsx
-import React from "react";
-import { Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { getMembers, type Member } from "../services/members.ts"; // Corrected import path
-import { Button } from "../components/ui/button.tsx";
+import { $api } from "@/api/client.ts";
+import { DataTable } from "@/components/common/DataTable";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../components/ui/card.tsx";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Label } from "@/components/ui/label";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "../components/ui/table.tsx";
-import { Badge } from "../components/ui/badge.tsx";
-import { toast } from "sonner";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  IconCircleCheckFilled,
+  IconDotsVertical,
+  IconLoader,
+  IconPlus,
+} from "@tabler/icons-react";
 
-const MembersPage: React.FC = () => {
-  const {
-    data: members,
-    isLoading,
-    isError,
-    error,
-  } = useQuery<Member[], Error>({
-    queryKey: ["members"],
-    queryFn: getMembers,
-  });
+export default function MembersPage() {
+  const { data, isLoading } = $api.useQuery("get", "/members");
 
   if (isLoading) {
     return (
@@ -41,97 +36,112 @@ const MembersPage: React.FC = () => {
     );
   }
 
-  if (isError) {
-    toast.error("Error", {
-      description: error?.message || "Failed to load members.",
-    });
-    return (
-      <div className="flex justify-center items-center h-full text-red-600">
-        <p>Error: {error?.message || "Failed to load members."}</p>
-      </div>
-    );
-  }
-
   return (
-    <>
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Members</h1>
-        <Link to="/members/new">
-          <Button>Add New Member</Button>
-        </Link>
+    <Tabs
+      defaultValue="outline"
+      className="w-full flex-col justify-start gap-6"
+    >
+      <div className="flex items-center justify-between  px-4 lg:px-6">
+        <Label htmlFor="view-selector" className="sr-only">
+          View
+        </Label>
+        <Select defaultValue="outline">
+          <SelectTrigger
+            className="flex w-fit @4xl/main:hidden"
+            size="sm"
+            id="view-selector"
+          >
+            <SelectValue placeholder="Select a view" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="outline">Gym 1</SelectItem>
+          </SelectContent>
+        </Select>
+        <TabsList className="**:data-[slot=badge]:bg-muted-foreground/30 hidden **:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:px-1 @4xl/main:flex">
+          <TabsTrigger value="outline">
+            Gym 1 <Badge variant="secondary">3</Badge>
+          </TabsTrigger>
+        </TabsList>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm">
+            <IconPlus />
+            <span className="hidden lg:inline">Add Member</span>
+          </Button>
+        </div>
       </div>
-
-      <Card className="mt-4">
-        <CardHeader>
-          <CardTitle>All Gym Members</CardTitle>
-          <CardDescription>
-            Manage your gym members, view their status, and details.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {members && members.length > 0 ? (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Wallet Address</TableHead>
-                  <TableHead>Membership</TableHead>
-                  <TableHead>Waiver Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {members.map((member) => (
-                  <TableRow key={member.id}>
-                    <TableCell className="font-medium">{member.name}</TableCell>
-                    <TableCell>{member.email}</TableCell>
-                    <TableCell className="font-mono text-xs">
-                      {member.walletAddress.substring(0, 8)}...
-                      {member.walletAddress.slice(-6)}
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={
-                          member.membershipStatus === "Active"
-                            ? "default"
-                            : "secondary"
-                        }
-                      >
-                        {member.membershipStatus}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={
-                          member.waiverStatus === "Signed"
-                            ? "default"
-                            : "outline"
-                        }
-                      >
-                        {member.waiverStatus}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Link to={`/members/${member.id}`}>
-                        <Button variant="ghost" size="sm">
-                          View/Edit
-                        </Button>
-                      </Link>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          ) : (
-            <p className="text-center text-muted-foreground py-8">
-              No members found. Add one to get started!
-            </p>
-          )}
-        </CardContent>
-      </Card>
-    </>
+      <TabsContent
+        value="outline"
+        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
+      >
+        <DataTable
+          data={data ?? []}
+          columns={[
+            {
+              accessorKey: "firstName",
+              header: "First Name",
+            },
+            {
+              accessorKey: "lastName",
+              header: "Last Name",
+            },
+            {
+              accessorKey: "email",
+              header: "Email",
+            },
+            {
+              accessorKey: "isActive",
+              header: "Status",
+              cell: ({ row }) => (
+                <Badge
+                  variant="outline"
+                  className="text-muted-foreground px-1.5"
+                >
+                  {row.original.isActive ? (
+                    <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
+                  ) : (
+                    <IconLoader />
+                  )}
+                  {row.original.isActive ? "Active" : "Inactive"}
+                </Badge>
+              ),
+            },
+            {
+              accessorKey: "phoneNumber",
+              header: "Phone",
+            },
+            {
+              accessorKey: "updatedAt",
+              header: "Updated",
+            },
+            {
+              id: "actions",
+              cell: () => (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
+                      size="icon"
+                    >
+                      <IconDotsVertical />
+                      <span className="sr-only">Open menu</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-32">
+                    <DropdownMenuItem>Edit</DropdownMenuItem>
+                    <DropdownMenuItem>Make a copy</DropdownMenuItem>
+                    <DropdownMenuItem>Favorite</DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem variant="destructive">
+                      Delete
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ),
+            },
+          ]}
+        />
+      </TabsContent>
+    </Tabs>
   );
-};
-
-export default MembersPage;
+}
