@@ -40,7 +40,8 @@ export const handleApiErrorMessage = (err: components["schemas"]["ErrorDto"]) =>
     ? err.message.join(". ")
     : err.message || "An unexpected error occurred.";
 
-// You can also export common types for convenience
-export type User = components["schemas"]["UserLoginResponseDto"]; // Example: Assuming a UserDto schema exists
+export type User = components["schemas"]["UserLoginResponseDto"];
 export type LoginRequest = components["schemas"]["LoginDto"];
-export type LoginResponse = components["schemas"]["LoginResponseDto"]; // Assuming this includes token and user data
+export type LoginResponse = components["schemas"]["LoginResponseDto"];
+export type CreateMember = components["schemas"]["CreateMemberDto"];
+export type UpdateMember = components["schemas"]["UpdateMemberDto"];
