@@ -1,19 +1,8 @@
 import { $api } from "@/api/client.ts";
-import { DataTable } from "@/components/common/DataTable";
+import { DataTable } from "@/components/common/data-table";
+import MoreDropDown from "@/components/common/more-dropdown";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  IconCircleCheckFilled,
-  IconDotsVertical,
-  IconLoader,
-} from "@tabler/icons-react";
+import { IconCircleCheckFilled, IconLoader } from "@tabler/icons-react";
 
 export default function StaffPage() {
   const { data, isLoading } = $api.useQuery("get", "/staff");
@@ -67,29 +56,7 @@ export default function StaffPage() {
           },
           {
             id: "actions",
-            cell: () => (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-                    size="icon"
-                  >
-                    <IconDotsVertical />
-                    <span className="sr-only">Open menu</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-32">
-                  <DropdownMenuItem>Edit</DropdownMenuItem>
-                  <DropdownMenuItem>Make a copy</DropdownMenuItem>
-                  <DropdownMenuItem>Favorite</DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem variant="destructive">
-                    Delete
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ),
+            cell: () => <MoreDropDown />,
           },
         ]}
       />

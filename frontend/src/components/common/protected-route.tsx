@@ -1,6 +1,6 @@
 import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import { useAuth } from "../../contexts/useAuth";
+import { useAuth } from "../../contexts/use-auth";
 import type { User } from "@/api/client";
 
 interface ProtectedRouteProps {

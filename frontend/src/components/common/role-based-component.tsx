@@ -1,8 +1,8 @@
 import React, { type ReactNode } from "react";
-import { useAuth } from "../../contexts/useAuth";
+import { useAuth } from "../../contexts/use-auth";
 
 interface RoleBasedComponentProps {
-  allowedRoles?: Array<"SUPER_ADMIN" | "TENANT_OWNER" | "STAFF" | "MEMBER">;
+  allowedRoles?: Array<"STAFF" | "MEMBER">;
   children: ReactNode;
 }
 

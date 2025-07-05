@@ -1,5 +1,5 @@
 import { useState, type ReactNode, useMemo, useCallback } from "react";
-import { AuthContext, type AuthState } from "./useAuth";
+import { AuthContext, type AuthState } from "./use-auth";
 import type { User } from "@/api/client";
 import { AuthService } from "@/services/auth";
 

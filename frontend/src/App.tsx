@@ -6,22 +6,24 @@ import {
 } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import { AuthProvider } from "./contexts/AuthContext";
+import { AuthProvider } from "./contexts/auth-context.tsx";
 import { Toaster } from "./components/ui/sonner.tsx";
-import ProtectedRoute from "./components/common/ProtectedRoute.tsx";
+import ProtectedRoute from "./components/common/protected-route.tsx";
 
-import LoginPage from "./pages/LoginPage.tsx";
-import DashboardPage from "./pages/DashboardPage.tsx";
-import NotFoundPage from "./pages/NotFoundPage.tsx";
-import AppLayout from "./layouts/AppLayout.tsx";
-import SetPasswordPage from "./pages/SetPasswordPage.tsx";
-import MembersPage from "./pages/MembersPage.tsx";
-import LogoutPage from "./pages/LogoutPage.tsx";
-import ClassesPage from "./pages/ClassesPage.tsx";
-import StaffPage from "./pages/StaffPage.tsx";
-import AccountPage from "./pages/AccountPage.tsx";
-import AccountBillingPage from "./pages/AccountBillingPage.tsx";
-import AccountNotificationsPage from "./pages/AccountNotificationsPage.tsx";
+import LoginPage from "./pages/login-page.tsx";
+import DashboardPage from "./pages/dashboard-page.tsx";
+import NotFoundPage from "./pages/not-found-page.tsx";
+import AppLayout from "./layouts/app-layout.tsx";
+import SetPasswordPage from "./pages/set-password-page.tsx";
+import MembersPage from "./pages/members-page.tsx";
+import LogoutPage from "./pages/logout-page.tsx";
+import ClassesPage from "./pages/classes-page.tsx";
+import StaffPage from "./pages/staff-page.tsx";
+import AccountPage from "./pages/account-page.tsx";
+import AccountBillingPage from "./pages/account-billing-page.tsx";
+import AccountNotificationsPage from "./pages/account-notifications-page.tsx";
+import ReportsContractsPage from "./pages/reports-contracts-page.tsx";
+import ReportsMembershipsPage from "./pages/reports-memberships-page.tsx";
 
 const queryClient = new QueryClient();
 
@@ -32,24 +34,28 @@ function App() {
         <Router>
           <Routes>
             <Route element={<ProtectedRoute requiredRoles={["STAFF"]} />}>
-              <Route element={<AppLayout />}>
-                <Route path="/" element={<DashboardPage />} />
-                <Route path="/members" element={<MembersPage />} />
-                <Route path="/staff" element={<StaffPage />} />
-                <Route path="/classes" element={<ClassesPage />} />
+              <Route path="/" element={<AppLayout />}>
+                <Route index element={<DashboardPage />} />
+                <Route path="members" element={<MembersPage />} />
+                <Route path="staff" element={<StaffPage />} />
+                <Route path="classes" element={<ClassesPage />} />
 
-                <Route path="/reports/contracts" element={<MembersPage />} />
-                <Route path="/reports/memberships" element={<MembersPage />} />
+                <Route path="reports">
+                  <Route path="contracts" element={<ReportsContractsPage />} />
+                  <Route
+                    path="memberships"
+                    element={<ReportsMembershipsPage />}
+                  />
+                </Route>
 
-                <Route path="/account" element={<AccountPage />} />
-                <Route
-                  path="/account/billing"
-                  element={<AccountBillingPage />}
-                />
-                <Route
-                  path="/account/notifications"
-                  element={<AccountNotificationsPage />}
-                />
+                <Route path="account">
+                  <Route index element={<AccountPage />} />
+                  <Route path="billing" element={<AccountBillingPage />} />
+                  <Route
+                    path="notifications"
+                    element={<AccountNotificationsPage />}
+                  />
+                </Route>
               </Route>
             </Route>
 

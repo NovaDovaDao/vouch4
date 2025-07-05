@@ -4,7 +4,7 @@ import { SectionCards } from "@/components/section-cards";
 
 import data from "../app/dashboard/data.json";
 
-export default function TODashboardPage() {
+export default function DashboardPage() {
   return (
     <>
       <SectionCards />

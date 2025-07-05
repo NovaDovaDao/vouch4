@@ -1,5 +1,5 @@
 import { $api } from "@/api/client.ts";
-import { DataTable } from "@/components/common/DataTable";
+import { DataTable } from "@/components/common/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
