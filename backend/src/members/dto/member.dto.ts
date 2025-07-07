@@ -3,7 +3,6 @@ import {
   IsBoolean,
   IsDateString,
   IsEmail,
-  IsEthereumAddress,
   IsOptional,
   IsPhoneNumber,
   IsString,
@@ -18,7 +17,6 @@ export class MemberDto
       | 'email'
       | 'firstName'
       | 'lastName'
-      | 'walletAddress'
       | 'isActive'
       | 'updatedAt'
       | 'phoneNumber'
@@ -36,10 +34,6 @@ export class MemberDto
 
   @IsString()
   lastName: string;
-
-  @IsEthereumAddress()
-  @IsOptional()
-  walletAddress: string | null;
 
   @IsBoolean()
   isActive: boolean;

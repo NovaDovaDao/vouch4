@@ -1,11 +1,4 @@
-import {
-  IsEmail,
-  IsEthereumAddress,
-  IsOptional,
-  IsPhoneNumber,
-  IsString,
-  IsUrl,
-} from 'class-validator';
+import { IsEmail, IsPhoneNumber, IsString } from 'class-validator';
 import { User } from '../../../generated/prisma';
 
 export class UpdateMemberDto
@@ -13,36 +6,19 @@ export class UpdateMemberDto
     Partial<
       Pick<
         User,
-        | 'firstName'
-        | 'lastName'
-        | 'email'
-        | 'phoneNumber'
-        | 'walletAddress'
-        | 'profilePicUrl'
+        'firstName' | 'lastName' | 'email' | 'phoneNumber' | 'walletAddress'
       >
     >
 {
   @IsString()
-  @IsOptional()
-  firstName!: string;
+  firstName: string;
 
   @IsString()
-  @IsOptional()
-  lastName!: string;
+  lastName: string;
 
   @IsEmail()
-  @IsOptional()
-  email?: string;
+  email: string;
 
   @IsPhoneNumber()
-  @IsOptional()
-  phoneNumber?: string | null;
-
-  @IsEthereumAddress()
-  @IsOptional()
-  walletAddress?: string;
-
-  @IsUrl()
-  @IsOptional()
-  profilePicUrl?: string | null;
+  phoneNumber: string;
 }

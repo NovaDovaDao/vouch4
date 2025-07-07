@@ -42,7 +42,6 @@ export class MembersService {
         lastName: createMemberDto.lastName,
         email: createMemberDto.email,
         phoneNumber: createMemberDto.phoneNumber,
-        walletAddress: createMemberDto.walletAddress,
         category: 'MEMBER',
       },
     });
@@ -95,6 +94,5 @@ function parseUser(user: User): MemberDto {
     phoneNumber: user.phoneNumber,
     profilePicUrl: user.profilePicUrl,
     updatedAt: user.updatedAt,
-    walletAddress: user.walletAddress,
   };
 }

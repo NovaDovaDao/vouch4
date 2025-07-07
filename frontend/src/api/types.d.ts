@@ -253,7 +253,6 @@ export interface components {
             email: string;
             firstName: string;
             lastName: string;
-            walletAddress: string | null;
             isActive: boolean;
             /** Format: date-time */
             updatedAt: string;
@@ -268,24 +267,19 @@ export interface components {
             statusCode: number;
         };
         CreateMemberDto: {
-            passwordHash: string | null;
             isActive: boolean;
             phoneNumber: string | null;
             firstName: string;
             lastName: string;
             /** Format: email */
             email: string;
-            walletAddress: string;
         };
         UpdateMemberDto: {
             firstName: string;
             lastName: string;
             /** Format: email */
-            email?: string;
-            phoneNumber?: string | null;
-            walletAddress?: string;
-            /** Format: uri */
-            profilePicUrl?: string | null;
+            email: string;
+            phoneNumber: string;
         };
         StaffDto: {
             id: string;

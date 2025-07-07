@@ -1,8 +1,6 @@
 import {
   IsBoolean,
   IsEmail,
-  IsEthereumAddress,
-  IsHash,
   IsOptional,
   IsPhoneNumber,
   IsString,
@@ -11,20 +9,8 @@ import { User } from '../../../generated/prisma';
 
 export class CreateMemberDto
   implements
-    Pick<
-      User,
-      | 'passwordHash'
-      | 'isActive'
-      | 'phoneNumber'
-      | 'firstName'
-      | 'lastName'
-      | 'email'
-      | 'walletAddress'
-    >
+    Pick<User, 'isActive' | 'phoneNumber' | 'firstName' | 'lastName' | 'email'>
 {
-  @IsHash('sha1')
-  passwordHash: string | null;
-
   @IsBoolean()
   isActive: boolean;
 
@@ -33,14 +19,11 @@ export class CreateMemberDto
   phoneNumber: string | null;
 
   @IsString()
-  firstName!: string;
+  firstName: string;
 
   @IsString()
-  lastName!: string;
+  lastName: string;
 
   @IsEmail()
-  email!: string;
-
-  @IsEthereumAddress()
-  walletAddress!: string;
+  email: string;
 }

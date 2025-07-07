@@ -12,14 +12,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import CreateMemberDrawer from "@/features/members/create-member-drawer";
+import UpdateMemberDrawer from "@/features/members/update-member-drawer";
 import {
   IconCircleCheckFilled,
   IconLoader,
   IconPlus,
 } from "@tabler/icons-react";
+import { useState } from "react";
 
 export default function MembersPage() {
   const { data, isLoading } = $api.useQuery("get", "/members");
+  const [editMemberId, setEditMemberId] = useState<string | null>(null);
 
   if (isLoading) {
     return (
@@ -56,10 +60,12 @@ export default function MembersPage() {
           </TabsTrigger>
         </TabsList>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm">
-            <IconPlus />
-            <span className="hidden lg:inline">Add Member</span>
-          </Button>
+          <CreateMemberDrawer>
+            <Button variant="outline" size="sm">
+              <IconPlus />
+              <span className="hidden lg:inline">Add Member</span>
+            </Button>
+          </CreateMemberDrawer>
         </div>
       </div>
       <TabsContent
@@ -108,9 +114,25 @@ export default function MembersPage() {
             },
             {
               id: "actions",
-              cell: () => <MoreDropDown />,
+              cell: ({ row }) => (
+                <MoreDropDown
+                  items={[
+                    [
+                      {
+                        children: "Edit",
+                        onClick: () => setEditMemberId(row.original.id),
+                      },
+                    ],
+                    [{ children: "Delete", variant: "destructive" }],
+                  ]}
+                />
+              ),
             },
           ]}
+        />
+        <UpdateMemberDrawer
+          id={editMemberId}
+          onClose={() => setEditMemberId(null)}
         />
       </TabsContent>
     </Tabs>
