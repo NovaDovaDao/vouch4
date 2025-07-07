@@ -12,7 +12,6 @@ const initialData: CreateMemberFormData = {
   lastName: "",
   email: "",
   phoneNumber: "",
-  walletAddress: "",
   isActive: true,
 };
 

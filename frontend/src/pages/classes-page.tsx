@@ -36,7 +36,7 @@ export default function ClassesPage() {
           },
           {
             id: "actions",
-            cell: () => <MoreDropDown />,
+            cell: () => <MoreDropDown items={[]} />,
           },
         ]}
       />

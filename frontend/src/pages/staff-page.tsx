@@ -56,7 +56,7 @@ export default function StaffPage() {
           },
           {
             id: "actions",
-            cell: () => <MoreDropDown />,
+            cell: () => <MoreDropDown items={[]} />,
           },
         ]}
       />

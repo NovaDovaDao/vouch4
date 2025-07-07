@@ -20,6 +20,7 @@ import {
   IconPlus,
 } from "@tabler/icons-react";
 import { useState } from "react";
+import { formatDistanceToNow } from "date-fns";
 
 export default function MembersPage() {
   const { data, isLoading } = $api.useQuery("get", "/members");
@@ -76,12 +77,12 @@ export default function MembersPage() {
           data={data ?? []}
           columns={[
             {
-              accessorKey: "firstName",
-              header: "First Name",
-            },
-            {
-              accessorKey: "lastName",
-              header: "Last Name",
+              accessorKey: "Name",
+              header: "Name",
+              cell: ({ row }) =>
+                [row.original.lastName, row.original.firstName]
+                  .filter((v) => !!v)
+                  .join(", "),
             },
             {
               accessorKey: "email",
@@ -111,6 +112,11 @@ export default function MembersPage() {
             {
               accessorKey: "updatedAt",
               header: "Updated",
+              cell: ({ row }) =>
+                formatDistanceToNow(row.original.updatedAt, {
+                  addSuffix: true,
+                  includeSeconds: true,
+                }),
             },
             {
               id: "actions",
@@ -121,6 +127,9 @@ export default function MembersPage() {
                       {
                         children: "Edit",
                         onClick: () => setEditMemberId(row.original.id),
+                      },
+                      {
+                        children: "Send Invite",
                       },
                     ],
                     [{ children: "Delete", variant: "destructive" }],
