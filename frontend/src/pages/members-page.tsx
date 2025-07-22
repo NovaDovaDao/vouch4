@@ -2,7 +2,6 @@ import { $api } from "@/api/client.ts";
 import { DataTable } from "@/components/common/data-table";
 import MoreDropDown from "@/components/common/more-dropdown";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -12,15 +11,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import CreateMemberDrawer from "@/features/members/create-member-drawer";
-import UpdateMemberDrawer from "@/features/members/update-member-drawer";
-import {
-  IconCircleCheckFilled,
-  IconLoader,
-  IconPlus,
-} from "@tabler/icons-react";
+import UpdateMemberForm from "@/features/members/update-member-form";
+import { IconCircleCheckFilled, IconLoader } from "@tabler/icons-react";
 import { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
+import CreateMemberForm from "@/features/members/create-member-form";
 
 export default function MembersPage() {
   const { data, isLoading } = $api.useQuery("get", "/members");
@@ -61,12 +56,7 @@ export default function MembersPage() {
           </TabsTrigger>
         </TabsList>
         <div className="flex items-center gap-2">
-          <CreateMemberDrawer>
-            <Button variant="outline" size="sm">
-              <IconPlus />
-              <span className="hidden lg:inline">Add Member</span>
-            </Button>
-          </CreateMemberDrawer>
+          <CreateMemberForm />
         </div>
       </div>
       <TabsContent
@@ -121,25 +111,27 @@ export default function MembersPage() {
             {
               id: "actions",
               cell: ({ row }) => (
-                <MoreDropDown
-                  items={[
-                    [
-                      {
-                        children: "Edit",
-                        onClick: () => setEditMemberId(row.original.id),
-                      },
-                      {
-                        children: "Send Invite",
-                      },
-                    ],
-                    [{ children: "Delete", variant: "destructive" }],
-                  ]}
-                />
+                <div className="text-right">
+                  <MoreDropDown
+                    items={[
+                      [
+                        {
+                          children: "Edit",
+                          onClick: () => setEditMemberId(row.original.id),
+                        },
+                        {
+                          children: "Send Invite",
+                        },
+                      ],
+                      [{ children: "Delete", variant: "destructive" }],
+                    ]}
+                  />
+                </div>
               ),
             },
           ]}
         />
-        <UpdateMemberDrawer
+        <UpdateMemberForm
           id={editMemberId}
           onClose={() => setEditMemberId(null)}
         />

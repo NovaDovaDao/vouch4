@@ -1,7 +1,6 @@
-import type { CreateMember, UpdateMember } from "@/api/client";
 import { z } from "zod";
 
-export const baseMemberSchema = z.object({
+export const memberSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   email: z.string().email("Invalid email address"),
@@ -9,13 +8,4 @@ export const baseMemberSchema = z.object({
   isActive: z.boolean(),
 });
 
-export const createMemberSchema = baseMemberSchema.extend(
-  {}
-) satisfies z.ZodType<CreateMember>;
-
-export const updateMemberSchema = baseMemberSchema.extend({
-  id: z.string().uuid("Invalid member ID format"),
-}) satisfies z.ZodType<UpdateMember>;
-
-export type CreateMemberFormData = z.infer<typeof createMemberSchema>;
-export type UpdateMemberFormData = z.infer<typeof updateMemberSchema>;
+export type MemberFormData = z.infer<typeof memberSchema>;

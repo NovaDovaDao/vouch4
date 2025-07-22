@@ -17,7 +17,7 @@ export default function MoreDropDown({ items }: { items: Item[][] }) {
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
+          className="data-[state=open]:bg-muted text-muted-foreground inline-flex size-8"
           size="icon"
         >
           <IconDotsVertical />

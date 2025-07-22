@@ -11,21 +11,13 @@ const middleware = {
     request.headers.set("authorization", `Bearer ${authService.token}`);
     return request;
   },
-  // async onResponse({ response }) {
-  //   // change status of response
-  //   if (response.status === 401) {
-  //     window.location.href = "/logout";
-  //     return;
-  //   }
-  //   return response;
-  // },
-  // async onError({ error }) {
-  //   // wrap errors thrown by fetch
-  //   toast.error("Error", {
-  //     description: error instanceof Error ? error.message : String(error),
-  //   });
-  //   return new Error("Oops, fetch failed");
-  // },
+  async onResponse({ response }) {
+    if (response.status === 401) {
+      window.location.href = "/logout";
+      return;
+    }
+    return response;
+  },
 } satisfies Middleware;
 
 const fetchClient = createFetchClient<paths>({
