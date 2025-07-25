@@ -1,27 +1,27 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-import { $api, type UpdateMember } from "@/api/client";
+import { $api, type UpdateStaff } from "@/api/client";
 import { DrawerClose, DrawerFooter } from "@/components/ui/drawer";
 import FormDrawer from "@/components/common/form-drawer";
 import { Button } from "@/components/ui/button";
 
-import { memberSchema, type MemberFormData } from "./member.schema";
+import { staffSchema, type StaffFormData } from "./staff.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import MemberForm from "./member-form";
+import StaffForm from "./staff-form";
 
-type UpdateMemberDrawerProps = {
+type UpdateStaffDrawerProps = {
   id: string | null;
   onClose: () => void;
 };
-export default function UpdateMemberForm({
+export default function UpdateStaffForm({
   id,
   onClose,
-}: UpdateMemberDrawerProps) {
+}: UpdateStaffDrawerProps) {
   const { data } = $api.useQuery(
     "get",
-    "/members/{id}",
+    "/staff/{id}",
     {
       params: { path: { id: id ?? "" } },
       cache: "no-cache",
@@ -30,13 +30,13 @@ export default function UpdateMemberForm({
   );
 
   const queryClient = useQueryClient();
-  const { mutate, isPending } = $api.useMutation("put", "/members/{id}");
-  const handleSubmit = (body: UpdateMember) =>
+  const { mutate, isPending } = $api.useMutation("put", "/staff/{id}");
+  const handleSubmit = (body: UpdateStaff) =>
     mutate(
       { body, params: { path: { id: id! } } },
       {
         onSuccess: (data) => {
-          queryClient.invalidateQueries({ queryKey: ["get", "/members"] });
+          queryClient.invalidateQueries({ queryKey: ["get", "/staff"] });
           toast.success("Success!", {
             description: `Updated ${data?.firstName}'s data!`,
           });
@@ -47,7 +47,7 @@ export default function UpdateMemberForm({
 
   if (data)
     return (
-      <UpdateMemberDrawerWrapper
+      <UpdateStaffDrawerWrapper
         id={id}
         data={{
           email: data.email,
@@ -63,34 +63,34 @@ export default function UpdateMemberForm({
     );
 }
 
-type UpdateMemberDrawerWrapperProps = UpdateMemberDrawerProps & {
-  data: MemberFormData;
-  onSubmit: (data: MemberFormData) => void;
+type UpdateStaffDrawerWrapperProps = UpdateStaffDrawerProps & {
+  data: StaffFormData;
+  onSubmit: (data: StaffFormData) => void;
   isSubmitting: boolean;
 };
-function UpdateMemberDrawerWrapper({
+function UpdateStaffDrawerWrapper({
   id,
   data,
   onClose,
   onSubmit,
   isSubmitting,
-}: UpdateMemberDrawerWrapperProps) {
+}: UpdateStaffDrawerWrapperProps) {
   const form = useForm({
-    resolver: zodResolver(memberSchema),
+    resolver: zodResolver(staffSchema),
     defaultValues: data,
   });
 
-  function handleSubmit(data: MemberFormData) {
+  function handleSubmit(data: StaffFormData) {
     onSubmit(data);
   }
   return (
     <FormDrawer
-      title={`Edit ${data?.firstName ?? "Member"}`}
-      description="Edit member information"
+      title={`Edit ${data?.firstName ?? "Staff"}`}
+      description="Edit Staff information"
       drawerProps={{ open: !!id, onClose }}
     >
       <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm">
-        <MemberForm
+        <StaffForm
           form={form}
           isSubmitting={isSubmitting}
           onSubmit={handleSubmit}

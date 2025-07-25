@@ -17,15 +17,18 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "../ui/button";
+import { Skeleton } from "../ui/skeleton";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  loading?: boolean;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  loading,
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
@@ -56,6 +59,23 @@ export function DataTable<TData, TValue>({
               </TableRow>
             ))}
           </TableHeader>
+          {loading && (
+            <TableBody>
+              {Array(10)
+                .fill(null)
+                .map((_, i) => (
+                  <TableRow key={i}>
+                    {table.getHeaderGroups().map((headerGroup) =>
+                      headerGroup.headers.map((_, j) => (
+                        <TableCell key={j}>
+                          <Skeleton className="h-8 w-full" />
+                        </TableCell>
+                      ))
+                    )}
+                  </TableRow>
+                ))}
+            </TableBody>
+          )}
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (

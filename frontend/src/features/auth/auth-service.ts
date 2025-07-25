@@ -1,4 +1,4 @@
-import { $api, type User } from "../api/client";
+import { $api, type User } from "@/api/client";
 
 export class AuthService {
   private readonly TOKEN_KEY = "jwt_token";

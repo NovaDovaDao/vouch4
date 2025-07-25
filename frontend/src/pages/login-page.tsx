@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label.tsx";
 import { Input } from "../components/ui/input.tsx";
 import { Button } from "../components/ui/button.tsx";
 import { $api, handleApiErrorMessage } from "@/api/client.ts";
-import { useAuth } from "@/contexts/use-auth.ts";
+import { useAuth } from "@/features/auth/use-auth.ts";
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");

@@ -1,7 +1,7 @@
 import { Navigate } from "react-router-dom";
 import { toast } from "sonner";
 
-import { useAuth } from "@/contexts/use-auth";
+import { useAuth } from "@/features/auth/use-auth";
 
 const LogoutPage: React.FC = () => {
   const auth = useAuth();

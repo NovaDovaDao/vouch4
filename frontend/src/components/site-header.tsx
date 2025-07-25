@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { useBreadcrumbs } from "@/hooks/use-breadcrumbs";
+import { useBreadcrumbs } from "@/features/breadcrumbs/use-breadcrumbs";
 
 export function SiteHeader() {
   const { breadcrumbs } = useBreadcrumbs();

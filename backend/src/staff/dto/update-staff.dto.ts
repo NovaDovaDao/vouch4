@@ -4,7 +4,6 @@ import {
   IsPhoneNumber,
   IsString,
   IsUrl,
-  IsUUID,
 } from 'class-validator';
 import { User } from '../../../generated/prisma';
 
@@ -13,7 +12,6 @@ export class UpdateStaffDto
     Partial<
       Pick<
         User,
-        | 'id'
         | 'isActive'
         | 'phoneNumber'
         | 'firstName'
@@ -23,9 +21,6 @@ export class UpdateStaffDto
       >
     >
 {
-  @IsUUID()
-  id!: string;
-
   @IsPhoneNumber()
   @IsOptional()
   phoneNumber: string | null;

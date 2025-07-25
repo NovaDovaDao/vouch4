@@ -26,7 +26,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { useAuth } from "@/contexts/use-auth";
+import { useAuth } from "@/features/auth/use-auth";
 
 export function NavUser() {
   const { user, logout } = useAuth();

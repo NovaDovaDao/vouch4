@@ -1,7 +1,7 @@
 import { useState, type ReactNode, useMemo, useCallback } from "react";
-import { AuthContext, type AuthState } from "./use-auth";
 import type { User } from "@/api/client";
-import { AuthService } from "@/services/auth";
+import { AuthContext, type AuthState } from "./use-auth";
+import { AuthService } from "./auth-service";
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const authService = new AuthService();

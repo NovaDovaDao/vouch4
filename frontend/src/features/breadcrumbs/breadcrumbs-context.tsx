@@ -1,7 +1,7 @@
 import {
   BreadcrumbsContext,
   type BreadcrumbsState,
-} from "@/hooks/use-breadcrumbs";
+} from "@/features/breadcrumbs/use-breadcrumbs";
 import { useEffect, useState, type PropsWithChildren } from "react";
 import { useLocation } from "react-router-dom";
 

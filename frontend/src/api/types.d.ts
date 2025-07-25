@@ -302,8 +302,6 @@ export interface components {
             email: string;
         };
         UpdateStaffDto: {
-            /** Format: uuid */
-            id: string;
             phoneNumber: string | null;
             firstName: string;
             lastName: string;
@@ -556,7 +554,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["MemberDto"];
+                };
             };
             201: {
                 headers: {
@@ -751,7 +751,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": Record<string, never>;
+                    "application/json": components["schemas"]["StaffDto"];
                 };
             };
             201: {
@@ -787,9 +787,7 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": Record<string, never>;
-                };
+                content?: never;
             };
             201: {
                 headers: {

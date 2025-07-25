@@ -1,5 +1,5 @@
 import React, { type ReactNode } from "react";
-import { useAuth } from "../../contexts/use-auth";
+import { useAuth } from "../../features/auth/use-auth";
 
 interface RoleBasedComponentProps {
   allowedRoles?: Array<"STAFF" | "MEMBER">;

@@ -2,7 +2,8 @@ import { Outlet } from "react-router-dom";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { BreadcrumbsProvider } from "@/contexts/breadcrumbs-context";
+import { BreadcrumbsProvider } from "@/features/breadcrumbs/breadcrumbs-context";
+import AppDialogs from "@/components/app-dialogs";
 
 export default function AppLayout() {
   return (
@@ -26,6 +27,7 @@ export default function AppLayout() {
             </div>
           </div>
         </SidebarInset>
+        <AppDialogs />
       </SidebarProvider>
     </BreadcrumbsProvider>
   );

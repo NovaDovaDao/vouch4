@@ -21,14 +21,6 @@ export default function MembersPage() {
   const { data, isLoading } = $api.useQuery("get", "/members");
   const [editMemberId, setEditMemberId] = useState<string | null>(null);
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-full">
-        <p>Loading members...</p>
-      </div>
-    );
-  }
-
   return (
     <Tabs
       defaultValue="outline"
@@ -65,6 +57,7 @@ export default function MembersPage() {
       >
         <DataTable
           data={data ?? []}
+          loading={isLoading}
           columns={[
             {
               accessorKey: "Name",
