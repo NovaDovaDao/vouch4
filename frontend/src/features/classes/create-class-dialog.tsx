@@ -11,15 +11,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export function CreateClasDialog({
-  isOpen,
-  onClose,
+export default function CreateClassDialog({
+  handleOpen,
 }: {
-  isOpen: boolean;
-  onClose: (open: boolean) => void;
+  handleOpen: (open: boolean) => void;
 }) {
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open onOpenChange={handleOpen}>
       <form>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>

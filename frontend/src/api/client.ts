@@ -42,3 +42,6 @@ export type UpdateMember = components["schemas"]["UpdateMemberDto"];
 
 export type CreateStaff = components["schemas"]["CreateStaffDto"];
 export type UpdateStaff = components["schemas"]["UpdateStaffDto"];
+
+export type CreateClass = components["schemas"]["CreateClassDto"];
+export type UpdateClass = components["schemas"]["UpdateClassDto"];

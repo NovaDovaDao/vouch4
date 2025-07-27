@@ -1,19 +1,27 @@
-import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { IconPlus } from "@tabler/icons-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 
 import { $api, type CreateStaff } from "@/api/client";
-import FormDrawer from "@/components/common/form-drawer";
 import StaffForm from "./staff-form";
 import { staffSchema } from "./staff.schema";
 import { Button } from "@/components/ui/button";
-import { DrawerFooter, DrawerClose } from "@/components/ui/drawer";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
-export default function CreateStaffForm() {
-  const [isOpen, setIsOpen] = useState(false);
+export default function CreateStaffDialog({
+  handleOpen,
+}: {
+  handleOpen: (open: boolean) => void;
+}) {
   const form = useForm({
     resolver: zodResolver(staffSchema),
     defaultValues: {
@@ -36,36 +44,32 @@ export default function CreateStaffForm() {
           toast.success("Success!", {
             description: `Added ${data.firstName}!`,
           });
-          setIsOpen(false);
+          handleOpen(false);
         },
       }
     );
 
   return (
-    <FormDrawer
-      title="Add Staff"
-      description="Enter staff information"
-      trigger={
-        <Button variant="outline" size="sm">
-          <IconPlus />
-          <span className="hidden lg:inline">Add Staff</span>
-        </Button>
-      }
-      drawerProps={{ open: isOpen, onOpenChange: setIsOpen }}
-    >
-      <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm">
+    <Dialog open onOpenChange={handleOpen}>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Add Staff</DialogTitle>
+          <DialogDescription>Enter staff information</DialogDescription>
+        </DialogHeader>
         <StaffForm
           form={form}
           isSubmitting={isPending}
           onSubmit={handleSubmit}
         />
-      </div>
-      <DrawerFooter>
-        <Button onClick={() => handleSubmit(form.getValues())}>Submit</Button>
-        <DrawerClose asChild>
-          <Button variant="outline">Done</Button>
-        </DrawerClose>
-      </DrawerFooter>
-    </FormDrawer>
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button variant="outline">Cancel</Button>
+          </DialogClose>
+          <Button onClick={() => handleSubmit(form.getValues())}>
+            Save class
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

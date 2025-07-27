@@ -1,4 +1,6 @@
-import { CreateClasDialog } from "@/features/classes/create-class-dialog";
+import CreateClassDialog from "@/features/classes/create-class-dialog";
+import CreateMemberDialog from "@/features/members/create-member-dialog";
+import CreateStaffDialog from "@/features/staff/create-staff-dialog";
 import { useDialogStore } from "@/stores/dialog-store";
 
 export default function AppDialogs() {
@@ -6,8 +8,11 @@ export default function AppDialogs() {
 
   switch (currentDialog.type) {
     case "createClass":
-      // TypeScript knows currentModal.props is ViewReportModalProps here
-      return <CreateClasDialog isOpen={true} onClose={closeDialog} />;
+      return <CreateClassDialog handleOpen={closeDialog} />;
+    case "createMember":
+      return <CreateMemberDialog handleOpen={closeDialog} />;
+    case "createStaff":
+      return <CreateStaffDialog handleOpen={closeDialog} />;
     case null:
       return null; // No modal currently open
     default:

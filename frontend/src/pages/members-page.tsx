@@ -12,14 +12,20 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import UpdateMemberForm from "@/features/members/update-member-form";
-import { IconCircleCheckFilled, IconLoader } from "@tabler/icons-react";
+import {
+  IconCircleCheckFilled,
+  IconLoader,
+  IconPlus,
+} from "@tabler/icons-react";
 import { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
-import CreateMemberForm from "@/features/members/create-member-form";
+import { Button } from "@/components/ui/button";
+import { useDialogStore } from "@/stores/dialog-store";
 
 export default function MembersPage() {
   const { data, isLoading } = $api.useQuery("get", "/members");
   const [editMemberId, setEditMemberId] = useState<string | null>(null);
+  const dialogStore = useDialogStore();
 
   return (
     <Tabs
@@ -48,7 +54,14 @@ export default function MembersPage() {
           </TabsTrigger>
         </TabsList>
         <div className="flex items-center gap-2">
-          <CreateMemberForm />
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => dialogStore.openDialog({ type: "createMember" })}
+          >
+            <IconPlus />
+            <span className="hidden lg:inline">Add Member</span>
+          </Button>
         </div>
       </div>
       <TabsContent

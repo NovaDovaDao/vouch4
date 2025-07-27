@@ -1,10 +1,9 @@
 import { IsDate, IsInt, IsOptional, IsString, IsUUID } from 'class-validator';
 import { Class } from '../../../generated/prisma';
 
-export class ClassDto implements Class {
-  @IsUUID()
-  id: string;
-
+export class CreateClassDto
+  implements Omit<Class, 'id' | 'createdAt' | 'updatedAt'>
+{
   @IsString()
   name: string;
 
@@ -24,10 +23,4 @@ export class ClassDto implements Class {
   @IsUUID()
   @IsOptional()
   instructorId: string | null;
-
-  @IsDate()
-  createdAt: Date;
-
-  @IsDate()
-  updatedAt: Date;
 }

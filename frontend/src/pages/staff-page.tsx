@@ -2,6 +2,7 @@ import { $api } from "@/api/client.ts";
 import { DataTable } from "@/components/common/data-table";
 import MoreDropDown from "@/components/common/more-dropdown";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -11,15 +12,20 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import CreateStaffForm from "@/features/staff/create-staff-form";
 import UpdateStaffForm from "@/features/staff/update-staff-form";
-import { IconCircleCheckFilled, IconLoader } from "@tabler/icons-react";
+import { useDialogStore } from "@/stores/dialog-store";
+import {
+  IconCircleCheckFilled,
+  IconLoader,
+  IconPlus,
+} from "@tabler/icons-react";
 import { formatDistanceToNow } from "date-fns";
 import { useState } from "react";
 
 export default function StaffPage() {
   const { data, isLoading } = $api.useQuery("get", "/staff");
   const [editStaffId, setEditStaffId] = useState<string | null>(null);
+  const dialogStore = useDialogStore();
 
   return (
     <Tabs
@@ -48,7 +54,14 @@ export default function StaffPage() {
           </TabsTrigger>
         </TabsList>
         <div className="flex items-center gap-2">
-          <CreateStaffForm />
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => dialogStore.openDialog({ type: "createStaff" })}
+          >
+            <IconPlus />
+            <span className="hidden lg:inline">Add Staff</span>
+          </Button>
         </div>
       </div>
       <TabsContent
