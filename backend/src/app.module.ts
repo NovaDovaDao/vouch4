@@ -9,6 +9,8 @@ import { ConfigAppModule } from './config/config.module';
 import { StaffModule } from './staff/staff.module';
 import { ClassesModule } from './classes/classes.module';
 import { ContractsModule } from './contracts/contracts.module';
+import { GymsModule } from './gyms/gyms.module';
+import { TenancyModule } from './tenancy/tenancy.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { ContractsModule } from './contracts/contracts.module';
     StaffModule,
     ClassesModule,
     ContractsModule,
+    GymsModule,
+    TenancyModule,
   ],
   controllers: [AppController],
   providers: [AppService],

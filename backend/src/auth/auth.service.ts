@@ -61,6 +61,7 @@ export class AuthService {
       isSuperUser: user.isSuperUser,
       tenancyId: user.tenancyId,
     } satisfies UserJwtResponse['user'];
+    console.log({ payload });
     const accessToken = this.jwtService.sign(payload);
 
     return { user: payload, accessToken };

@@ -31,6 +31,9 @@ export const BreadcrumbsProvider = (props: PropsWithChildren) => {
       case "/reports/memberships":
         label = "Memberships";
         break;
+      case "/account":
+        label = "Account";
+        break;
     }
     setBreadcrumbs([{ label, path: location.pathname }]);
   };

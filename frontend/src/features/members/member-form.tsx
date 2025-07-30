@@ -3,10 +3,6 @@ import { Label } from "../../components/ui/label";
 import { type UseFormReturn } from "react-hook-form";
 import type { MemberFormData } from "./member.schema";
 
-export type FormRef = {
-  submitForm: () => void;
-};
-
 interface MemberFormProps {
   form: UseFormReturn<MemberFormData>; // Pass the useForm hook's return value
   onSubmit: (data: MemberFormData) => void;

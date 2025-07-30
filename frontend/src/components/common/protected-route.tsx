@@ -1,5 +1,5 @@
 import React from "react";
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../../features/auth/use-auth";
 import type { User } from "@/api/client";
 
@@ -11,9 +11,14 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   requiredRoles = [],
 }) => {
   const { user, canAccess } = useAuth();
+  const location = useLocation();
 
   if (!user) {
     return <Navigate to="/login" replace />;
+  }
+
+  if (!user.tenancyId && location.pathname !== "/account") {
+    return <Navigate to="/account" replace />;
   }
 
   if (requiredRoles.length > 0 && !canAccess(requiredRoles)) {
