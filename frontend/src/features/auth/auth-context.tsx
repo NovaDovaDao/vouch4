@@ -1,64 +1,40 @@
-import { useState, type ReactNode, useMemo, useCallback } from "react";
-import type { User } from "@/api/client";
+import { useCallback, type PropsWithChildren } from "react";
 import { AuthContext, type AuthState } from "./use-auth";
-import { AuthService } from "./auth-service";
+import { $api, type User } from "@/api/client";
+import { useQueryClient } from "@tanstack/react-query";
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const authService = new AuthService();
-  const [user, setUser] = useState<User | null>(authService.user);
-  const [token, setToken] = useState<string | null>(authService.token);
-
-  const setLogin = (user: User, token: string) => {
-    setUser(user);
-    setToken(token);
-    authService.user = user;
-    authService.token = token;
-  };
-
-  const logout = () => {
-    authService.clear();
-    setUser(null);
-    setToken(null);
-  };
-
-  // Helper functions for roles
-  const { isMember, isStaff, isSuperAdmin, isTenantOwner } = useMemo(() => {
-    const isSuperAdmin = user?.isSuperUser ?? false;
-    const isTenantOwner = !!user?.tenancyId;
-    const isStaff = user?.category === "STAFF";
-    const isMember = user?.category === "MEMBER";
-    return {
-      isMember,
-      isStaff,
-      isSuperAdmin,
-      isTenantOwner,
-    };
-  }, [user]);
+export const AuthProvider = (props: PropsWithChildren) => {
+  const { data: user, refetch } = $api.useQuery(
+    "get",
+    "/auth/me",
+    {},
+    { retry: false }
+  );
+  const { mutate: logout } = $api.useMutation("post", "/auth/logout", {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["get", "/auth/me"] });
+    },
+  });
 
   const canAccess = useCallback(
-    (requiredRoles: User["category"][]): boolean => {
+    (requiredRoles: User["role"][]): boolean => {
       if (!user) return false;
-      if (isSuperAdmin) return true;
-      if (requiredRoles.includes("STAFF") && isStaff) return true;
-      if (requiredRoles.includes("MEMBER") && isMember) return true;
-      return false;
+      return requiredRoles.includes(user.role);
     },
-    [isMember, isStaff, isSuperAdmin, user]
+    [user]
   );
 
+  const queryClient = useQueryClient();
   const authState: AuthState = {
     user,
-    token,
-    setLogin,
-    logout,
-    isSuperAdmin,
-    isTenantOwner,
-    isStaff,
-    isMember,
+    init: refetch,
+    logout: async () => logout({}),
     canAccess,
   };
 
   return (
-    <AuthContext.Provider value={authState}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={authState}>
+      {props.children}
+    </AuthContext.Provider>
   );
 };

@@ -24,6 +24,7 @@ import AccountBillingPage from "./pages/account-billing-page.tsx";
 import AccountNotificationsPage from "./pages/account-notifications-page.tsx";
 import ReportsContractsPage from "./pages/reports-contracts-page.tsx";
 import ReportsMembershipsPage from "./pages/reports-memberships-page.tsx";
+import GymsPage from "./pages/gyms-page.tsx";
 
 const queryClient = new QueryClient();
 
@@ -33,12 +34,13 @@ function App() {
       <AuthProvider>
         <Router>
           <Routes>
-            <Route element={<ProtectedRoute requiredRoles={["STAFF"]} />}>
+            <Route element={<ProtectedRoute requiredRoles={[]} />}>
               <Route path="/" element={<AppLayout />}>
                 <Route index element={<DashboardPage />} />
                 <Route path="members" element={<MembersPage />} />
                 <Route path="staff" element={<StaffPage />} />
                 <Route path="classes" element={<ClassesPage />} />
+                <Route path="gyms" element={<GymsPage />} />
 
                 <Route path="reports">
                   <Route path="contracts" element={<ReportsContractsPage />} />

@@ -2,15 +2,10 @@ import type { User } from "@/api/client";
 import { createContext, useContext } from "react";
 
 export interface AuthState {
-  user: User | null;
-  token: string | null;
-  setLogin: (user: User, token: string) => void;
-  logout: () => void;
-  isSuperAdmin: boolean;
-  isTenantOwner: boolean;
-  isStaff: boolean;
-  isMember: boolean;
-  canAccess: (requiredRoles: User["category"][]) => boolean;
+  user?: User;
+  init: () => void;
+  logout: () => Promise<void>;
+  canAccess: (role: User["role"][]) => boolean;
 }
 
 export const AuthContext = createContext<AuthState | null>(null);

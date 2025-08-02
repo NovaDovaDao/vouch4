@@ -1,5 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { Controller, Get } from '@nestjs/common';
 import {
   ApiOkResponse,
   ApiUnauthorizedResponse,
@@ -9,7 +8,6 @@ import { UnauthorizedDto, ErrorDto } from '../error.dto';
 import { ContractsService } from './contracts.service';
 import { ContractDto } from './dto/contract.dto';
 
-@UseGuards(AuthGuard('jwt'))
 @Controller('contracts')
 export class ContractsController {
   constructor(private readonly contractsService: ContractsService) {}

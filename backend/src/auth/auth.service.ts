@@ -2,6 +2,7 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import {
   BadRequestException,
+  HttpStatus,
   Injectable,
   Logger,
   NotFoundException,
@@ -12,13 +13,15 @@ import { v4 as uuidv4 } from 'uuid';
 import { User, UserCategory } from '../../generated/prisma';
 import { PrismaService } from '../prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
-import { UserJwtResponse } from './auth-jwt.interface';
+import { JwtPayload } from './auth-jwt.interface';
 import { jwtConstants } from './constants';
-import { MailService } from 'src/mail/mail.service';
+import { MailService } from '../mail/mail.service';
 import { ConfigService } from '@nestjs/config';
+import { Response } from 'express';
 
 @Injectable()
 export class AuthService {
+  readonly cookieName = 'access_token';
   private readonly logger = new Logger(AuthService.name);
 
   constructor(
@@ -46,25 +49,33 @@ export class AuthService {
     return null;
   }
 
-  async login(loginDto: LoginDto): Promise<UserJwtResponse | null> {
+  async login(loginDto: LoginDto, res: Response) {
     const user = await this.validateUser(loginDto.email, loginDto.password);
     if (!user || !user.isActive) {
       this.logger.warn('User does not exist or inactive');
       throw new UnauthorizedException();
     }
-    // For MVP, you can return a simple "token" or just the user info.
-    // A real app would generate a JWT here.
-    const payload = {
-      id: user.id,
-      email: user.email,
-      category: user.category,
-      isSuperUser: user.isSuperUser,
-      tenancyId: user.tenancyId,
-    } satisfies UserJwtResponse['user'];
-    console.log({ payload });
-    const accessToken = this.jwtService.sign(payload);
 
-    return { user: payload, accessToken };
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      role: 'MANAGER',
+      hasTenancy: !!user.tenancyId,
+    } satisfies JwtPayload;
+    const accessToken = await this.jwtService.signAsync(payload, {
+      expiresIn: jwtConstants.expiresIn,
+      secret: jwtConstants.secret,
+    });
+    res.cookie(this.cookieName, accessToken, {
+      httpOnly: true,
+      secure: true,
+    });
+    res.sendStatus(HttpStatus.ACCEPTED);
+  }
+
+  logout(res: Response) {
+    res.clearCookie(this.cookieName);
+    res.sendStatus(HttpStatus.ACCEPTED);
   }
 
   // Helper to hash passwords for initial setup or user creation

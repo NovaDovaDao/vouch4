@@ -3,4 +3,5 @@ require('dotenv').config();
 
 export const jwtConstants = {
   secret: process.env.JWT_SECRET_KEY as string,
+  expiresIn: process.env.JWT_EXPIRESIN as string,
 };

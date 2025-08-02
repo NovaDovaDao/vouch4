@@ -4,7 +4,7 @@ import { useAuth } from "../../features/auth/use-auth";
 import type { User } from "@/api/client";
 
 interface ProtectedRouteProps {
-  requiredRoles?: User["category"][];
+  requiredRoles?: User["role"][];
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
@@ -17,7 +17,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return <Navigate to="/login" replace />;
   }
 
-  if (!user.tenancyId && location.pathname !== "/account") {
+  if (!user.hasTenancy && location.pathname !== "/account") {
     return <Navigate to="/account" replace />;
   }
 

@@ -25,6 +25,9 @@ export const BreadcrumbsProvider = (props: PropsWithChildren) => {
       case "/classes":
         label = "Classes";
         break;
+      case "/gyms":
+        label = "Gyms";
+        break;
       case "/reports/contracts":
         label = "Contracts";
         break;
@@ -33,6 +36,12 @@ export const BreadcrumbsProvider = (props: PropsWithChildren) => {
         break;
       case "/account":
         label = "Account";
+        break;
+      case "/account/billing":
+        label = "Billing";
+        break;
+      case "/account/notifications":
+        label = "Notifications";
         break;
     }
     setBreadcrumbs([{ label, path: location.pathname }]);

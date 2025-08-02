@@ -1,10 +1,8 @@
-import { User } from '../../generated/prisma';
+import { UserAtGymRole } from '../../generated/prisma';
 
-export type UserJwt = Pick<
-  User,
-  'id' | 'email' | 'tenancyId' | 'isSuperUser' | 'category'
->;
-export interface UserJwtResponse {
-  user: UserJwt;
-  accessToken: string;
+export interface JwtPayload {
+  sub: string;
+  email: string;
+  role: UserAtGymRole;
+  hasTenancy: boolean;
 }

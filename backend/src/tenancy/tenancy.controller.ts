@@ -1,14 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  UseGuards,
-  Request,
-  BadRequestException,
-  Put,
-  Param,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body } from '@nestjs/common';
 import { TenancyService } from './tenancy.service';
 import { CreateTenancyDto } from './dto/create-tenancy.dto';
 import {
@@ -17,13 +7,12 @@ import {
   ApiOkResponse,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
 import { UnauthorizedDto, ErrorDto } from '../error.dto';
 import { TenancyEntity } from './entities/tenancy.entity';
-import { UserJwtResponse } from '../auth/auth-jwt.interface';
+import { JwtPayload } from '../auth/auth-jwt.interface';
 import { UpdateTenancyDto } from './dto/update-tenancy.dto';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
 
-@UseGuards(AuthGuard('jwt'))
 @Controller('tenancy')
 export class TenancyController {
   constructor(private readonly tenancyService: TenancyService) {}
@@ -34,31 +23,26 @@ export class TenancyController {
   @ApiDefaultResponse({ type: ErrorDto })
   create(
     @Body() createTenancyDto: CreateTenancyDto,
-    @Request() req: { user: UserJwtResponse['user'] },
+    @CurrentUser() user: JwtPayload,
   ) {
-    return this.tenancyService.create(req.user, createTenancyDto);
+    return this.tenancyService.create(user, createTenancyDto);
   }
 
-  @Put(':id')
   @ApiOkResponse({ type: TenancyEntity })
   @ApiUnauthorizedResponse({ type: UnauthorizedDto })
   @ApiDefaultResponse({ type: ErrorDto })
   update(
-    @Param('id') id: string,
     @Body() updateTenancyDto: UpdateTenancyDto,
-    @Request() req: { user: UserJwtResponse['user'] },
+    @CurrentUser() user: JwtPayload,
   ) {
-    if (req.user.tenancyId !== id) {
-      throw new BadRequestException();
-    }
-    return this.tenancyService.update(id, updateTenancyDto);
+    return this.tenancyService.update(user, updateTenancyDto);
   }
 
   @Get()
   @ApiOkResponse({ type: TenancyEntity })
   @ApiUnauthorizedResponse({ type: UnauthorizedDto })
   @ApiDefaultResponse({ type: ErrorDto })
-  findOne(@Request() req: { user: UserJwtResponse['user'] }) {
-    return this.tenancyService.findOne(req.user.id);
+  findOne(@CurrentUser() user: JwtPayload) {
+    return this.tenancyService.findOne(user);
   }
 }

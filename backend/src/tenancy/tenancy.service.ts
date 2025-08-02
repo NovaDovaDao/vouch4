@@ -1,25 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTenancyDto } from './dto/create-tenancy.dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { UserJwtResponse } from 'src/auth/auth-jwt.interface';
+import { JwtPayload } from '../auth/auth-jwt.interface';
 import { UpdateTenancyDto } from './dto/update-tenancy.dto';
 
 @Injectable()
 export class TenancyService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(
-    user: UserJwtResponse['user'],
-    createTenancyDto: CreateTenancyDto,
-  ) {
+  async create(user: JwtPayload, createTenancyDto: CreateTenancyDto) {
     const existing = await this.prisma.tenancy.findUnique({
-      where: { tenancyOwnerUserId: user.id },
+      where: { tenancyOwnerUserId: user.sub },
     });
     if (existing) throw new Error('Already has tenancy');
 
     const tenancy = await this.prisma.tenancy.create({
       data: {
-        tenancyOwnerUserId: user.id,
+        tenancyOwnerUserId: user.sub,
         contactEmail: createTenancyDto.contactEmail,
         name: createTenancyDto.name,
         legalName: createTenancyDto.legalName,
@@ -27,7 +24,7 @@ export class TenancyService {
     });
 
     await this.prisma.user.update({
-      where: { id: user.id },
+      where: { id: user.sub },
       data: {
         tenancyId: tenancy.id,
       },
@@ -36,18 +33,18 @@ export class TenancyService {
     return tenancy;
   }
 
-  findOne(userId: string) {
+  findOne(user: JwtPayload) {
     return this.prisma.tenancy.findUniqueOrThrow({
       where: {
-        tenancyOwnerUserId: userId,
+        tenancyOwnerUserId: user.sub,
       },
     });
   }
 
-  update(userId: string, updateTenancyDto: UpdateTenancyDto) {
+  update(user: JwtPayload, updateTenancyDto: UpdateTenancyDto) {
     return this.prisma.tenancy.update({
       where: {
-        tenancyOwnerUserId: userId,
+        tenancyOwnerUserId: user.sub,
       },
       data: updateTenancyDto,
     });

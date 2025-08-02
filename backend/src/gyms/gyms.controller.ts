@@ -6,9 +6,7 @@ import {
   Patch,
   Param,
   Delete,
-  Request,
   BadRequestException,
-  UseGuards,
 } from '@nestjs/common';
 import { GymsService } from './gyms.service';
 import { CreateGymDto } from './dto/create-gym.dto';
@@ -22,10 +20,9 @@ import {
 } from '@nestjs/swagger';
 import { GymEntity } from './entities/gym.entity';
 import { ErrorDto, UnauthorizedDto } from '../error.dto';
-import { UserJwtResponse } from '../auth/auth-jwt.interface';
-import { AuthGuard } from '@nestjs/passport';
+import { JwtPayload } from '../auth/auth-jwt.interface';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
 
-@UseGuards(AuthGuard('jwt'))
 @Controller('gyms')
 export class GymsController {
   constructor(private readonly gymsService: GymsService) {}
@@ -34,46 +31,48 @@ export class GymsController {
   @ApiCreatedResponse({ type: GymEntity })
   @ApiUnauthorizedResponse({ type: UnauthorizedDto })
   @ApiDefaultResponse({ type: ErrorDto })
-  create(
-    @Body() createGymDto: CreateGymDto,
-    @Request() req: { user: UserJwtResponse['user'] },
-  ) {
-    if (!req.user.tenancyId) {
+  create(@Body() createGymDto: CreateGymDto, @CurrentUser() user: JwtPayload) {
+    if (!user.hasTenancy) {
       throw new BadRequestException();
     }
-    return this.gymsService.create(req.user.tenancyId, createGymDto);
+    return this.gymsService.create(user, createGymDto);
   }
 
   @Get()
   @ApiOkResponse({ type: [GymEntity] })
   @ApiUnauthorizedResponse({ type: UnauthorizedDto })
   @ApiDefaultResponse({ type: ErrorDto })
-  findAll(@Request() req: { user: UserJwtResponse['user'] }) {
-    if (!req.user.tenancyId) return [];
-    return this.gymsService.findAll(req.user.tenancyId);
+  findAll(@CurrentUser() user: JwtPayload) {
+    if (!user.hasTenancy) return [];
+    return this.gymsService.findAll(user);
   }
 
   @Get(':id')
   @ApiOkResponse({ type: GymEntity })
   @ApiUnauthorizedResponse({ type: UnauthorizedDto })
   @ApiDefaultResponse({ type: ErrorDto })
-  findOne(@Param('id') id: string) {
-    return this.gymsService.findOne(id);
+  findOne(@Param('id') id: string, @CurrentUser() user: JwtPayload) {
+    return this.gymsService.findOne(user, id);
   }
 
   @Patch(':id')
   @ApiOkResponse({ type: GymEntity })
   @ApiUnauthorizedResponse({ type: UnauthorizedDto })
   @ApiDefaultResponse({ type: ErrorDto })
-  update(@Param('id') id: string, @Body() updateGymDto: UpdateGymDto) {
-    return this.gymsService.update(id, updateGymDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateGymDto: UpdateGymDto,
+
+    @CurrentUser() user: JwtPayload,
+  ) {
+    return this.gymsService.update(user, id, updateGymDto);
   }
 
   @Delete(':id')
   @ApiNoContentResponse()
   @ApiUnauthorizedResponse({ type: UnauthorizedDto })
   @ApiDefaultResponse({ type: ErrorDto })
-  remove(@Param('id') id: string) {
-    return this.gymsService.remove(id);
+  remove(@Param('id') id: string, @CurrentUser() user: JwtPayload) {
+    return this.gymsService.remove(user, id);
   }
 }

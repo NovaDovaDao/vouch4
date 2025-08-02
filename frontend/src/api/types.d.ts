@@ -21,6 +21,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/auth/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AuthController_currentUser"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/auth/login": {
         parameters: {
             query?: never;
@@ -63,6 +79,22 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["AuthController_setUserPassword"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/logout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["AuthController_logout"];
         delete?: never;
         options?: never;
         head?: never;
@@ -245,67 +277,19 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/tenancy/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put: operations["TenancyController_update"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        LoginDto: {
-            /** Format: email */
+        MeResponseDto: {
             email: string;
-            password: string;
-        };
-        UserLoginResponseDto: {
             /**
              * @description Type of user
-             * @example STAFF
+             * @example MANAGER
              * @enum {string}
              */
-            category: "MEMBER" | "STAFF";
-            /**
-             * @description Unique identifier of the user
-             * @example clxzyzqr00000abcde12345
-             */
-            id: string;
-            /**
-             * @description Email address of the user
-             * @example user@example.com
-             */
-            email: string;
-            /**
-             * @description Indicates if the user is a super administrator
-             * @example false
-             */
-            isSuperUser: boolean;
-            /**
-             * @description The ID of the tenancy the user belongs to (if applicable)
-             * @example clxzyzqr00001abcde67890
-             */
-            tenancyId: string | null;
-        };
-        LoginResponseDto: {
-            /** @description User details after successful login */
-            user: components["schemas"]["UserLoginResponseDto"];
-            /**
-             * @description JWT access token for authentication
-             * @example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-             */
-            accessToken: string;
+            role: "MANAGER" | "TRAINER" | "ROUTE_SETTER" | "FRONT_DESK_STAFF" | "CLEANING_STAFF";
+            hasTenancy: boolean;
         };
         ErrorDto: {
             /** @example Bad Request */
@@ -314,6 +298,11 @@ export interface components {
             message: string[];
             /** @example 400 */
             status: number;
+        };
+        LoginDto: {
+            /** Format: email */
+            email: string;
+            password: string;
         };
         InviteUserDto: {
             /** Format: email */
@@ -522,6 +511,33 @@ export interface operations {
             };
         };
     };
+    AuthController_currentUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MeResponseDto"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
     AuthController_login: {
         parameters: {
             query?: never;
@@ -540,10 +556,10 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LoginResponseDto"];
+                    "application/json": string;
                 };
             };
-            default: {
+            400: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -572,6 +588,14 @@ export interface operations {
                 };
                 content?: never;
             };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
         };
     };
     AuthController_setUserPassword: {
@@ -595,13 +619,30 @@ export interface operations {
                     "application/json": components["schemas"]["SetPasswordResponseDto"];
                 };
             };
-            default: {
+            400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": components["schemas"]["ErrorDto"];
                 };
+            };
+        };
+    };
+    AuthController_logout: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
@@ -1085,7 +1126,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": Record<string, never>;
+                    "application/json": components["schemas"]["ClassDto"];
                 };
             };
             201: {
@@ -1121,9 +1162,7 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": Record<string, never>;
-                };
+                content?: never;
             };
             201: {
                 headers: {
@@ -1302,9 +1341,7 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": Record<string, never>;
-                };
+                content?: never;
             };
             204: {
                 headers: {
@@ -1420,47 +1457,6 @@ export interface operations {
         };
         responses: {
             201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TenancyEntity"];
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UnauthorizedDto"];
-                };
-            };
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorDto"];
-                };
-            };
-        };
-    };
-    TenancyController_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateTenancyDto"];
-            };
-        };
-        responses: {
-            200: {
                 headers: {
                     [name: string]: unknown;
                 };

@@ -1,5 +1,11 @@
 import { $api } from "@/api/client";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import AccountForm from "@/features/account/account-form";
 import {
   accountSchema,
@@ -7,7 +13,6 @@ import {
 } from "@/features/account/account.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
-import { WandSparklesIcon } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -56,22 +61,25 @@ export default function AccountPage() {
   };
 
   return (
-    <div className="px-4 lg:px-6 sm:max-w-sm space-y-6">
-      {!account && (
-        <Alert variant="destructive">
-          <WandSparklesIcon />
-          <AlertTitle>Heads up!</AlertTitle>
-          <AlertDescription>
-            We need to setup your account first!
-          </AlertDescription>
-        </Alert>
-      )}
-      <AccountForm
-        form={form}
-        isSubmitting={isPending}
-        isLoading={isLoading}
-        onSubmit={handleSubmit}
-      />
+    <div className="px-4 lg:px-6">
+      <Card className="sm:max-w-sm">
+        <CardHeader>
+          <CardTitle>Edit Account</CardTitle>
+          {!account && (
+            <CardDescription>
+              We need to setup your account first!
+            </CardDescription>
+          )}
+        </CardHeader>
+        <CardContent>
+          <AccountForm
+            form={form}
+            isSubmitting={isPending}
+            isLoading={isLoading}
+            onSubmit={handleSubmit}
+          />
+        </CardContent>
+      </Card>
     </div>
   );
 }

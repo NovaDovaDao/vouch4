@@ -9,9 +9,9 @@ import {
   IconListDetails,
   IconReport,
   IconSearch,
-  IconSettings,
   IconUsers,
   IconGymnastics,
+  IconBuilding,
 } from "@tabler/icons-react";
 
 import { NavDocuments } from "@/components/nav-documents";
@@ -49,6 +49,11 @@ const data = {
       title: "Classes",
       url: "/classes",
       icon: IconListDetails,
+    },
+    {
+      title: "Gyms",
+      url: "/gyms",
+      icon: IconBuilding,
     },
   ],
   navClouds: [
@@ -100,11 +105,6 @@ const data = {
     },
   ],
   navSecondary: [
-    {
-      title: "Settings",
-      url: "/settings",
-      icon: IconSettings,
-    },
     {
       title: "Get Help",
       url: "/help",

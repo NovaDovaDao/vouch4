@@ -6,9 +6,7 @@ import {
   Param,
   Post,
   Put,
-  UseGuards,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { ClassesService } from './classes.service';
 import { ClassDto } from './dto/class.dto';
 import {
@@ -21,7 +19,6 @@ import { UnauthorizedDto, ErrorDto } from '../error.dto';
 import { CreateClassDto } from './dto/create-class.dto';
 import { UpdateClassDto } from './dto/update-class.dto';
 
-@UseGuards(AuthGuard('jwt'))
 @Controller('classes')
 export class ClassesController {
   constructor(private readonly classesService: ClassesService) {}

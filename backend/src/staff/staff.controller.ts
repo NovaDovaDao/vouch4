@@ -6,22 +6,19 @@ import {
   Param,
   Post,
   Put,
-  UseGuards,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import {
   ApiCreatedResponse,
   ApiDefaultResponse,
   ApiOkResponse,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { ErrorDto, UnauthorizedDto } from 'src/error.dto';
+import { ErrorDto, UnauthorizedDto } from '../error.dto';
 import { StaffDto } from './dto/staff.dto';
 import { CreateStaffDto } from './dto/create-staff.dto';
 import { UpdateStaffDto } from './dto/update-staff.dto';
 import { StaffService } from './staff.service';
 
-@UseGuards(AuthGuard('jwt'))
 @Controller('staff')
 export class StaffController {
   constructor(private readonly staffService: StaffService) {}

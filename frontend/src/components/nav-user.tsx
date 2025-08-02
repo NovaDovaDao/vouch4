@@ -27,10 +27,12 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { useAuth } from "@/features/auth/use-auth";
+import { useNavigate } from "react-router-dom";
 
 export function NavUser() {
   const { user, logout } = useAuth();
   const { isMobile } = useSidebar();
+  const navigate = useNavigate();
 
   return (
     <SidebarMenu>
@@ -64,7 +66,9 @@ export function NavUser() {
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
                   {/* <AvatarImage src={user.avatar} alt={user.name} /> */}
-                  <AvatarFallback className="rounded-lg">AV</AvatarFallback>
+                  <AvatarFallback className="rounded-lg">
+                    {user?.email}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{user?.email}</span>
@@ -76,15 +80,17 @@ export function NavUser() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate("/account")}>
                 <IconUserCircle />
                 Account
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate("/account/billing")}>
                 <IconCreditCard />
                 Billing
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => navigate("/account/notifications")}
+              >
                 <IconNotification />
                 Notifications
               </DropdownMenuItem>

@@ -6,22 +6,19 @@ import {
   Param,
   Post,
   Put,
-  UseGuards,
 } from '@nestjs/common';
 import { MembersService } from './members.service';
-import { AuthGuard } from '@nestjs/passport';
 import {
   ApiCreatedResponse,
   ApiDefaultResponse,
   ApiOkResponse,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { ErrorDto, UnauthorizedDto } from 'src/error.dto';
+import { ErrorDto, UnauthorizedDto } from '../error.dto';
 import { MemberDto } from './dto/member.dto';
 import { CreateMemberDto } from './dto/create-member.dto';
 import { UpdateMemberDto } from './dto/update-member.dto';
 
-@UseGuards(AuthGuard('jwt'))
 @Controller('members')
 export class MembersController {
   constructor(private readonly membersService: MembersService) {}

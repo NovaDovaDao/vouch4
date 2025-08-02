@@ -20,15 +20,15 @@ const LoginPage: React.FC = () => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const { setLogin, user } = useAuth();
+  const { init, user } = useAuth();
 
   const loginMutation = $api.useMutation("post", "/auth/login", {
-    onSuccess: (data) => {
-      if (data) {
-        toast.success("Login Successful!", {
-          description: `Welcome, ${data.user.email}`,
+    onSuccess: (message) => {
+      if (message) {
+        init();
+        toast.success("Success", {
+          description: message,
         });
-        setLogin(data.user, data.accessToken);
         navigate("/dashboard"); // Redirect to dashboard after successful login
       }
     },
@@ -41,7 +41,7 @@ const LoginPage: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    loginMutation.mutate({ body: { email, password } });
+    loginMutation.mutateAsync({ body: { email, password } });
   };
 
   if (user) {
