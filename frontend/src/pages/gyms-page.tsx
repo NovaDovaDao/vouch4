@@ -16,7 +16,7 @@ export default function GymsPage() {
         <Button
           variant="ghost"
           className="h-full"
-          onClick={() => dialogStore.openDialog({ type: "createClass" })}
+          onClick={() => dialogStore.openDialog({ type: "createGym" })}
         >
           <IconPlus />
           <span className="hidden lg:inline">Add Gym</span>

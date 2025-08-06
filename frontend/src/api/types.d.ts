@@ -422,14 +422,30 @@ export interface components {
             /** Format: uuid */
             id: string;
         };
+        LocationDto: {
+            latitude: number;
+            longitude: number;
+        };
+        AddressDto: {
+            street1?: string;
+            street2?: string;
+            street3?: string;
+            city?: string;
+            state?: string;
+            province?: string;
+            country?: string;
+            zip?: string;
+            location?: components["schemas"]["LocationDto"];
+        };
         CreateGymDto: {
-            address: Record<string, never>;
+            address?: components["schemas"]["AddressDto"];
             /** Format: uri */
             legalDocsUrl: string | null;
             legalEntityName: string | null;
             name: string;
         };
         GymEntity: {
+            address?: components["schemas"]["AddressDto"];
             /** Format: uuid */
             tenancyId: string;
             /** Format: uuid */
@@ -442,10 +458,9 @@ export interface components {
             legalEntityName: string | null;
             /** Format: uri */
             legalDocsUrl: string | null;
-            address: Record<string, never>;
         };
         UpdateGymDto: {
-            address?: Record<string, never>;
+            address?: components["schemas"]["AddressDto"];
             /** Format: uri */
             legalDocsUrl?: string | null;
             legalEntityName?: string | null;
@@ -555,9 +570,7 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": string;
-                };
+                content?: never;
             };
             400: {
                 headers: {

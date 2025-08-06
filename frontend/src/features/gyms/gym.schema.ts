@@ -17,6 +17,7 @@ export const gymSchema = z.object({
       longitude: z.number(),
     }),
   }),
+  legalDocsUrl: z.string().url(),
 });
 
 export type GymFormData = z.infer<typeof gymSchema>;

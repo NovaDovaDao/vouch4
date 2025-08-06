@@ -22,7 +22,12 @@ const LoginPage: React.FC = () => {
 
   const { init, user } = useAuth();
 
-  const loginMutation = $api.useMutation("post", "/auth/login", {
+  const {
+    mutate: login,
+    isPending: loading,
+    isError,
+    error,
+  } = $api.useMutation("post", "/auth/login", {
     onSuccess: (message) => {
       if (message) {
         init();
@@ -41,7 +46,7 @@ const LoginPage: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    loginMutation.mutateAsync({ body: { email, password } });
+    login({ body: { email, password } });
   };
 
   if (user) {
@@ -82,16 +87,12 @@ const LoginPage: React.FC = () => {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={loginMutation.isPending}
-            >
-              {loginMutation.isPending ? "Logging in..." : "Login"}
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Logging in..." : "Login"}
             </Button>
-            {loginMutation.isError && (
+            {isError && (
               <p className="text-red-500 text-sm text-center mt-2">
-                {String(loginMutation.error.message)}
+                {String(error.message)}
               </p>
             )}
           </form>

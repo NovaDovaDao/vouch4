@@ -2,6 +2,7 @@ import React from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../../features/auth/use-auth";
 import type { User } from "@/api/client";
+import AppLoading from "../app-loading";
 
 interface ProtectedRouteProps {
   requiredRoles?: User["role"][];
@@ -10,8 +11,12 @@ interface ProtectedRouteProps {
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   requiredRoles = [],
 }) => {
-  const { user, canAccess } = useAuth();
+  const { user, canAccess, isLoading } = useAuth();
   const location = useLocation();
+
+  if (isLoading) {
+    return <AppLoading />;
+  }
 
   if (!user) {
     return <Navigate to="/login" replace />;
