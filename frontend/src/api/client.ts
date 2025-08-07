@@ -24,8 +24,12 @@ export type UpdateMember = components["schemas"]["UpdateMemberDto"];
 export type CreateStaff = components["schemas"]["CreateStaffDto"];
 export type UpdateStaff = components["schemas"]["UpdateStaffDto"];
 
+export type GymClass =
+  paths["/classes"]["get"]["responses"]["200"]["content"]["application/json"][0];
 export type CreateClass = components["schemas"]["CreateClassDto"];
 export type UpdateClass = components["schemas"]["UpdateClassDto"];
 
+export type Gym =
+  paths["/gyms"]["get"]["responses"]["200"]["content"]["application/json"][0];
 export type CreateGym = components["schemas"]["CreateGymDto"];
 export type UpdateGym = components["schemas"]["UpdateGymDto"];

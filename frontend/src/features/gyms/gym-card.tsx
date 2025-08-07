@@ -1,35 +1,38 @@
+import type { Gym } from "@/api/client";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardAction,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { IconTrendingUp } from "@tabler/icons-react";
+import { IconClipboardData, IconMap2 } from "@tabler/icons-react";
+import { formatDistanceToNow } from "date-fns";
+import type { PropsWithChildren } from "react";
 
-export default function GymCard() {
+export default function GymCard({ gym }: PropsWithChildren<{ gym: Gym }>) {
   return (
     <Card className="@container/card">
       <CardHeader>
-        <CardDescription>Total Revenue</CardDescription>
         <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-          $1,250.00
+          {gym.name}
         </CardTitle>
         <CardAction>
-          <Badge variant="outline">
-            <IconTrendingUp />
-            +12.5%
-          </Badge>
+          {!!gym.legalDocsUrl && (
+            <Badge variant="outline">
+              <IconClipboardData />
+            </Badge>
+          )}
         </CardAction>
       </CardHeader>
       <CardFooter className="flex-col items-start gap-1.5 text-sm">
         <div className="line-clamp-1 flex gap-2 font-medium">
-          Trending up this month <IconTrendingUp className="size-4" />
+          {gym.address?.street1}, {gym.address?.city}{" "}
+          <IconMap2 className="size-4" />
         </div>
         <div className="text-muted-foreground">
-          Visitors for the last 6 months
+          Updated {formatDistanceToNow(gym.updatedAt)}
         </div>
       </CardFooter>
     </Card>

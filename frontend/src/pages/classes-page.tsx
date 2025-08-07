@@ -27,7 +27,7 @@ export default function ClassesPage() {
           .fill(null)
           .map((_, i) => <Skeleton className="h-full min-h-36" key={i} />)}
       {data?.map((c) => (
-        <ClassCard key={c.id} />
+        <ClassCard key={c.id} gymClass={c} />
       ))}
     </div>
   );

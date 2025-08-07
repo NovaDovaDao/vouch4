@@ -4,7 +4,7 @@ import { createContext, useContext } from "react";
 export interface AuthState {
   user?: User;
   isLoading: boolean;
-  init: () => void;
+  init: () => Promise<unknown>;
   logout: () => Promise<void>;
   canAccess: (role: User["role"][]) => boolean;
 }

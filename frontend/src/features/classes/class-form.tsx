@@ -59,7 +59,12 @@ export default function ClassForm({ form, onSubmit }: ClassFormProps) {
       </div>
       <div className="flex flex-col gap-3">
         <Label htmlFor="capacity">Capacity</Label>
-        <Input id="capacity" step={1} type="number" {...register("capacity")} />
+        <Input
+          id="capacity"
+          step={1}
+          type="number"
+          {...register("capacity", { valueAsNumber: true })}
+        />
       </div>
       <div className="flex flex-col gap-3">
         <Label htmlFor="scheduled-date">Scheduled Date</Label>
@@ -103,7 +108,11 @@ export default function ClassForm({ form, onSubmit }: ClassFormProps) {
       </div>
       <div className="flex flex-col gap-3">
         <Label htmlFor="gym">Gym</Label>
-        <Select {...register("gymId")} disabled={isFetchingGyms}>
+        <Select
+          {...register("gymId")}
+          disabled={isFetchingGyms}
+          onValueChange={(val) => form.setValue("gymId", val)}
+        >
           <SelectTrigger
             className="w-38 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate"
             size="sm"
@@ -122,7 +131,11 @@ export default function ClassForm({ form, onSubmit }: ClassFormProps) {
       </div>
       <div className="flex flex-col gap-3">
         <Label htmlFor="capacity">Instructor</Label>
-        <Select {...register("instructorId")} disabled={isFetchingStaff}>
+        <Select
+          {...register("instructorId")}
+          disabled={isFetchingStaff}
+          onValueChange={(val) => form.setValue("instructorId", val)}
+        >
           <SelectTrigger
             className="w-38 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate"
             size="sm"

@@ -21,6 +21,7 @@ import { SetPasswordResponseDto } from './dto/set-password-response.dto';
 import { ErrorDto } from '../error.dto';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { MeResponseDto } from './dto/me-response.dto';
+import { LoginResponseDto } from './dto/login-repsonse.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -40,7 +41,7 @@ export class AuthController {
 
   @Post('login')
   @SkipAuthGuard()
-  @ApiCreatedResponse()
+  @ApiCreatedResponse({ type: LoginResponseDto })
   @ApiBadRequestResponse({ type: ErrorDto })
   async login(
     @Body(ValidationPipe) loginDto: LoginDto,

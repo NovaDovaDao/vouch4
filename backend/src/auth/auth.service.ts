@@ -18,6 +18,7 @@ import { jwtConstants } from './constants';
 import { MailService } from '../mail/mail.service';
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
+import { LoginResponseDto } from './dto/login-repsonse.dto';
 
 @Injectable()
 export class AuthService {
@@ -49,7 +50,7 @@ export class AuthService {
     return null;
   }
 
-  async login(loginDto: LoginDto, res: Response) {
+  async login(loginDto: LoginDto, res: Response): Promise<LoginResponseDto> {
     const user = await this.validateUser(loginDto.email, loginDto.password);
     if (!user || !user.isActive) {
       this.logger.warn('User does not exist or inactive');
@@ -70,7 +71,7 @@ export class AuthService {
       httpOnly: true,
       secure: true,
     });
-    res.sendStatus(HttpStatus.ACCEPTED);
+    return { ok: true };
   }
 
   logout(res: Response) {

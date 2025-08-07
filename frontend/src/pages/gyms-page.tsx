@@ -26,8 +26,8 @@ export default function GymsPage() {
         Array(5)
           .fill(null)
           .map((_, i) => <Skeleton className="h-full min-h-36" key={i} />)}
-      {data?.map((c) => (
-        <GymCard key={c.id} />
+      {data?.map((gym) => (
+        <GymCard key={gym.id} gym={gym} />
       ))}
     </div>
   );

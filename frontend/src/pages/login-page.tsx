@@ -28,11 +28,11 @@ const LoginPage: React.FC = () => {
     isError,
     error,
   } = $api.useMutation("post", "/auth/login", {
-    onSuccess: (message) => {
-      if (message) {
-        init();
+    onSuccess: async (data) => {
+      if (data.ok) {
+        await init();
         toast.success("Success", {
-          description: message,
+          description: "Welcome back!",
         });
         navigate("/dashboard"); // Redirect to dashboard after successful login
       }

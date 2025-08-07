@@ -304,6 +304,9 @@ export interface components {
             email: string;
             password: string;
         };
+        LoginResponseDto: {
+            ok: boolean;
+        };
         InviteUserDto: {
             /** Format: email */
             email: string;
@@ -570,7 +573,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["LoginResponseDto"];
+                };
             };
             400: {
                 headers: {

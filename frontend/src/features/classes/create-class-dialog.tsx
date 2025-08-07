@@ -31,6 +31,7 @@ export default function CreateClassDialog({
       instructorId: "",
       scheduleDateTime: "",
     },
+    shouldFocusError: true,
   });
   const queryClient = useQueryClient();
   const { mutate, isPending } = $api.useMutation("post", "/classes");
@@ -40,7 +41,7 @@ export default function CreateClassDialog({
       { body },
       {
         onSuccess: (data) => {
-          queryClient.invalidateQueries({ queryKey: ["get", "/members"] });
+          queryClient.invalidateQueries({ queryKey: ["get", "/classes"] });
           toast.success("Success!", {
             description: `Added ${data.name}!`,
           });
