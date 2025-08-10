@@ -1,0 +1,204 @@
+enum AgreementStatus {
+  EXPIRED
+  PENDING_SIGNATURE
+  REVOKED
+  SIGNED
+}
+
+enum AgreementType {
+  PRIVACY_POLICY
+  TERMS_OF_SERVICE
+  WAIVER
+}
+
+type Booking {
+  bookedAt: DateTime!
+  id: String!
+}
+
+type CheckIn {
+  id: String!
+  timestamp: DateTime!
+}
+
+type Class {
+  bookings: [Booking!]
+  capacity: Int!
+  createdAt: DateTime
+  description: String
+  gymId: ID!
+  id: String!
+  instructorId: ID
+  name: String!
+  scheduleDateTime: DateTime!
+  updatedAt: DateTime
+}
+
+scalar DateTime
+
+type Gym {
+  address: Json
+  createdAt: DateTime!
+  id: ID!
+  legalDocsUrl: String
+  legalEntityName: String
+  name: String!
+  updatedAt: DateTime!
+}
+
+type GymAddress {
+  city: String
+  country: String
+  state: String
+  street1: String
+  zip: String
+}
+
+input GymCreateInput {
+  address: Json!
+  legalDocsUrl: String
+  legalEntityName: String
+  name: String!
+  tenancyId: String!
+}
+
+input GymUpdateInput {
+  address: Json
+  legalDocsUrl: String
+  legalEntityName: String
+  name: String
+}
+
+type InvitationToken {
+  createdAt: DateTime!
+  expiresAt: DateTime!
+  id: String!
+  token: String!
+  userId: ID!
+}
+
+scalar Json
+
+type MembershipNFT {
+  createdAt: DateTime!
+  expiresAt: DateTime
+  id: ID!
+  isActive: Boolean!
+  isCurrentlyRented: Boolean!
+  renterUserId: ID
+  updatedAt: DateTime!
+  userId: ID!
+}
+
+type Mutation {
+  createGym(data: GymCreateInput!): Gym!
+  createTenancy(data: TenancyCreateInput!): Tenancy!
+  createUser(category: UserCategory!, email: String!, firstName: String!, lastName: String!): User!
+  deleteGym(id: ID!): Gym
+  deleteTenancy(id: ID!): Tenancy
+  deleteUser(id: ID!): User
+  updateGym(data: GymUpdateInput!, id: ID!): Gym!
+  updateTenancy(data: TenancyUpdateInput!, id: ID!): Tenancy!
+  updateUser(data: UserUpdateInput!, id: ID!): User!
+}
+
+type Query {
+  classById(id: ID!): Class!
+  classes: [Class!]!
+  contractById(id: ID!): UserTenancyAgreement!
+  contracts: [UserTenancyAgreement!]!
+  gymById(id: ID!): Gym
+  gyms: [Gym!]!
+  memberById(id: ID!): User!
+  members: [User!]!
+  membershipById(id: ID!): MembershipNFT!
+  memberships: [MembershipNFT!]!
+  staff: [User!]!
+  staffById(id: ID!): User!
+  tenancy: Tenancy!
+}
+
+type Tenancy {
+  contactEmail: String!
+  createdAt: DateTime!
+  id: ID!
+  legalName: String
+  name: String!
+  updatedAt: DateTime!
+}
+
+input TenancyCreateInput {
+  contactEmail: String!
+  legalName: String
+  name: String!
+}
+
+input TenancyUpdateInput {
+  contactEmail: String
+  legalName: String
+  name: String
+}
+
+type User {
+  category: UserCategory!
+  createdAt: DateTime!
+  email: String!
+  firstName: String!
+  id: ID!
+  isActive: Boolean!
+  isSuperUser: Boolean!
+  lastName: String!
+  passwordHash: String
+  phoneNumber: String
+  profilePicUrl: String
+  updatedAt: DateTime!
+  walletAddress: String
+}
+
+enum UserAtGymRole {
+  CLEANING_STAFF
+  FRONT_DESK_STAFF
+  MANAGER
+  ROUTE_SETTER
+  TRAINER
+}
+
+enum UserCategory {
+  MEMBER
+  STAFF
+}
+
+type UserGymAssociation {
+  assignedAt: DateTime!
+  gymId: ID!
+  isActiveAtGym: Boolean!
+  permissions: Json
+  roleAtGym: UserAtGymRole!
+  updatedAt: DateTime!
+  userId: ID!
+}
+
+type UserTenancyAgreement {
+  createdAt: DateTime!
+  documentVersion: String
+  expiresAt: DateTime
+  id: ID!
+  signedAt: DateTime
+  status: AgreementStatus!
+  type: AgreementType!
+  updatedAt: DateTime!
+}
+
+input UserUpdateInput {
+  category: UserCategory
+  createdAt: DateTime
+  email: String
+  firstName: String
+  isActive: Boolean
+  isSuperUser: Boolean
+  lastName: String
+  phoneNumber: String
+  profilePicUrl: String
+  updatedAt: DateTime
+  walletAddress: String
+}

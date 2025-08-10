@@ -1,16 +1,21 @@
-import { PrismaClient, UserCategory } from '../generated/prisma';
-import * as bcrypt from 'bcrypt'; // Import bcryptjs for password hashing
+import { hash } from "jsr:@denorg/scrypt@4.4.4";
+import { $Enums, PrismaClient } from "./generated/client.ts";
 
-const prisma = new PrismaClient();
+const isDenoDeploy = Deno.env.get("DENO_DEPLOYMENT_ID") !== undefined;
+
+const prisma = new PrismaClient({
+  datasourceUrl: Deno.env.get("DATABASE_URL"),
+});
 
 async function main() {
   // --- Define SUPER_ADMIN Credentials ---
   // IMPORTANT: For production, these values MUST come from environment variables
   // for security. DO NOT hardcode sensitive information in production code.
   const superAdminEmail =
-    process.env.SUPER_ADMIN_EMAIL || 'superadmin@example.com';
+    Deno.env.get("SUPER_ADMIN_EMAIL") || "superadmin@example.com";
   const superAdminPassword =
-    process.env.SUPER_ADMIN_PASSWORD || 'yourVeryStrongDefaultAdminPassword!'; // CHANGE THIS DEFAUULT!
+    Deno.env.get("SUPER_ADMIN_PASSWORD") ||
+    "yourVeryStrongDefaultAdminPassword!"; // CHANGE THIS DEFAUULT!
 
   // --- Check if SUPER_ADMIN user already exists (for idempotency) ---
   let superAdminUser = await prisma.user.findUnique({
@@ -19,16 +24,15 @@ async function main() {
 
   if (!superAdminUser) {
     console.log(`Creating SUPER_ADMIN user: ${superAdminEmail}`);
-    const hashedPassword = await bcrypt.hash(superAdminPassword, 10); // Hash the password
+    const hashedPassword = hash(superAdminPassword); // Hash the password
 
     superAdminUser = await prisma.user.create({
       data: {
         email: superAdminEmail,
         passwordHash: hashedPassword,
-        firstName: 'System',
-        lastName: 'Admin',
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-        category: UserCategory.STAFF, // SUPER_ADMIN is a type of staff
+        firstName: "System",
+        lastName: "Admin",
+        category: $Enums.UserCategory.STAFF, // SUPER_ADMIN is a type of staff
         isSuperUser: true, // This flag grants super admin privileges
         isActive: true,
         // SUPER_ADMINs do not belong to a specific tenancy or own one
@@ -38,18 +42,18 @@ async function main() {
     console.log(`SUPER_ADMIN user created with ID: ${superAdminUser.id}`);
   } else {
     console.log(
-      `SUPER_ADMIN user '${superAdminEmail}' already exists. Skipping creation.`,
+      `SUPER_ADMIN user '${superAdminEmail}' already exists. Skipping creation.`
     );
     // In a development environment, you might optionally update the password
     // for convenience if it changes often (but NOT in production):
-    // if (process.env.NODE_ENV === 'development') {
-    //   const hashedPassword = await bcrypt.hash(superAdminPassword, 10);
-    //   await prisma.user.update({
-    //     where: { id: superAdminUser.id },
-    //     data: { passwordHash: hashedPassword }
-    //   });
-    //   console.log('SUPER_ADMIN password updated (DEV only).');
-    // }
+    if (!isDenoDeploy) {
+      const hashedPassword = hash(superAdminPassword);
+      await prisma.user.update({
+        where: { id: superAdminUser.id },
+        data: { passwordHash: hashedPassword },
+      });
+      console.log("SUPER_ADMIN password updated (DEV only).");
+    }
   }
 
   // --- No need to create a Tenancy or TENANCY_OWNER here ---
@@ -61,8 +65,7 @@ async function main() {
 // Execute the main seeding function
 main()
   .catch((e) => {
-    console.error('Prisma seeding failed:', e);
-    process.exit(1); // Exit with a non-zero code to indicate failure
+    console.error("Prisma seeding failed:", e);
   })
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   .finally(async () => {
