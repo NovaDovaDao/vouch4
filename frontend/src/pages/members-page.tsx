@@ -1,4 +1,3 @@
-import { $api } from "@/api/client.ts";
 import { DataTable } from "@/components/common/data-table";
 import MoreDropDown from "@/components/common/more-dropdown";
 import { Badge } from "@/components/ui/badge";
@@ -21,9 +20,28 @@ import { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { useDialogStore } from "@/stores/dialog-store";
+import { graphql } from "@/graphql";
+import { useQuery } from "@tanstack/react-query";
+import { execute } from "@/graphql/execute";
+
+const GET_MEMBERS = graphql(`
+  query GetMembers {
+    members {
+      id
+      firstName
+      lastName
+      email
+      isActive
+      updatedAt
+    }
+  }
+`);
 
 export default function MembersPage() {
-  const { data, isLoading } = $api.useQuery("get", "/members");
+  const { data, isLoading } = useQuery({
+    queryKey: ["members"],
+    queryFn: () => execute(GET_MEMBERS),
+  });
   const [editMemberId, setEditMemberId] = useState<string | null>(null);
   const dialogStore = useDialogStore();
 
@@ -69,7 +87,7 @@ export default function MembersPage() {
         className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
       >
         <DataTable
-          data={data ?? []}
+          data={data?.members ?? []}
           loading={isLoading}
           columns={[
             {

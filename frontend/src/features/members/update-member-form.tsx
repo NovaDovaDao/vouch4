@@ -1,7 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-import { $api, type UpdateMember } from "@/api/client";
 import { DrawerClose, DrawerFooter } from "@/components/ui/drawer";
 import FormDrawer from "@/components/common/form-drawer";
 import { Button } from "@/components/ui/button";
@@ -15,6 +14,7 @@ type UpdateMemberDrawerProps = {
   id: string | null;
   onClose: () => void;
 };
+
 export default function UpdateMemberForm({
   id,
   onClose,

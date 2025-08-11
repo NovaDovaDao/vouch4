@@ -19,7 +19,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { $api } from "@/api/client";
 
 interface ClassFormProps {
   form: UseFormReturn<ClassFormData>; // Pass the useForm hook's return value

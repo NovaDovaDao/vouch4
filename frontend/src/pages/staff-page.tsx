@@ -1,4 +1,3 @@
-import { $api } from "@/api/client.ts";
 import { DataTable } from "@/components/common/data-table";
 import MoreDropDown from "@/components/common/more-dropdown";
 import { Badge } from "@/components/ui/badge";
@@ -13,17 +12,35 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import UpdateStaffForm from "@/features/staff/update-staff-form";
+import { graphql } from "@/graphql";
+import { execute } from "@/graphql/execute";
 import { useDialogStore } from "@/stores/dialog-store";
 import {
   IconCircleCheckFilled,
   IconLoader,
   IconPlus,
 } from "@tabler/icons-react";
+import { useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import { useState } from "react";
 
+const GET_STAFF = graphql(`
+  query GetStaff {
+    staff {
+      id
+      firstName
+      lastName
+      updatedAt
+      isActive
+    }
+  }
+`);
+
 export default function StaffPage() {
-  const { data, isLoading } = $api.useQuery("get", "/staff");
+  const { data, isLoading } = useQuery({
+    queryKey: ["staff"],
+    queryFn: () => execute(GET_STAFF),
+  });
   const [editStaffId, setEditStaffId] = useState<string | null>(null);
   const dialogStore = useDialogStore();
 
@@ -69,7 +86,7 @@ export default function StaffPage() {
         className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
       >
         <DataTable
-          data={data ?? []}
+          data={data?.staff ?? []}
           loading={isLoading}
           columns={[
             {

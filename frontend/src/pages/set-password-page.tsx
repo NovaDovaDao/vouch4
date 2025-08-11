@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -12,41 +12,36 @@ import {
 import { Label } from "@/components/ui/label.tsx";
 import { Input } from "../components/ui/input.tsx";
 import { Button } from "../components/ui/button.tsx";
-import { $api, handleApiErrorMessage } from "@/api/client.ts";
-import { useAuth } from "@/features/auth/use-auth.ts";
+import { authClient } from "@/lib/auth.ts";
+import { useMutation } from "@tanstack/react-query";
 
 export default function SetPasswordPage() {
   const [newPassword, setNewPassword] = useState("");
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  const { user, logout } = useAuth();
-
-  const setPasswordMutation = $api.useMutation("post", "/auth/set-password", {
+  const { mutate: setPassword, isPending } = useMutation({
+    mutationKey: ["set-password"],
+    mutationFn: (variables: { token: string; newPassword: string }) =>
+      authClient.resetPassword(variables),
     onSuccess: (data) => {
-      if (data) {
-        toast.success("Setting Password Successful!", {
-          description: data.message,
-        });
-        navigate("/login");
-      }
+      toast.success("Set Password", {
+        description: data.data?.status,
+      });
+      navigate("/login");
     },
     onError: (err) => {
-      toast.error(err.error ?? "Error", {
-        description: handleApiErrorMessage(err),
+      toast.error("Error", {
+        description: err.message,
       });
     },
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const token = searchParams.get("token")!;
-    setPasswordMutation.mutate({ body: { newPassword, token } });
+    setPassword({ token, newPassword });
   };
-
-  useEffect(() => {
-    if (user) logout();
-  }, [user, logout]);
 
   return (
     <div className="flex items-center justify-center min-h-screen ">
@@ -71,14 +66,8 @@ export default function SetPasswordPage() {
                 onChange={(e) => setNewPassword(e.target.value)}
               />
             </div>
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={setPasswordMutation.isPending}
-            >
-              {setPasswordMutation.isPending
-                ? "Setting Password..."
-                : "Set Password"}
+            <Button type="submit" className="w-full" disabled={isPending}>
+              {isPending ? "Setting Password..." : "Set Password"}
             </Button>
           </form>
         </CardContent>

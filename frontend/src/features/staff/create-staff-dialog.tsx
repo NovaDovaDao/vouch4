@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 
-import { $api, type CreateStaff } from "@/api/client";
 import StaffForm from "./staff-form";
 import { staffSchema } from "./staff.schema";
 import { Button } from "@/components/ui/button";

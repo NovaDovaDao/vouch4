@@ -1,4 +1,3 @@
-import { $api } from "@/api/client";
 import {
   Card,
   CardContent,
@@ -11,19 +10,41 @@ import {
   accountSchema,
   type AccountFormData,
 } from "@/features/account/account.schema";
+import { graphql } from "@/graphql";
+import { execute } from "@/graphql/execute";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+
+const GET_TENANCY = graphql(`
+  query GetTenancy {
+    tenancy {
+      id
+      contactEmail
+      legalName
+      name
+    }
+  }
+`);
+
+// const UPDATE_TENANCY = graphql(`
+// mutation UppdateTenancy(input: UpdateTenancyInput!) {
+//   id
+// }
+//  `);
 
 export default function AccountPage() {
   const {
     data: account,
     dataUpdatedAt,
     isLoading,
-  } = $api.useQuery("get", "/tenancy");
-  const { mutate, isPending } = $api.useMutation("post", "/tenancy");
+  } = useQuery({ queryKey: ["tenancy"], queryFn: () => execute(GET_TENANCY) });
+  const { isPending } = useMutation({
+    mutationKey: ["update-tenancy"],
+    // mutationFn: (input) => execute(UPDATE_TENANCY),
+  });
   const form = useForm({
     resolver: zodResolver(accountSchema),
     defaultValues: {
@@ -36,28 +57,19 @@ export default function AccountPage() {
   useEffect(() => {
     if (dataUpdatedAt) {
       form.reset({
-        contactEmail: account?.contactEmail ?? "",
-        legalName: account?.legalName ?? "",
-        name: account?.name ?? "",
+        contactEmail: account?.tenancy.contactEmail ?? "",
+        legalName: account?.tenancy.legalName ?? "",
+        name: account?.tenancy.name ?? "",
       });
     }
   }, [dataUpdatedAt, account, form]);
 
   const queryClient = useQueryClient();
   const handleSubmit = (body: AccountFormData) => {
-    mutate(
-      {
-        body,
-      },
-      {
-        onSuccess: (data) => {
-          queryClient.invalidateQueries({ queryKey: ["get", "/staff"] });
-          toast.success("Success!", {
-            description: `Added ${data.name}!`,
-          });
-        },
-      }
-    );
+    queryClient.invalidateQueries({ queryKey: ["get", "/staff"] });
+    toast.success("Success!", {
+      description: `Added ${body.name}!`,
+    });
   };
 
   return (

@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.157.0/http/server.ts";
 import { auth } from "./auth.ts";
-import { yogaServer } from "./server.ts";
+import { yogaServer } from "./graphql/server.ts";
 
 const handler = (request: Request) => {
   const url = new URL(request.url);

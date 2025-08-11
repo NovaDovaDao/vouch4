@@ -1,4 +1,3 @@
-import type { Gym } from "@/api/client";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -7,11 +6,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import type { Gym } from "@/graphql/graphql";
 import { IconClipboardData, IconMap2 } from "@tabler/icons-react";
 import { formatDistanceToNow } from "date-fns";
 import type { PropsWithChildren } from "react";
 
-export default function GymCard({ gym }: PropsWithChildren<{ gym: Gym }>) {
+export default function GymCard({
+  gym,
+}: PropsWithChildren<{
+  gym: Pick<Gym, "name" | "legalDocsUrl" | "address" | "updatedAt">;
+}>) {
   return (
     <Card className="@container/card">
       <CardHeader>

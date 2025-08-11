@@ -1,4 +1,4 @@
-import type { User } from "@/api/client";
+import type { User } from "@/graphql/graphql";
 import { createContext, useContext } from "react";
 
 export interface AuthState {
@@ -6,7 +6,7 @@ export interface AuthState {
   isLoading: boolean;
   init: () => Promise<unknown>;
   logout: () => Promise<void>;
-  canAccess: (role: User["role"][]) => boolean;
+  canAccess: (role: User["category"][]) => boolean;
 }
 
 export const AuthContext = createContext<AuthState | null>(null);

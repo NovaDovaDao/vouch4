@@ -1,4 +1,3 @@
-import type { GymClass } from "@/api/client";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -8,13 +7,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import type { Class } from "@/graphql/graphql";
 import { IconCalendar, IconUsersGroup } from "@tabler/icons-react";
 import { format } from "date-fns";
 import type { PropsWithoutRef } from "react";
 
 export default function ClassCard({
   gymClass,
-}: PropsWithoutRef<{ gymClass: GymClass }>) {
+}: PropsWithoutRef<{
+  gymClass: Pick<
+    Class,
+    "description" | "name" | "capacity" | "scheduleDateTime" | "instructorId"
+  >;
+}>) {
   return (
     <Card className="@container/card">
       <CardHeader>

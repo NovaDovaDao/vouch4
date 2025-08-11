@@ -1,13 +1,31 @@
-import { $api } from "@/api/client.ts";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import ClassCard from "@/features/classes/class-card";
+import { graphql } from "@/graphql";
+import { execute } from "@/graphql/execute";
 import { useDialogStore } from "@/stores/dialog-store";
 import { IconPlus } from "@tabler/icons-react";
+import { useQuery } from "@tanstack/react-query";
+
+const GET_CLASSES = graphql(`
+  query GetClasses {
+    classes {
+      id
+      description
+      name
+      capacity
+      scheduleDateTime
+      instructorId
+    }
+  }
+`);
 
 export default function ClassesPage() {
-  const { data, isLoading } = $api.useQuery("get", "/classes");
+  const { data, isLoading } = useQuery({
+    queryKey: ["classes"],
+    queryFn: () => execute(GET_CLASSES),
+  });
   const dialogStore = useDialogStore();
 
   return (
@@ -26,7 +44,7 @@ export default function ClassesPage() {
         Array(5)
           .fill(null)
           .map((_, i) => <Skeleton className="h-full min-h-36" key={i} />)}
-      {data?.map((c) => (
+      {data?.classes.map((c) => (
         <ClassCard key={c.id} gymClass={c} />
       ))}
     </div>

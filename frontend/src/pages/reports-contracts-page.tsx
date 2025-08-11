@@ -1,4 +1,3 @@
-import { $api } from "@/api/client.ts";
 import { DataTable } from "@/components/common/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,10 +10,24 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { graphql } from "@/graphql";
+import { execute } from "@/graphql/execute";
 import { IconPlus } from "@tabler/icons-react";
+import { useQuery } from "@tanstack/react-query";
+
+const GET_CONTRACTS = graphql(`
+  query GetContracts {
+    contracts {
+      id
+    }
+  }
+`);
 
 export default function ReportsContractsPage() {
-  const { data, isLoading } = $api.useQuery("get", "/contracts");
+  const { data, isLoading } = useQuery({
+    queryKey: ["contracts"],
+    queryFn: () => execute(GET_CONTRACTS),
+  });
 
   if (isLoading) {
     return (
@@ -62,7 +75,7 @@ export default function ReportsContractsPage() {
         className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
       >
         <DataTable
-          data={data ?? []}
+          data={data?.contracts ?? []}
           columns={[
             {
               accessorKey: "id",

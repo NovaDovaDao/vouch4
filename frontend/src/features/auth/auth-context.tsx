@@ -1,35 +1,30 @@
 import { useCallback, type PropsWithChildren } from "react";
 import { AuthContext, type AuthState } from "./use-auth";
-import { $api, type User } from "@/api/client";
-import { useQueryClient } from "@tanstack/react-query";
+import { authClient } from "@/lib/auth";
+import type { User } from "@/graphql/graphql";
+import { useQuery } from "@tanstack/react-query";
 
 export const AuthProvider = (props: PropsWithChildren) => {
-  const {
-    data: user,
-    refetch,
-    isLoading,
-  } = $api.useQuery("get", "/auth/me", {}, { retry: false });
-
-  const queryClient = useQueryClient();
-  const { mutate: logout } = $api.useMutation("post", "/auth/logout", {
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["get", "/auth/me"] });
-    },
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ["get-session"],
+    queryFn: () => authClient.getSession(),
   });
 
   const canAccess = useCallback(
-    (requiredRoles: User["role"][]): boolean => {
-      if (!user) return false;
-      return requiredRoles.includes(user.role);
+    (requiredRoles: User["category"][]): boolean => {
+      if (!data?.data?.user) return false;
+      return requiredRoles.includes(
+        (data.data.user as unknown as User).category
+      );
     },
-    [user]
+    [data]
   );
 
   const authState = {
-    user,
+    user: undefined,
     init: refetch,
     isLoading,
-    logout: async () => logout({}),
+    logout: async () => {},
     canAccess,
   } satisfies AuthState;
 

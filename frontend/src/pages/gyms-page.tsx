@@ -1,13 +1,30 @@
-import { $api } from "@/api/client.ts";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import GymCard from "@/features/gyms/gym-card";
+import { graphql } from "@/graphql";
+import { execute } from "@/graphql/execute";
 import { useDialogStore } from "@/stores/dialog-store";
 import { IconPlus } from "@tabler/icons-react";
+import { useQuery } from "@tanstack/react-query";
+
+const GET_GYMS = graphql(`
+  query GetGyms {
+    gyms {
+      id
+      address
+      name
+      legalDocsUrl
+      updatedAt
+    }
+  }
+`);
 
 export default function GymsPage() {
-  const { data, isLoading } = $api.useQuery("get", "/gyms");
+  const { data, isLoading } = useQuery({
+    queryKey: ["gyms"],
+    queryFn: () => execute(GET_GYMS),
+  });
   const dialogStore = useDialogStore();
 
   return (
@@ -26,7 +43,7 @@ export default function GymsPage() {
         Array(5)
           .fill(null)
           .map((_, i) => <Skeleton className="h-full min-h-36" key={i} />)}
-      {data?.map((gym) => (
+      {data?.gyms.map((gym) => (
         <GymCard key={gym.id} gym={gym} />
       ))}
     </div>

@@ -1,4 +1,3 @@
-import { $api } from "@/api/client.ts";
 import { DataTable } from "@/components/common/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,10 +10,24 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { graphql } from "@/graphql";
+import { execute } from "@/graphql/execute";
 import { IconPlus } from "@tabler/icons-react";
+import { useQuery } from "@tanstack/react-query";
+
+const GET_MEMBERS = graphql(`
+  query GetMemberships {
+    memberships {
+      id
+    }
+  }
+`);
 
 export default function ReportsMembershipsPage() {
-  const { data, isLoading } = $api.useQuery("get", "/members");
+  const { data, isLoading } = useQuery({
+    queryKey: ["members"],
+    queryFn: () => execute(GET_MEMBERS),
+  });
 
   if (isLoading) {
     return (
@@ -62,11 +75,11 @@ export default function ReportsMembershipsPage() {
         className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
       >
         <DataTable
-          data={data ?? []}
+          data={data?.memberships ?? []}
           columns={[
             {
-              accessorKey: "firstName",
-              header: "Name",
+              accessorKey: "id",
+              header: "ID",
             },
           ]}
         />

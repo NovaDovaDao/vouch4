@@ -1,11 +1,6 @@
-import { hash } from "jsr:@denorg/scrypt@4.4.4";
-import { $Enums, PrismaClient } from "./generated/client.ts";
-
-const isDenoDeploy = Deno.env.get("DENO_DEPLOYMENT_ID") !== undefined;
-
-const prisma = new PrismaClient({
-  datasourceUrl: Deno.env.get("DATABASE_URL"),
-});
+import { $Enums } from "./generated/client.ts";
+import { auth, AuthUser } from "../auth.ts";
+import { db } from "../db.ts";
 
 async function main() {
   // --- Define SUPER_ADMIN Credentials ---
@@ -17,57 +12,35 @@ async function main() {
     Deno.env.get("SUPER_ADMIN_PASSWORD") ||
     "yourVeryStrongDefaultAdminPassword!"; // CHANGE THIS DEFAUULT!
 
-  // --- Check if SUPER_ADMIN user already exists (for idempotency) ---
-  let superAdminUser = await prisma.user.findUnique({
+  const superAdminUser = (await db.user.findUnique({
     where: { email: superAdminEmail },
-  });
+  })) as AuthUser;
 
   if (!superAdminUser) {
     console.log(`Creating SUPER_ADMIN user: ${superAdminEmail}`);
-    const hashedPassword = hash(superAdminPassword); // Hash the password
 
-    superAdminUser = await prisma.user.create({
-      data: {
+    const newAdmin = await auth.api.signUpEmail({
+      body: {
         email: superAdminEmail,
-        passwordHash: hashedPassword,
-        firstName: "System",
-        lastName: "Admin",
-        category: $Enums.UserCategory.STAFF, // SUPER_ADMIN is a type of staff
-        isSuperUser: true, // This flag grants super admin privileges
+        password: superAdminPassword,
+        name: undefined as unknown as string,
+        category: $Enums.UserCategory.STAFF,
+        firstName: "SYSTEM",
+        lastName: "ADMIN",
         isActive: true,
-        // SUPER_ADMINs do not belong to a specific tenancy or own one
-        // as their role is global across the platform.
+        isSuperUser: true,
       },
     });
-    console.log(`SUPER_ADMIN user created with ID: ${superAdminUser.id}`);
-  } else {
-    console.log(
-      `SUPER_ADMIN user '${superAdminEmail}' already exists. Skipping creation.`
-    );
-    // In a development environment, you might optionally update the password
-    // for convenience if it changes often (but NOT in production):
-    if (!isDenoDeploy) {
-      const hashedPassword = hash(superAdminPassword);
-      await prisma.user.update({
-        where: { id: superAdminUser.id },
-        data: { passwordHash: hashedPassword },
-      });
-      console.log("SUPER_ADMIN password updated (DEV only).");
-    }
+    console.log(`SUPER_ADMIN user created with ID: ${newAdmin.user.id}`);
   }
-
-  // --- No need to create a Tenancy or TENANCY_OWNER here ---
-  // The SUPER_ADMIN will log into the application and create the first Tenancy
-  // and assign its TENANCY_OWNER user through the admin UI.
-  // This approach simulates the actual onboarding flow for new tenants.
 }
 
 // Execute the main seeding function
 main()
   .catch((e) => {
-    console.error("Prisma seeding failed:", e);
+    console.error("Auth seeding failed:", e);
   })
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   .finally(async () => {
-    await prisma.$disconnect(); // Ensure the Prisma client connection is closed
+    await db.$disconnect(); // Ensure the Prisma client connection is closed
   });

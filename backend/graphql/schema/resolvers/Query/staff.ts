@@ -1,11 +1,11 @@
-import { db } from "../../../db.ts";
+import { CustomContext } from "../../../server.ts";
 import type { QueryResolvers } from "./../../types.generated.ts";
-export const staff: NonNullable<QueryResolvers['staff']> = (
+export const staff: NonNullable<QueryResolvers["staff"]> = (
   _parent,
   _arg,
-  _ctx
+  ctx: CustomContext
 ) => {
-  return db.user.findMany({
+  return ctx.db.user.findMany({
     where: { category: "STAFF" },
   });
 };

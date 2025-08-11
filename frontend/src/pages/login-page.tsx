@@ -12,8 +12,9 @@ import {
 import { Label } from "@/components/ui/label.tsx";
 import { Input } from "../components/ui/input.tsx";
 import { Button } from "../components/ui/button.tsx";
-import { $api, handleApiErrorMessage } from "@/api/client.ts";
 import { useAuth } from "@/features/auth/use-auth.ts";
+import { useMutation } from "@tanstack/react-query";
+import { authClient } from "@/lib/auth.ts";
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -23,30 +24,33 @@ const LoginPage: React.FC = () => {
   const { init, user } = useAuth();
 
   const {
-    mutate: login,
+    mutateAsync: login,
     isPending: loading,
     isError,
     error,
-  } = $api.useMutation("post", "/auth/login", {
+  } = useMutation({
+    mutationKey: ["login"],
+    mutationFn: (variables: { email: string; password: string }) =>
+      authClient.signIn.email(variables),
     onSuccess: async (data) => {
-      if (data.ok) {
+      if (data.data?.user) {
         await init();
         toast.success("Success", {
-          description: "Welcome back!",
+          description: "Welcome back! " + data.data.user.name,
         });
         navigate("/dashboard"); // Redirect to dashboard after successful login
       }
     },
     onError: (err) => {
-      toast.error(err.error ?? "Login Error", {
-        description: handleApiErrorMessage(err),
+      toast.error("Login Error", {
+        description: err.message,
       });
     },
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    login({ body: { email, password } });
+    login({ email, password });
   };
 
   if (user) {
