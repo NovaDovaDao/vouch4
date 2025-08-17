@@ -7,6 +7,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { Link, useLocation } from "react-router-dom";
 import NavQuickCreate from "./nav-quick-create";
@@ -19,6 +20,7 @@ type Item = {
 
 export function NavMain({ items }: { items: Item[] }) {
   const location = useLocation();
+  const { toggleSidebar } = useSidebar();
   return (
     <SidebarGroup>
       <SidebarGroupContent className="flex flex-col gap-2">
@@ -37,7 +39,7 @@ export function NavMain({ items }: { items: Item[] }) {
         </SidebarMenu>
         <SidebarMenu>
           {items.map((item, i) => (
-            <Link to={item.url} key={i}>
+            <Link to={item.url} key={i} onClick={toggleSidebar}>
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton
                   tooltip={item.title}
