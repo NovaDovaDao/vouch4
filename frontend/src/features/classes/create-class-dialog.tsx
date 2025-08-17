@@ -12,9 +12,23 @@ import ClassForm from "./class-form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { classSchema } from "./class.schema";
-import { useQueryClient } from "@tanstack/react-query";
-import { $api, type CreateClass } from "@/api/client";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { graphql } from "@/graphql";
+import type {
+  ClassCreateInput,
+  CreateClassMutationVariables,
+} from "@/graphql/graphql";
+import { execute } from "@/graphql/execute";
+
+const CREATE_CLASS = graphql(`
+  mutation CreateClass($data: ClassCreateInput!) {
+    createClass(data: $data) {
+      id
+      name
+    }
+  }
+`);
 
 export default function CreateClassDialog({
   handleOpen,
@@ -34,21 +48,23 @@ export default function CreateClassDialog({
     shouldFocusError: true,
   });
   const queryClient = useQueryClient();
-  const { mutate, isPending } = $api.useMutation("post", "/classes");
+  const { mutate: createClass, isPending } = useMutation({
+    mutationKey: ["create-class"],
+    mutationFn: (variables: CreateClassMutationVariables) =>
+      execute(CREATE_CLASS, variables),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["classes"] });
+      toast.success("Success!", {
+        description: `Added ${data.createClass.name}!`,
+      });
+      handleOpen(false);
+    },
+  });
 
-  const handleSubmit = (body: CreateClass) =>
-    mutate(
-      { body },
-      {
-        onSuccess: (data) => {
-          queryClient.invalidateQueries({ queryKey: ["get", "/classes"] });
-          toast.success("Success!", {
-            description: `Added ${data.name}!`,
-          });
-          handleOpen(false);
-        },
-      }
-    );
+  const handleSubmit = (body: ClassCreateInput) =>
+    createClass({
+      data: body,
+    });
 
   return (
     <Dialog open onOpenChange={handleOpen}>

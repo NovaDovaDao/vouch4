@@ -36,11 +36,6 @@ const data = {
       icon: IconDashboard,
     },
     {
-      title: "Members",
-      url: "/members",
-      icon: IconUsers,
-    },
-    {
       title: "Staff",
       url: "/staff",
       icon: IconUsers,

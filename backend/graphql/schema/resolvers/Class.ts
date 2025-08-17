@@ -1,4 +1,4 @@
-import type   { ClassResolvers } from './../types.generated';
-    export const Class: ClassResolvers = {
-    /* Implement Class resolver logic here */
-  };
+import type { ClassResolvers } from "./../types.generated.ts";
+export const Class: ClassResolvers = {
+  /* Implement Class resolver logic here */
+};

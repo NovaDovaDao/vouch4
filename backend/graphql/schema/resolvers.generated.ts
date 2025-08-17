@@ -6,22 +6,22 @@ import    { contractById as Query_contractById } from './resolvers/Query/contrac
 import    { contracts as Query_contracts } from './resolvers/Query/contracts';
 import    { gymById as Query_gymById } from './resolvers/Query/gymById';
 import    { gyms as Query_gyms } from './resolvers/Query/gyms';
-import    { memberById as Query_memberById } from './resolvers/Query/memberById';
-import    { members as Query_members } from './resolvers/Query/members';
 import    { membershipById as Query_membershipById } from './resolvers/Query/membershipById';
 import    { memberships as Query_memberships } from './resolvers/Query/memberships';
 import    { staff as Query_staff } from './resolvers/Query/staff';
 import    { staffById as Query_staffById } from './resolvers/Query/staffById';
 import    { tenancy as Query_tenancy } from './resolvers/Query/tenancy';
+import    { createClass as Mutation_createClass } from './resolvers/Mutation/createClass';
 import    { createGym as Mutation_createGym } from './resolvers/Mutation/createGym';
+import    { createStaff as Mutation_createStaff } from './resolvers/Mutation/createStaff';
 import    { createTenancy as Mutation_createTenancy } from './resolvers/Mutation/createTenancy';
-import    { createUser as Mutation_createUser } from './resolvers/Mutation/createUser';
+import    { deleteClass as Mutation_deleteClass } from './resolvers/Mutation/deleteClass';
 import    { deleteGym as Mutation_deleteGym } from './resolvers/Mutation/deleteGym';
-import    { deleteTenancy as Mutation_deleteTenancy } from './resolvers/Mutation/deleteTenancy';
-import    { deleteUser as Mutation_deleteUser } from './resolvers/Mutation/deleteUser';
+import    { deleteStaff as Mutation_deleteStaff } from './resolvers/Mutation/deleteStaff';
+import    { updateClass as Mutation_updateClass } from './resolvers/Mutation/updateClass';
 import    { updateGym as Mutation_updateGym } from './resolvers/Mutation/updateGym';
+import    { updateStaff as Mutation_updateStaff } from './resolvers/Mutation/updateStaff';
 import    { updateTenancy as Mutation_updateTenancy } from './resolvers/Mutation/updateTenancy';
-import    { updateUser as Mutation_updateUser } from './resolvers/Mutation/updateUser';
 import    { Booking } from './resolvers/Booking';
 import    { CheckIn } from './resolvers/CheckIn';
 import    { Class } from './resolvers/Class';
@@ -36,8 +36,8 @@ import    { UserTenancyAgreement } from './resolvers/UserTenancyAgreement';
 import    { Json } from './resolvers/Json';
 import    { DateTimeResolver } from 'graphql-scalars';
     export const resolvers: Resolvers = {
-      Query: { classById: Query_classById,classes: Query_classes,contractById: Query_contractById,contracts: Query_contracts,gymById: Query_gymById,gyms: Query_gyms,memberById: Query_memberById,members: Query_members,membershipById: Query_membershipById,memberships: Query_memberships,staff: Query_staff,staffById: Query_staffById,tenancy: Query_tenancy },
-      Mutation: { createGym: Mutation_createGym,createTenancy: Mutation_createTenancy,createUser: Mutation_createUser,deleteGym: Mutation_deleteGym,deleteTenancy: Mutation_deleteTenancy,deleteUser: Mutation_deleteUser,updateGym: Mutation_updateGym,updateTenancy: Mutation_updateTenancy,updateUser: Mutation_updateUser },
+      Query: { classById: Query_classById,classes: Query_classes,contractById: Query_contractById,contracts: Query_contracts,gymById: Query_gymById,gyms: Query_gyms,membershipById: Query_membershipById,memberships: Query_memberships,staff: Query_staff,staffById: Query_staffById,tenancy: Query_tenancy },
+      Mutation: { createClass: Mutation_createClass,createGym: Mutation_createGym,createStaff: Mutation_createStaff,createTenancy: Mutation_createTenancy,deleteClass: Mutation_deleteClass,deleteGym: Mutation_deleteGym,deleteStaff: Mutation_deleteStaff,updateClass: Mutation_updateClass,updateGym: Mutation_updateGym,updateStaff: Mutation_updateStaff,updateTenancy: Mutation_updateTenancy },
       
       Booking: Booking,
 CheckIn: CheckIn,

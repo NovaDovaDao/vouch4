@@ -12,6 +12,7 @@ import {
 } from "@/features/account/account.schema";
 import { graphql } from "@/graphql";
 import { execute } from "@/graphql/execute";
+import type { TenancyCreateInput } from "@/graphql/graphql";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
@@ -29,6 +30,13 @@ const GET_TENANCY = graphql(`
   }
 `);
 
+const CREATE_TENANCY = graphql(`
+  mutation CreateTenancy($data: TenancyCreateInput!) {
+    createTenancy(data: $data) {
+      id
+    }
+  }
+`);
 // const UPDATE_TENANCY = graphql(`
 // mutation UppdateTenancy(input: UpdateTenancyInput!) {
 //   id
@@ -37,14 +45,20 @@ const GET_TENANCY = graphql(`
 
 export default function AccountPage() {
   const {
-    data: account,
+    data: tenancy,
     dataUpdatedAt,
     isLoading,
-  } = useQuery({ queryKey: ["tenancy"], queryFn: () => execute(GET_TENANCY) });
-  const { isPending } = useMutation({
-    mutationKey: ["update-tenancy"],
-    // mutationFn: (input) => execute(UPDATE_TENANCY),
+  } = useQuery({
+    queryKey: ["tenancy"],
+    queryFn: () => execute(GET_TENANCY),
+    select: (data) => data.tenancy,
   });
+
+  const { mutateAsync: createTenancy, isPending } = useMutation({
+    mutationKey: ["create-tenancy"],
+    mutationFn: (data: TenancyCreateInput) => execute(CREATE_TENANCY, { data }),
+  });
+
   const form = useForm({
     resolver: zodResolver(accountSchema),
     defaultValues: {
@@ -57,18 +71,19 @@ export default function AccountPage() {
   useEffect(() => {
     if (dataUpdatedAt) {
       form.reset({
-        contactEmail: account?.tenancy.contactEmail ?? "",
-        legalName: account?.tenancy.legalName ?? "",
-        name: account?.tenancy.name ?? "",
+        contactEmail: tenancy?.contactEmail ?? "",
+        legalName: tenancy?.legalName ?? "",
+        name: tenancy?.name ?? "",
       });
     }
-  }, [dataUpdatedAt, account, form]);
+  }, [dataUpdatedAt, tenancy, form]);
 
   const queryClient = useQueryClient();
-  const handleSubmit = (body: AccountFormData) => {
-    queryClient.invalidateQueries({ queryKey: ["get", "/staff"] });
+  const handleSubmit = async (data: AccountFormData) => {
+    await createTenancy(data);
+    queryClient.invalidateQueries({ queryKey: ["tenancy", "get-session"] });
     toast.success("Success!", {
-      description: `Added ${body.name}!`,
+      description: `Updated ${data.name}!`,
     });
   };
 
@@ -77,7 +92,7 @@ export default function AccountPage() {
       <Card className="sm:max-w-sm">
         <CardHeader>
           <CardTitle>Edit Account</CardTitle>
-          {!account && (
+          {!tenancy && (
             <CardDescription>
               We need to setup your account first!
             </CardDescription>

@@ -1,6 +1,6 @@
 import { db } from "../../../../db.ts";
 import type { QueryResolvers } from "./../../types.generated.ts";
-export const membershipById: NonNullable<QueryResolvers["membershipById"]> = (
+export const membershipById: NonNullable<QueryResolvers['membershipById']> = (
   _parent,
   arg,
   _ctx

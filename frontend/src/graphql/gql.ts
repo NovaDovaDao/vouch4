@@ -15,19 +15,31 @@ import * as types from './graphql';
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 type Documents = {
+    "\n  query ClassOptions {\n    staff {\n      id\n      firstName\n      lastName\n    }\n    gyms {\n      id\n      name\n      legalEntityName\n    }\n  }\n": typeof types.ClassOptionsDocument,
+    "\n  mutation CreateClass($data: ClassCreateInput!) {\n    createClass(data: $data) {\n      id\n      name\n    }\n  }\n": typeof types.CreateClassDocument,
+    "\n  mutation CreateGym($data: GymCreateInput!) {\n    createGym(data: $data) {\n      id\n      name\n    }\n  }\n": typeof types.CreateGymDocument,
+    "\n  mutation CreateStaff($data: StaffCreateInput!) {\n    createStaff(data: $data) {\n      id\n      firstName\n    }\n  }\n": typeof types.CreateStaffDocument,
+    "\n  query GetStaffById($id: ID!) {\n    staffById(id: $id) {\n      createdAt\n      email\n      firstName\n      id\n      isActive\n      lastName\n      walletAddress\n      updatedAt\n      phoneNumber\n    }\n  }\n": typeof types.GetStaffByIdDocument,
+    "\n  mutation UpdateStaff($id: ID!, $data: StaffUpdateInput!) {\n    updateStaff(id: $id, data: $data) {\n      id\n      firstName\n    }\n  }\n": typeof types.UpdateStaffDocument,
     "\n  query GetTenancy {\n    tenancy {\n      id\n      contactEmail\n      legalName\n      name\n    }\n  }\n": typeof types.GetTenancyDocument,
-    "\n  query GetClasses {\n    classes {\n      id\n      description\n      name\n      capacity\n      scheduleDateTime\n      instructorId\n    }\n  }\n": typeof types.GetClassesDocument,
+    "\n  mutation CreateTenancy($data: TenancyCreateInput!) {\n    createTenancy(data: $data) {\n      id\n    }\n  }\n": typeof types.CreateTenancyDocument,
+    "\n  query GetClasses {\n    classes {\n      id\n      description\n      name\n      capacity\n      scheduleDateTime\n      instructor {\n        id\n        name\n      }\n      gym {\n        id\n        name\n      }\n    }\n  }\n": typeof types.GetClassesDocument,
     "\n  query GetGyms {\n    gyms {\n      id\n      address\n      name\n      legalDocsUrl\n      updatedAt\n    }\n  }\n": typeof types.GetGymsDocument,
-    "\n  query GetMembers {\n    members {\n      id\n      firstName\n      lastName\n      email\n      isActive\n      updatedAt\n    }\n  }\n": typeof types.GetMembersDocument,
     "\n  query GetContracts {\n    contracts {\n      id\n    }\n  }\n": typeof types.GetContractsDocument,
     "\n  query GetMemberships {\n    memberships {\n      id\n    }\n  }\n": typeof types.GetMembershipsDocument,
     "\n  query GetStaff {\n    staff {\n      id\n      firstName\n      lastName\n      updatedAt\n      isActive\n    }\n  }\n": typeof types.GetStaffDocument,
 };
 const documents: Documents = {
+    "\n  query ClassOptions {\n    staff {\n      id\n      firstName\n      lastName\n    }\n    gyms {\n      id\n      name\n      legalEntityName\n    }\n  }\n": types.ClassOptionsDocument,
+    "\n  mutation CreateClass($data: ClassCreateInput!) {\n    createClass(data: $data) {\n      id\n      name\n    }\n  }\n": types.CreateClassDocument,
+    "\n  mutation CreateGym($data: GymCreateInput!) {\n    createGym(data: $data) {\n      id\n      name\n    }\n  }\n": types.CreateGymDocument,
+    "\n  mutation CreateStaff($data: StaffCreateInput!) {\n    createStaff(data: $data) {\n      id\n      firstName\n    }\n  }\n": types.CreateStaffDocument,
+    "\n  query GetStaffById($id: ID!) {\n    staffById(id: $id) {\n      createdAt\n      email\n      firstName\n      id\n      isActive\n      lastName\n      walletAddress\n      updatedAt\n      phoneNumber\n    }\n  }\n": types.GetStaffByIdDocument,
+    "\n  mutation UpdateStaff($id: ID!, $data: StaffUpdateInput!) {\n    updateStaff(id: $id, data: $data) {\n      id\n      firstName\n    }\n  }\n": types.UpdateStaffDocument,
     "\n  query GetTenancy {\n    tenancy {\n      id\n      contactEmail\n      legalName\n      name\n    }\n  }\n": types.GetTenancyDocument,
-    "\n  query GetClasses {\n    classes {\n      id\n      description\n      name\n      capacity\n      scheduleDateTime\n      instructorId\n    }\n  }\n": types.GetClassesDocument,
+    "\n  mutation CreateTenancy($data: TenancyCreateInput!) {\n    createTenancy(data: $data) {\n      id\n    }\n  }\n": types.CreateTenancyDocument,
+    "\n  query GetClasses {\n    classes {\n      id\n      description\n      name\n      capacity\n      scheduleDateTime\n      instructor {\n        id\n        name\n      }\n      gym {\n        id\n        name\n      }\n    }\n  }\n": types.GetClassesDocument,
     "\n  query GetGyms {\n    gyms {\n      id\n      address\n      name\n      legalDocsUrl\n      updatedAt\n    }\n  }\n": types.GetGymsDocument,
-    "\n  query GetMembers {\n    members {\n      id\n      firstName\n      lastName\n      email\n      isActive\n      updatedAt\n    }\n  }\n": types.GetMembersDocument,
     "\n  query GetContracts {\n    contracts {\n      id\n    }\n  }\n": types.GetContractsDocument,
     "\n  query GetMemberships {\n    memberships {\n      id\n    }\n  }\n": types.GetMembershipsDocument,
     "\n  query GetStaff {\n    staff {\n      id\n      firstName\n      lastName\n      updatedAt\n      isActive\n    }\n  }\n": types.GetStaffDocument,
@@ -36,19 +48,43 @@ const documents: Documents = {
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function graphql(source: "\n  query ClassOptions {\n    staff {\n      id\n      firstName\n      lastName\n    }\n    gyms {\n      id\n      name\n      legalEntityName\n    }\n  }\n"): typeof import('./graphql').ClassOptionsDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation CreateClass($data: ClassCreateInput!) {\n    createClass(data: $data) {\n      id\n      name\n    }\n  }\n"): typeof import('./graphql').CreateClassDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation CreateGym($data: GymCreateInput!) {\n    createGym(data: $data) {\n      id\n      name\n    }\n  }\n"): typeof import('./graphql').CreateGymDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation CreateStaff($data: StaffCreateInput!) {\n    createStaff(data: $data) {\n      id\n      firstName\n    }\n  }\n"): typeof import('./graphql').CreateStaffDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query GetStaffById($id: ID!) {\n    staffById(id: $id) {\n      createdAt\n      email\n      firstName\n      id\n      isActive\n      lastName\n      walletAddress\n      updatedAt\n      phoneNumber\n    }\n  }\n"): typeof import('./graphql').GetStaffByIdDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation UpdateStaff($id: ID!, $data: StaffUpdateInput!) {\n    updateStaff(id: $id, data: $data) {\n      id\n      firstName\n    }\n  }\n"): typeof import('./graphql').UpdateStaffDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: "\n  query GetTenancy {\n    tenancy {\n      id\n      contactEmail\n      legalName\n      name\n    }\n  }\n"): typeof import('./graphql').GetTenancyDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query GetClasses {\n    classes {\n      id\n      description\n      name\n      capacity\n      scheduleDateTime\n      instructorId\n    }\n  }\n"): typeof import('./graphql').GetClassesDocument;
+export function graphql(source: "\n  mutation CreateTenancy($data: TenancyCreateInput!) {\n    createTenancy(data: $data) {\n      id\n    }\n  }\n"): typeof import('./graphql').CreateTenancyDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query GetClasses {\n    classes {\n      id\n      description\n      name\n      capacity\n      scheduleDateTime\n      instructor {\n        id\n        name\n      }\n      gym {\n        id\n        name\n      }\n    }\n  }\n"): typeof import('./graphql').GetClassesDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  query GetGyms {\n    gyms {\n      id\n      address\n      name\n      legalDocsUrl\n      updatedAt\n    }\n  }\n"): typeof import('./graphql').GetGymsDocument;
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n  query GetMembers {\n    members {\n      id\n      firstName\n      lastName\n      email\n      isActive\n      updatedAt\n    }\n  }\n"): typeof import('./graphql').GetMembersDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

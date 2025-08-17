@@ -19,6 +19,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { graphql } from "@/graphql";
+import { useQuery } from "@tanstack/react-query";
+import { execute } from "@/graphql/execute";
 
 interface ClassFormProps {
   form: UseFormReturn<ClassFormData>; // Pass the useForm hook's return value
@@ -27,6 +30,21 @@ interface ClassFormProps {
   isSubmitting: boolean;
 }
 
+const CLASS_FORM_OPTIONS = graphql(`
+  query ClassOptions {
+    staff {
+      id
+      firstName
+      lastName
+    }
+    gyms {
+      id
+      name
+      legalEntityName
+    }
+  }
+`);
+
 export default function ClassForm({ form, onSubmit }: ClassFormProps) {
   const {
     register,
@@ -34,14 +52,10 @@ export default function ClassForm({ form, onSubmit }: ClassFormProps) {
     formState: { errors },
   } = form;
   const [openCal, setOpenCal] = useState(false);
-  const { data: staff, isFetching: isFetchingStaff } = $api.useQuery(
-    "get",
-    "/staff"
-  );
-  const { data: gyms, isFetching: isFetchingGyms } = $api.useQuery(
-    "get",
-    "/gyms"
-  );
+  const { data: options, isFetching: isFetchingOptions } = useQuery({
+    queryKey: ["class", "options"],
+    queryFn: () => execute(CLASS_FORM_OPTIONS),
+  });
 
   return (
     <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
@@ -109,7 +123,7 @@ export default function ClassForm({ form, onSubmit }: ClassFormProps) {
         <Label htmlFor="gym">Gym</Label>
         <Select
           {...register("gymId")}
-          disabled={isFetchingGyms}
+          disabled={isFetchingOptions}
           onValueChange={(val) => form.setValue("gymId", val)}
         >
           <SelectTrigger
@@ -120,7 +134,7 @@ export default function ClassForm({ form, onSubmit }: ClassFormProps) {
             <SelectValue placeholder="Assign Gym" />
           </SelectTrigger>
           <SelectContent align="end">
-            {gyms?.map((gym) => (
+            {options?.gyms.map((gym) => (
               <SelectItem value={gym.id}>
                 {gym.name} ({gym.legalEntityName})
               </SelectItem>
@@ -132,7 +146,7 @@ export default function ClassForm({ form, onSubmit }: ClassFormProps) {
         <Label htmlFor="capacity">Instructor</Label>
         <Select
           {...register("instructorId")}
-          disabled={isFetchingStaff}
+          disabled={isFetchingOptions}
           onValueChange={(val) => form.setValue("instructorId", val)}
         >
           <SelectTrigger
@@ -143,8 +157,8 @@ export default function ClassForm({ form, onSubmit }: ClassFormProps) {
             <SelectValue placeholder="Assign instructor" />
           </SelectTrigger>
           <SelectContent align="end">
-            {staff?.map((instructor) => (
-              <SelectItem value={instructor.id}>
+            {options?.staff.map((instructor, i) => (
+              <SelectItem key={i} value={instructor.id}>
                 {instructor.lastName}, {instructor.firstName}
               </SelectItem>
             ))}

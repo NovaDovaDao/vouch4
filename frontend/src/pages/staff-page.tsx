@@ -40,6 +40,7 @@ export default function StaffPage() {
   const { data, isLoading } = useQuery({
     queryKey: ["staff"],
     queryFn: () => execute(GET_STAFF),
+    select: (data) => data.staff,
   });
   const [editStaffId, setEditStaffId] = useState<string | null>(null);
   const dialogStore = useDialogStore();
@@ -86,7 +87,7 @@ export default function StaffPage() {
         className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
       >
         <DataTable
-          data={data?.staff ?? []}
+          data={data ?? []}
           loading={isLoading}
           columns={[
             {

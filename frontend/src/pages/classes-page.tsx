@@ -16,7 +16,14 @@ const GET_CLASSES = graphql(`
       name
       capacity
       scheduleDateTime
-      instructorId
+      instructor {
+        id
+        name
+      }
+      gym {
+        id
+        name
+      }
     }
   }
 `);
@@ -45,7 +52,17 @@ export default function ClassesPage() {
           .fill(null)
           .map((_, i) => <Skeleton className="h-full min-h-36" key={i} />)}
       {data?.classes.map((c) => (
-        <ClassCard key={c.id} gymClass={c} />
+        <ClassCard
+          key={c.id}
+          gymClass={{
+            capacity: c.capacity,
+            name: c.name,
+            scheduleDateTime: c.scheduleDateTime,
+            description: c.description ?? "",
+            gymName: c.gym?.name,
+            instructorName: c.instructor?.name ?? "",
+          }}
+        />
       ))}
     </div>
   );

@@ -15,7 +15,6 @@ import DashboardPage from "./pages/dashboard-page.tsx";
 import NotFoundPage from "./pages/not-found-page.tsx";
 import AppLayout from "./layouts/app-layout.tsx";
 import SetPasswordPage from "./pages/set-password-page.tsx";
-import MembersPage from "./pages/members-page.tsx";
 import LogoutPage from "./pages/logout-page.tsx";
 import ClassesPage from "./pages/classes-page.tsx";
 import StaffPage from "./pages/staff-page.tsx";
@@ -34,10 +33,9 @@ function App() {
       <AuthProvider>
         <Router>
           <Routes>
-            <Route element={<ProtectedRoute requiredRoles={[]} />}>
+            <Route element={<ProtectedRoute requiredRoles={["STAFF"]} />}>
               <Route path="/" element={<AppLayout />}>
                 <Route index element={<DashboardPage />} />
-                <Route path="members" element={<MembersPage />} />
                 <Route path="staff" element={<StaffPage />} />
                 <Route path="classes" element={<ClassesPage />} />
                 <Route path="gyms" element={<GymsPage />} />
@@ -71,7 +69,7 @@ function App() {
             <Route path="*" element={<Navigate to="/not-found" replace />} />
           </Routes>
         </Router>
-        <Toaster /> {/* Shadcn Toaster component */}
+        <Toaster />
       </AuthProvider>
     </QueryClientProvider>
   );

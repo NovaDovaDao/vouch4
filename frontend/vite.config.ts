@@ -12,9 +12,16 @@ export default defineConfig({
     },
   },
   server: {
+    cors: {
+      origin: "*",
+    },
     port: 1337,
     proxy: {
       "/api": {
+        target: "http://localhost:8000",
+        changeOrigin: true,
+      },
+      "/graphql": {
         target: "http://localhost:8000",
         changeOrigin: true,
       },

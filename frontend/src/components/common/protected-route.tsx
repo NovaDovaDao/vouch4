@@ -1,18 +1,17 @@
 import React from "react";
-import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../../features/auth/use-auth";
-import type { User } from "@/api/client";
+import type { BetterAuthUser } from "@/lib/auth";
 import AppLoading from "../app-loading";
 
 interface ProtectedRouteProps {
-  requiredRoles?: User["role"][];
+  requiredRoles?: BetterAuthUser["category"][];
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   requiredRoles = [],
 }) => {
-  const { user, canAccess, isLoading } = useAuth();
-  const location = useLocation();
+  const { canAccess, isLoading, user } = useAuth();
 
   if (isLoading) {
     return <AppLoading />;
@@ -22,9 +21,9 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return <Navigate to="/login" replace />;
   }
 
-  if (!user.hasTenancy && location.pathname !== "/account") {
-    return <Navigate to="/account" replace />;
-  }
+  // if (location.pathname !== "/account") {
+  //   return <Navigate to="/account" replace />;
+  // }
 
   if (requiredRoles.length > 0 && !canAccess(requiredRoles)) {
     return (

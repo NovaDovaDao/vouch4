@@ -1,4 +1,4 @@
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { DrawerClose, DrawerFooter } from "@/components/ui/drawer";
@@ -9,6 +9,37 @@ import { staffSchema, type StaffFormData } from "./staff.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import StaffForm from "./staff-form";
+import { graphql } from "@/graphql";
+import { execute } from "@/graphql/execute";
+import type {
+  UpdateStaffMutationVariables,
+  StaffUpdateInput,
+} from "@/graphql/graphql";
+
+const GET_STAFF_BY_ID = graphql(`
+  query GetStaffById($id: ID!) {
+    staffById(id: $id) {
+      createdAt
+      email
+      firstName
+      id
+      isActive
+      lastName
+      walletAddress
+      updatedAt
+      phoneNumber
+    }
+  }
+`);
+
+const UPDATE_STAFF = graphql(`
+  mutation UpdateStaff($id: ID!, $data: StaffUpdateInput!) {
+    updateStaff(id: $id, data: $data) {
+      id
+      firstName
+    }
+  }
+`);
 
 type UpdateStaffDrawerProps = {
   id: string | null;
@@ -18,42 +49,38 @@ export default function UpdateStaffForm({
   id,
   onClose,
 }: UpdateStaffDrawerProps) {
-  const { data } = $api.useQuery(
-    "get",
-    "/staff/{id}",
-    {
-      params: { path: { id: id ?? "" } },
-      cache: "no-cache",
-    },
-    { enabled: !!id }
-  );
+  const { data } = useQuery({
+    queryKey: ["staff", id],
+    queryFn: () => execute(GET_STAFF_BY_ID, { id: id! }),
+    enabled: !!id,
+  });
 
   const queryClient = useQueryClient();
-  const { mutate, isPending } = $api.useMutation("put", "/staff/{id}");
-  const handleSubmit = (body: UpdateStaff) =>
-    mutate(
-      { body, params: { path: { id: id! } } },
-      {
-        onSuccess: (data) => {
-          queryClient.invalidateQueries({ queryKey: ["get", "/staff"] });
-          toast.success("Success!", {
-            description: `Updated ${data?.firstName}'s data!`,
-          });
-          onClose();
-        },
-      }
-    );
+  const { mutate: updateStaff, isPending } = useMutation({
+    mutationKey: ["staff", "update", id],
+    mutationFn: (variables: UpdateStaffMutationVariables) =>
+      execute(UPDATE_STAFF, variables),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["staff"] });
+      toast.success("Success!", {
+        description: `Updated ${data}'s data!`,
+      });
+      onClose();
+    },
+  });
+  const handleSubmit = (body: StaffUpdateInput) =>
+    updateStaff({ id: id!, data: body });
 
   if (data)
     return (
       <UpdateStaffDrawerWrapper
         id={id}
         data={{
-          email: data.email,
-          firstName: data.firstName,
-          isActive: data.isActive,
-          lastName: data.lastName,
-          phoneNumber: data.phoneNumber ?? "",
+          email: data.staffById.email,
+          firstName: data.staffById.firstName,
+          isActive: data.staffById.isActive,
+          lastName: data.staffById.lastName,
+          phoneNumber: data.staffById.phoneNumber ?? "",
         }}
         onClose={onClose}
         onSubmit={handleSubmit}

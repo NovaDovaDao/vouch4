@@ -4,6 +4,9 @@ import { openAPI } from "better-auth/plugins";
 import { db } from "./db.ts";
 
 export const auth = betterAuth({
+  advanced: {
+    cookiePrefix: "ascend",
+  },
   appName: "Ascend",
   database: prismaAdapter(db, {
     provider: "postgresql",
@@ -12,7 +15,7 @@ export const auth = betterAuth({
       update: true,
     },
   }),
-  trustedOrigins: ["http://localhost:1337/"],
+  trustedOrigins: ["http://localhost:1337"],
   emailAndPassword: {
     enabled: true,
   },
@@ -22,6 +25,7 @@ export const auth = betterAuth({
     cookieCache: {
       enabled: true,
     },
+    expiresIn: 60 * 60 * 24 * 7, // 7 days?
   },
   user: {
     additionalFields: {

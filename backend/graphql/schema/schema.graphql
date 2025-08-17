@@ -1,12 +1,6 @@
 scalar DateTime
 scalar Json
 
-# --- ENUMS ---
-enum UserCategory {
-  MEMBER
-  STAFF
-}
-
 enum UserAtGymRole {
   MANAGER
   TRAINER
@@ -61,14 +55,13 @@ type User {
   email: String!
   firstName: String!
   lastName: String!
-  category: UserCategory!
+  name: String
   isSuperUser: Boolean!
   isActive: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
   walletAddress: String
   phoneNumber: String
-  profilePicUrl: String
 }
 
 type MembershipNFT {
@@ -80,22 +73,6 @@ type MembershipNFT {
   updatedAt: DateTime!
   isActive: Boolean!
   isCurrentlyRented: Boolean!
-}
-
-type User {
-  id: ID!
-  email: String!
-  passwordHash: String
-  firstName: String!
-  lastName: String!
-  category: UserCategory!
-  isSuperUser: Boolean!
-  isActive: Boolean!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  walletAddress: String
-  phoneNumber: String
-  profilePicUrl: String
 }
 
 type UserTenancyAgreement {
@@ -132,34 +109,66 @@ input TenancyUpdateInput {
   contactEmail: String
 }
 
+# --- CLASS INPUTS ---
+input ClassCreateInput {
+  name: String!
+  description: String
+  capacity: Int!
+  gymId: ID!
+  instructorId: ID
+  scheduleDateTime: String!
+}
+
+input ClassUpdateInput {
+  name: String
+  description: String
+  capacity: Int
+  gymId: ID
+  instructorId: ID
+  scheduleDateTime: String
+}
+
 # --- GYM INPUTS ---
+input GymAddressInput {
+  street1: String
+  city: String
+  state: String
+  zip: String
+  country: String
+}
+
 input GymCreateInput {
   name: String!
-  address: Json!
-  tenancyId: String!
+  address: GymAddressInput!
   legalEntityName: String
   legalDocsUrl: String
 }
 
 input GymUpdateInput {
   name: String
-  address: Json
+  address: GymAddressInput
   legalEntityName: String
   legalDocsUrl: String
 }
 
-input UserUpdateInput {
+input StaffCreateInput {
+  email: String!
+  firstName: String!
+  lastName: String!
+  isSuperUser: Boolean
+  isActive: Boolean
+  walletAddress: String
+  phoneNumber: String
+}
+
+input StaffUpdateInput {
   email: String
   firstName: String
   lastName: String
-  category: UserCategory
   isSuperUser: Boolean
   isActive: Boolean
-  createdAt: DateTime
-  updatedAt: DateTime
   walletAddress: String
   phoneNumber: String
-  profilePicUrl: String
 }
 
 type Booking {
@@ -181,8 +190,8 @@ type Class {
   description: String
   scheduleDateTime: DateTime!
   capacity: Int!
-  gymId: ID!
-  instructorId: ID
+  gym: Gym
+  instructor: User
   createdAt: DateTime
   updatedAt: DateTime
   bookings: [Booking!]
@@ -194,10 +203,6 @@ type CheckIn {
 }
 
 type Query {
-  # --- MEMBERS QUERIES ---
-  members: [User!]!
-  memberById(id: ID!): User!
-
   # --- STAFF QUERIES ---
   staff: [User!]!
   staffById(id: ID!): User!
@@ -226,21 +231,19 @@ type Mutation {
   # --- TENANCY MUTATIONS ---
   createTenancy(data: TenancyCreateInput!): Tenancy!
   updateTenancy(id: ID!, data: TenancyUpdateInput!): Tenancy!
-  deleteTenancy(id: ID!): Tenancy
 
   # --- GYM MUTATIONS ---
   createGym(data: GymCreateInput!): Gym!
   updateGym(id: ID!, data: GymUpdateInput!): Gym!
-  deleteGym(id: ID!): Gym
+  deleteGym(id: ID!): Boolean!
 
-  # --- USER MUTATIONS ---
-  # Note: Create user would likely have a more complex input (e.g., password)
-  createUser(
-    email: String!
-    firstName: String!
-    lastName: String!
-    category: UserCategory!
-  ): User!
-  updateUser(id: ID!, data: UserUpdateInput!): User!
-  deleteUser(id: ID!): User
+  # --- CLASS MUTATIONS ---
+  createClass(data: ClassCreateInput!): Class!
+  updateClass(id: ID!, data: ClassUpdateInput!): Class!
+  deleteClass(id: ID!): Boolean!
+
+  # --- Staff MUTATIONS ---
+  createStaff(data: StaffCreateInput!): User!
+  updateStaff(id: ID!, data: StaffUpdateInput!): User!
+  deleteStaff(id: ID!): Boolean!
 }

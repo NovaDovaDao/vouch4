@@ -1,12 +1,12 @@
-import type { User } from "@/graphql/graphql";
+import type { BetterAuthUser } from "@/lib/auth";
 import { createContext, useContext } from "react";
 
 export interface AuthState {
-  user?: User;
+  user?: BetterAuthUser;
   isLoading: boolean;
   init: () => Promise<unknown>;
   logout: () => Promise<void>;
-  canAccess: (role: User["category"][]) => boolean;
+  canAccess: (role: BetterAuthUser["category"][]) => boolean;
 }
 
 export const AuthContext = createContext<AuthState | null>(null);

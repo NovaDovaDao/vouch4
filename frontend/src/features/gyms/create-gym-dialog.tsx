@@ -11,9 +11,23 @@ import GymForm from "./gym-form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { gymSchema } from "./gym.schema";
-import { useQueryClient } from "@tanstack/react-query";
-import { $api, type CreateGym } from "@/api/client";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { graphql } from "@/graphql";
+import { execute } from "@/graphql/execute";
+import type {
+  CreateGymMutationVariables,
+  GymCreateInput,
+} from "@/graphql/graphql";
+
+const CREATE_GYM = graphql(`
+  mutation CreateGym($data: GymCreateInput!) {
+    createGym(data: $data) {
+      id
+      name
+    }
+  }
+`);
 
 export default function CreateGymDialog({
   handleOpen,
@@ -35,21 +49,24 @@ export default function CreateGymDialog({
     },
   });
   const queryClient = useQueryClient();
-  const { mutate, isPending } = $api.useMutation("post", "/gyms");
+  const { mutate, isPending } = useMutation({
+    mutationKey: ["create-gym"],
+    mutationFn: (variables: CreateGymMutationVariables) =>
+      execute(CREATE_GYM, variables),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["gyms"] });
+      toast.success("Success!", {
+        description: `Added! ${data.createGym.name}`,
+      });
+      handleOpen(false);
+    },
+  });
 
-  const handleSubmit = (body: CreateGym) =>
-    mutate(
-      { body },
-      {
-        onSuccess: (data) => {
-          queryClient.invalidateQueries({ queryKey: ["get", "gyms"] });
-          toast.success("Success!", {
-            description: `Added ${data.name}!`,
-          });
-          handleOpen(false);
-        },
-      }
-    );
+  const handleSubmit = (body: GymCreateInput) => {
+    mutate({
+      data: body,
+    });
+  };
 
   return (
     <Dialog open onOpenChange={handleOpen}>

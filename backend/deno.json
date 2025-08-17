@@ -1,11 +1,13 @@
 {
   "tasks": {
     "dev": "deno run -A --env --watch --unstable-sloppy-imports main.ts",
-    "seed": "deno run -A --env prisma/seed.ts"
+    "seed": "deno run -A --env prisma/seed.ts",
+    "generate-token": "deno run -A --env jwt.ts"
   },
   "imports": {
     "@oak/oak": "jsr:@oak/oak@^17.1.6",
     "@std/assert": "jsr:@std/assert@1",
-    "graphql-yoga": "npm:graphql-yoga@^3.7.3"
+    "graphql-yoga": "npm:graphql-yoga@^3.7.3",
+    "jose": "npm:jose@5.9.6"
   }
 }
