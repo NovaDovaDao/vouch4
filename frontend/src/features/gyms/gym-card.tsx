@@ -9,15 +9,17 @@ import {
 import type { Gym } from "@/graphql/graphql";
 import { IconClipboardData, IconMap2 } from "@tabler/icons-react";
 import { formatDistanceToNow } from "date-fns";
-import type { PropsWithChildren } from "react";
+import type { ComponentProps, PropsWithChildren } from "react";
 
 export default function GymCard({
   gym,
+  cardProps,
 }: PropsWithChildren<{
+  cardProps?: ComponentProps<typeof Card>;
   gym: Pick<Gym, "name" | "legalDocsUrl" | "address" | "updatedAt">;
 }>) {
   return (
-    <Card className="@container/card">
+    <Card className="@container/card" {...cardProps}>
       <CardHeader>
         <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
           {gym.name}

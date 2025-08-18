@@ -123,15 +123,16 @@ export default function ClassForm({ form, onSubmit }: ClassFormProps) {
         <Label htmlFor="gym">Gym</Label>
         <Select
           {...register("gymId")}
+          value={form.getValues("gymId")}
           disabled={isFetchingOptions}
           onValueChange={(val) => form.setValue("gymId", val)}
         >
           <SelectTrigger
-            className="w-38 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate"
+            className="w-full **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate"
             size="sm"
             id="gym"
           >
-            <SelectValue placeholder="Assign Gym" />
+            <SelectValue placeholder="Assign gym" />
           </SelectTrigger>
           <SelectContent align="end">
             {options?.gyms.map((gym) => (
@@ -147,10 +148,11 @@ export default function ClassForm({ form, onSubmit }: ClassFormProps) {
         <Select
           {...register("instructorId")}
           disabled={isFetchingOptions}
+          defaultValue={form.getValues("instructorId") ?? ""}
           onValueChange={(val) => form.setValue("instructorId", val)}
         >
           <SelectTrigger
-            className="w-38 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate"
+            className="w-full **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate"
             size="sm"
             id="location"
           >

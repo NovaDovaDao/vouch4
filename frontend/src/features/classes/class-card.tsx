@@ -9,10 +9,11 @@ import {
 } from "@/components/ui/card";
 import { IconCalendar, IconUsersGroup } from "@tabler/icons-react";
 import { format } from "date-fns";
-import type { PropsWithoutRef } from "react";
+import type { ComponentProps, PropsWithoutRef } from "react";
 
 export default function ClassCard({
   gymClass,
+  cardProps,
 }: PropsWithoutRef<{
   gymClass: {
     name: string;
@@ -22,9 +23,10 @@ export default function ClassCard({
     instructorName?: string;
     gymName?: string;
   };
+  cardProps?: ComponentProps<typeof Card>;
 }>) {
   return (
-    <Card className="@container/card">
+    <Card className="@container/card" {...cardProps}>
       <CardHeader>
         <CardDescription>{gymClass.description}</CardDescription>
         <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">

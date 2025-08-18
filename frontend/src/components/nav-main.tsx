@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Link, useLocation } from "react-router-dom";
 import NavQuickCreate from "./nav-quick-create";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type Item = {
   title: string;
@@ -20,6 +21,7 @@ type Item = {
 
 export function NavMain({ items }: { items: Item[] }) {
   const location = useLocation();
+  const isMobile = useIsMobile();
   const { toggleSidebar } = useSidebar();
   return (
     <SidebarGroup>
@@ -39,7 +41,11 @@ export function NavMain({ items }: { items: Item[] }) {
         </SidebarMenu>
         <SidebarMenu>
           {items.map((item, i) => (
-            <Link to={item.url} key={i} onClick={toggleSidebar}>
+            <Link
+              to={item.url}
+              key={i}
+              onClick={() => (isMobile ? toggleSidebar() : undefined)}
+            >
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton
                   tooltip={item.title}

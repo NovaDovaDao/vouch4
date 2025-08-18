@@ -352,12 +352,47 @@ export type CreateClassMutationVariables = Exact<{
 
 export type CreateClassMutation = { __typename?: 'Mutation', createClass: { __typename?: 'Class', id: string, name: string } };
 
+export type GetClassByIdQueryVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type GetClassByIdQuery = { __typename?: 'Query', classById: { __typename?: 'Class', capacity: number, description?: string | null, name: string, scheduleDateTime: any, gym?: { __typename?: 'Gym', id: string, name: string } | null, instructor?: { __typename?: 'User', id: string, name?: string | null } | null } };
+
+export type UpdateClassMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+  data: ClassUpdateInput;
+}>;
+
+
+export type UpdateClassMutation = { __typename?: 'Mutation', updateClass: { __typename?: 'Class', id: string, name: string } };
+
 export type CreateGymMutationVariables = Exact<{
   data: GymCreateInput;
 }>;
 
 
 export type CreateGymMutation = { __typename?: 'Mutation', createGym: { __typename?: 'Gym', id: string, name: string } };
+
+export type GetGymOptionsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetGymOptionsQuery = { __typename?: 'Query', gyms: Array<{ __typename?: 'Gym', id: string, name: string }> };
+
+export type GetGymByIdQueryVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type GetGymByIdQuery = { __typename?: 'Query', gymById?: { __typename?: 'Gym', name: string, address?: any | null, legalDocsUrl?: string | null, legalEntityName?: string | null } | null };
+
+export type UpdateGymMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+  data: GymUpdateInput;
+}>;
+
+
+export type UpdateGymMutation = { __typename?: 'Mutation', updateGym: { __typename?: 'Gym', id: string, name: string } };
 
 export type CreateStaffMutationVariables = Exact<{
   data: StaffCreateInput;
@@ -459,6 +494,32 @@ export const CreateClassDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<CreateClassMutation, CreateClassMutationVariables>;
+export const GetClassByIdDocument = new TypedDocumentString(`
+    query GetClassById($id: ID!) {
+  classById(id: $id) {
+    capacity
+    description
+    gym {
+      id
+      name
+    }
+    instructor {
+      id
+      name
+    }
+    name
+    scheduleDateTime
+  }
+}
+    `) as unknown as TypedDocumentString<GetClassByIdQuery, GetClassByIdQueryVariables>;
+export const UpdateClassDocument = new TypedDocumentString(`
+    mutation UpdateClass($id: ID!, $data: ClassUpdateInput!) {
+  updateClass(id: $id, data: $data) {
+    id
+    name
+  }
+}
+    `) as unknown as TypedDocumentString<UpdateClassMutation, UpdateClassMutationVariables>;
 export const CreateGymDocument = new TypedDocumentString(`
     mutation CreateGym($data: GymCreateInput!) {
   createGym(data: $data) {
@@ -467,6 +528,32 @@ export const CreateGymDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<CreateGymMutation, CreateGymMutationVariables>;
+export const GetGymOptionsDocument = new TypedDocumentString(`
+    query GetGymOptions {
+  gyms {
+    id
+    name
+  }
+}
+    `) as unknown as TypedDocumentString<GetGymOptionsQuery, GetGymOptionsQueryVariables>;
+export const GetGymByIdDocument = new TypedDocumentString(`
+    query GetGymById($id: ID!) {
+  gymById(id: $id) {
+    name
+    address
+    legalDocsUrl
+    legalEntityName
+  }
+}
+    `) as unknown as TypedDocumentString<GetGymByIdQuery, GetGymByIdQueryVariables>;
+export const UpdateGymDocument = new TypedDocumentString(`
+    mutation UpdateGym($id: ID!, $data: GymUpdateInput!) {
+  updateGym(id: $id, data: $data) {
+    id
+    name
+  }
+}
+    `) as unknown as TypedDocumentString<UpdateGymMutation, UpdateGymMutationVariables>;
 export const CreateStaffDocument = new TypedDocumentString(`
     mutation CreateStaff($data: StaffCreateInput!) {
   createStaff(data: $data) {

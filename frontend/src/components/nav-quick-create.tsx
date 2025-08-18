@@ -17,17 +17,12 @@ type Option = {
 
 const options: Option[] = [
   {
-    label: "Create Member",
-    shortcut: "m",
-    type: "createMember",
-  },
-  {
-    label: "Create Staff",
+    label: "Staff",
     shortcut: "s",
     type: "createStaff",
   },
   {
-    label: "Create Class",
+    label: "Class",
     shortcut: "c",
     type: "createClass",
   },

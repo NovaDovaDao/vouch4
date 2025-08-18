@@ -5,82 +5,84 @@ import { DrawerClose, DrawerFooter } from "@/components/ui/drawer";
 import FormDrawer from "@/components/common/form-drawer";
 import { Button } from "@/components/ui/button";
 
-import { staffSchema, type StaffFormData } from "./staff.schema";
+import { classSchema, type ClassFormData } from "./class.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import StaffForm from "./staff-form";
+import ClassForm from "./class-form";
 import { graphql } from "@/graphql";
 import { execute } from "@/graphql/execute";
-import type {
-  UpdateStaffMutationVariables,
-  StaffUpdateInput,
-} from "@/graphql/graphql";
+import type { UpdateClassMutationVariables } from "@/graphql/graphql";
 
-const GET_STAFF_BY_ID = graphql(`
-  query GetStaffById($id: ID!) {
-    staffById(id: $id) {
-      createdAt
-      email
-      firstName
-      id
-      isActive
-      lastName
-      walletAddress
-      updatedAt
-      phoneNumber
+const GET_CLASS_BY_ID = graphql(`
+  query GetClassById($id: ID!) {
+    classById(id: $id) {
+      capacity
+      description
+      gym {
+        id
+        name
+      }
+      instructor {
+        id
+        name
+      }
+      name
+      scheduleDateTime
     }
   }
 `);
 
-const UPDATE_STAFF = graphql(`
-  mutation UpdateStaff($id: ID!, $data: StaffUpdateInput!) {
-    updateStaff(id: $id, data: $data) {
+const UPDATE_CLASS = graphql(`
+  mutation UpdateClass($id: ID!, $data: ClassUpdateInput!) {
+    updateClass(id: $id, data: $data) {
       id
-      firstName
+      name
     }
   }
 `);
 
-type UpdateStaffDrawerProps = {
+type UpdateClassDrawerProps = {
   id: string | null;
   onClose: () => void;
 };
-export default function UpdateStaffForm({
+export default function UpdateClassForm({
   id,
   onClose,
-}: UpdateStaffDrawerProps) {
+}: UpdateClassDrawerProps) {
   const { data } = useQuery({
     queryKey: ["staff", id],
-    queryFn: () => execute(GET_STAFF_BY_ID, { id: id! }),
+    queryFn: () => execute(GET_CLASS_BY_ID, { id: id! }),
     enabled: !!id,
+    select: (data) => data.classById,
   });
 
   const queryClient = useQueryClient();
   const { mutate: updateStaff, isPending } = useMutation({
     mutationKey: ["staff", "update", id],
-    mutationFn: (variables: UpdateStaffMutationVariables) =>
-      execute(UPDATE_STAFF, variables),
+    mutationFn: (variables: UpdateClassMutationVariables) =>
+      execute(UPDATE_CLASS, variables),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["staff"] });
+      queryClient.invalidateQueries({ queryKey: ["classes"] });
       toast.success("Success!", {
-        description: `Updated ${data.updateStaff.firstName}'s data!`,
+        description: `Updated ${data.updateClass.name}'s data!`,
       });
       onClose();
     },
   });
-  const handleSubmit = (body: StaffUpdateInput) =>
+  const handleSubmit = (body: ClassFormData) =>
     updateStaff({ id: id!, data: body });
 
   if (data)
     return (
-      <UpdateStaffDrawerWrapper
+      <UpdateClassDrawerWrapper
         id={id}
         data={{
-          email: data.staffById.email,
-          firstName: data.staffById.firstName,
-          isActive: data.staffById.isActive,
-          lastName: data.staffById.lastName,
-          phoneNumber: data.staffById.phoneNumber ?? "",
+          capacity: data.capacity,
+          description: data.description ?? "",
+          gymId: data.gym?.id ?? "",
+          instructorId: data.instructor?.id ?? "",
+          name: data.name,
+          scheduleDateTime: data.scheduleDateTime,
         }}
         onClose={onClose}
         onSubmit={handleSubmit}
@@ -89,34 +91,34 @@ export default function UpdateStaffForm({
     );
 }
 
-type UpdateStaffDrawerWrapperProps = UpdateStaffDrawerProps & {
-  data: StaffFormData;
-  onSubmit: (data: StaffFormData) => void;
+type UpdateClassDrawerWrapperProps = UpdateClassDrawerProps & {
+  data: ClassFormData;
+  onSubmit: (data: ClassFormData) => void;
   isSubmitting: boolean;
 };
-function UpdateStaffDrawerWrapper({
+function UpdateClassDrawerWrapper({
   id,
   data,
   onClose,
   onSubmit,
   isSubmitting,
-}: UpdateStaffDrawerWrapperProps) {
+}: UpdateClassDrawerWrapperProps) {
   const form = useForm({
-    resolver: zodResolver(staffSchema),
+    resolver: zodResolver(classSchema),
     defaultValues: data,
   });
 
-  function handleSubmit(data: StaffFormData) {
+  function handleSubmit(data: ClassFormData) {
     onSubmit(data);
   }
   return (
     <FormDrawer
-      title={`Edit ${data?.firstName ?? "Staff"}`}
+      title={`Edit ${data?.name ?? "Staff"}`}
       description="Edit Staff information"
       drawerProps={{ open: !!id, onClose }}
     >
       <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm">
-        <StaffForm
+        <ClassForm
           form={form}
           isSubmitting={isSubmitting}
           onSubmit={handleSubmit}

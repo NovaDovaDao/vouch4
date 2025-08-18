@@ -49,7 +49,11 @@ export default function GymForm({ form, onSubmit }: GymFormProps) {
       </div>
       <div className="flex flex-col gap-3">
         <Label>State</Label>
-        <Select {...register("address.state")}>
+        <Select
+          {...register("address.state")}
+          value={form.getValues("address.state")}
+          onValueChange={(val) => form.setValue("address.state", val)}
+        >
           <SelectTrigger
             className="w-38 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate"
             size="sm"
@@ -63,12 +67,16 @@ export default function GymForm({ form, onSubmit }: GymFormProps) {
       </div>
       <div className="flex flex-col gap-3">
         <Label>Country</Label>
-        <Select {...register("address.country")}>
+        <Select
+          {...register("address.country")}
+          value={form.getValues("address.country")}
+          onValueChange={(val) => form.setValue("address.country", val)}
+        >
           <SelectTrigger
             className="w-38 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate"
             size="sm"
           >
-            <SelectValue placeholder="Assign Gym" />
+            <SelectValue placeholder="Select country" />
           </SelectTrigger>
           <SelectContent align="end">
             <SelectItem value="United States">United States</SelectItem>
