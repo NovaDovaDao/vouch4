@@ -4,6 +4,8 @@ export type DialogPayload =
   | { type: "createStaff" }
   | { type: "createClass" }
   | { type: "createGym" }
+  | { type: "search" }
+  | { type: "help" }
   | { type: null }; // Represents no Dialog being open
 
 interface DialogStore {

@@ -10,7 +10,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Link } from "react-router-dom";
 
 export function NavSecondary({
   items,
@@ -18,7 +17,7 @@ export function NavSecondary({
 }: {
   items: {
     title: string;
-    url: string;
+    onClick: () => void;
     icon: Icon;
   }[];
 } & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
@@ -28,11 +27,9 @@ export function NavSecondary({
         <SidebarMenu>
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild>
-                <Link to={item.url}>
-                  <item.icon />
-                  <span>{item.title}</span>
-                </Link>
+              <SidebarMenuButton onClick={item.onClick}>
+                <item.icon />
+                <span>{item.title}</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}

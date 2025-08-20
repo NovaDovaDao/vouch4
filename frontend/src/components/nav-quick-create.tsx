@@ -26,6 +26,11 @@ const options: Option[] = [
     shortcut: "c",
     type: "createClass",
   },
+  {
+    label: "Gym",
+    shortcut: "g",
+    type: "createGym",
+  },
 ];
 
 export default function NavQuickCreate() {
