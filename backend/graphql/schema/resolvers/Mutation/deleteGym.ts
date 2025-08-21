@@ -1,8 +1,10 @@
+import { CustomContext } from "../../../server.ts";
 import type { MutationResolvers } from "./../../types.generated.ts";
-export const deleteGym: NonNullable<MutationResolvers['deleteGym']> = async (
+export const deleteGym: NonNullable<MutationResolvers["deleteGym"]> = async (
   _parent,
-  _arg,
-  _ctx
+  arg,
+  ctx: CustomContext
 ) => {
-  /* Implement Mutation.deleteGym resolver logic here */
+  const response = await ctx.db.gym.delete({ where: { id: arg.id } });
+  return !!response.id;
 };

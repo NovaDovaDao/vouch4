@@ -5,9 +5,10 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
-  output   = "./generated"
-  runtime  = "deno"
+  provider      = "prisma-client"
+  output        = "./generated"
+  runtime       = "deno"
+  binaryTargets = ["native", "linux-arm64-openssl-1.1.x"]
 }
 
 datasource db {

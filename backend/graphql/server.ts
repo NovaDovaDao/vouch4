@@ -21,7 +21,8 @@ export const yogaServer = createYoga({
     typeDefs,
     resolvers,
   }),
-  context: async ({ request }) => {
+  logging: "debug",
+  context: async ({ request, params }) => {
     const session = await auth.api.getSession({ headers: request.headers });
 
     if (!session) {
@@ -36,6 +37,9 @@ export const yogaServer = createYoga({
     return {
       db,
       user: session?.user,
-    };
+      isInternal: !session?.user,
+      request,
+      params,
+    } as any;
   },
 });
