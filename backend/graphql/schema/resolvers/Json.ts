@@ -1,4 +1,4 @@
-import { GraphQLScalarType } from "graphql";
+import { GraphQLScalarType } from "npm:graphql";
 export const Json = new GraphQLScalarType({
   name: "Json",
   description: "Json description",
