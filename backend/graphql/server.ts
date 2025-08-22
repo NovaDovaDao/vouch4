@@ -3,7 +3,7 @@ import {
   createYoga,
   YogaInitialContext,
   createGraphQLError,
-} from "graphql-yoga";
+} from "npm:graphql-yoga";
 import { typeDefs } from "./schema/typeDefs.generated.ts";
 import { resolvers } from "./schema/resolvers.generated.ts";
 import { db } from "../db.ts";

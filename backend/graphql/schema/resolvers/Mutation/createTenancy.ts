@@ -1,9 +1,11 @@
-import { createGraphQLError } from "graphql-yoga";
+import { createGraphQLError } from "npm:graphql-yoga";
 import { CustomContext } from "../../../server.ts";
 import type { MutationResolvers } from "./../../types.generated.ts";
 import { auth } from "../../../../auth.ts";
 
-export const createTenancy: NonNullable<MutationResolvers['createTenancy']> = async (_parent, arg, ctx: CustomContext) => {
+export const createTenancy: NonNullable<
+  MutationResolvers["createTenancy"]
+> = async (_parent, arg, ctx: CustomContext) => {
   if (ctx.user?.tenancyId)
     throw createGraphQLError("You already have a tenancy");
 
