@@ -1,5 +1,5 @@
-import { betterAuth } from "better-auth";
-import { prismaAdapter } from "better-auth/adapters/prisma";
+import { betterAuth } from "npm:better-auth";
+import { prismaAdapter } from "npm:better-auth/adapters/prisma";
 import { db } from "./db.ts";
 
 export const auth = betterAuth({
