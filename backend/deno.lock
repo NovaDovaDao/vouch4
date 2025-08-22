@@ -12,7 +12,6 @@
     "jsr:@std/internal@^1.0.6": "1.0.7",
     "jsr:@std/media-types@1": "1.1.0",
     "jsr:@std/path@1": "1.0.9",
-    "npm:@eddeee888/gcg-typescript-resolver-files@~0.12.1": "0.12.1_graphql@16.11.0",
     "npm:@graphql-codegen/cli@^5.0.7": "5.0.7_graphql@16.11.0_@types+node@22.15.15",
     "npm:@prisma/client@*": "6.14.0_prisma@6.14.0",
     "npm:@prisma/client@^6.13.0": "6.14.0_prisma@6.14.0",
@@ -253,31 +252,6 @@
     "@better-fetch/fetch@1.1.18": {
       "integrity": "sha512-rEFOE1MYIsBmoMJtQbl32PGHHXuG2hDxvEd7rUHE0vCBoFQVSDqaVs9hkZEtHCxRoY+CljXKFCOuJ8uxqw1LcA=="
     },
-    "@eddeee888/gcg-server-config@0.2.3_graphql@16.11.0": {
-      "integrity": "sha512-8JL3tYZ9C0ZjAkMdwQlbwa7QHaOROqKg9IyauEYNjoiGeF7nSggINyBg0T8JkzWHwpHkP3W5nwPGVtSxxkaeWg==",
-      "dependencies": [
-        "@graphql-codegen/typescript",
-        "@graphql-codegen/typescript-resolvers",
-        "tslib@2.8.1"
-      ]
-    },
-    "@eddeee888/gcg-typescript-resolver-files@0.12.1_graphql@16.11.0": {
-      "integrity": "sha512-AdSufwlms4DD5+wkbJ3OoFatfPw1NtVW2i+JPzLvzlYrtuYuusgFWJeeGm2gAw8AbN6Xq+PjVViT1BVHHG60QQ==",
-      "dependencies": [
-        "@eddeee888/gcg-server-config",
-        "@graphql-codegen/add",
-        "@graphql-codegen/plugin-helpers",
-        "@graphql-codegen/schema-ast",
-        "@graphql-codegen/typescript",
-        "@graphql-codegen/typescript-resolvers",
-        "@graphql-tools/merge@9.1.1_graphql@16.11.0",
-        "@graphql-tools/utils@10.9.1_graphql@16.11.0",
-        "graphql",
-        "micromatch",
-        "ts-morph",
-        "tslib@2.8.1"
-      ]
-    },
     "@envelop/core@3.0.6": {
       "integrity": "sha512-06t1xCPXq6QFN7W1JUEf68aCwYN0OUDNAIoJe7bAqhaoa2vn7NCcuX1VHkJ/OWpmElUgCsRO6RiBbIru1in0Ig==",
       "dependencies": [
@@ -497,18 +471,6 @@
         "@graphql-codegen/plugin-helpers",
         "@graphql-codegen/typescript",
         "@graphql-codegen/visitor-plugin-common",
-        "auto-bind",
-        "graphql",
-        "tslib@2.6.3"
-      ]
-    },
-    "@graphql-codegen/typescript-resolvers@4.5.1_graphql@16.11.0": {
-      "integrity": "sha512-1Z9xyqcrM+EiuuwpgCGFz3IxlKqn+nS4mRpm81zWW9EHmUyiz1LkinIc+lQ6Ku+F2KyTbLkXUanE970wvdQLmA==",
-      "dependencies": [
-        "@graphql-codegen/plugin-helpers",
-        "@graphql-codegen/typescript",
-        "@graphql-codegen/visitor-plugin-common",
-        "@graphql-tools/utils@10.9.1_graphql@16.11.0",
         "auto-bind",
         "graphql",
         "tslib@2.6.3"
@@ -1181,15 +1143,6 @@
         "lodash.sortby"
       ]
     },
-    "@ts-morph/common@0.23.0": {
-      "integrity": "sha512-m7Lllj9n/S6sOkCkRftpM7L24uvmfXQFedlW/4hENcuJH1HHm9u5EgxZb9uVjQSCGrbBWBkOGgcTxNg36r6ywA==",
-      "dependencies": [
-        "fast-glob",
-        "minimatch",
-        "mkdirp",
-        "path-browserify"
-      ]
-    },
     "@types/js-yaml@4.0.9": {
       "integrity": "sha512-k4MGaQl5TGo/iipqb2UDG2UwjXziSWkh0uysQelTlJpX1qGlpUZYm8PnO4DxG1qBomtJUdYJ6qR6xdIah10JLg=="
     },
@@ -1520,9 +1473,6 @@
     },
     "clone@1.0.4": {
       "integrity": "sha512-JQHZ2QMW6l3aH/j6xCqQThY/9OH4D/9ls34cgkUBiEeocRTU04tHfKPBsUK1PqZCUQM7GiA0IIXJSuXHI64Kbg=="
-    },
-    "code-block-writer@13.0.3": {
-      "integrity": "sha512-Oofo0pq3IKnsFtuHqSF7TqBfr71aeyZDVJ0HpmqB7FBM2qEigL0iPONSCZSO9pE9dZTAxANe5XHG9Uy0YMv8cg=="
     },
     "color-convert@2.0.1": {
       "integrity": "sha512-RRECPsj7iu/xb5oKYcsFHSppFNnsj/52OVTRKb4zP5onXwVF3zVmmToNcOfGC+CRDpfK/U584fMg38ZHCaElKQ==",
@@ -2220,10 +2170,6 @@
     "minimist@1.2.8": {
       "integrity": "sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA=="
     },
-    "mkdirp@3.0.1": {
-      "integrity": "sha512-+NsyUUAZDmo6YVHzL/stxSu3t9YS1iljliy3BSDrXJ/dkn1KYdmtZODGGjLcc9XLgVVpH4KshHB8XmZgMhaBXg==",
-      "bin": true
-    },
     "ms@2.1.3": {
       "integrity": "sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA=="
     },
@@ -2361,9 +2307,6 @@
         "no-case",
         "tslib@2.8.1"
       ]
-    },
-    "path-browserify@1.0.1": {
-      "integrity": "sha512-b7uo2UCUOYZcnF/3ID0lulOJi/bafxa1xPe7ZPsammBSpjSWQkjNxlt635YGS2MiR9GjvuXCtz2emr3jbsz98g=="
     },
     "path-case@3.0.4": {
       "integrity": "sha512-qO4qCFjXqVTrcbPt/hQfhTQ+VhFsqNKOPtytgNKkKxSoEp3XPUQ8ObFuePylOIok5gjn69ry8XiULxCwot3Wfg==",
@@ -2668,13 +2611,6 @@
     "ts-log@2.2.7": {
       "integrity": "sha512-320x5Ggei84AxzlXp91QkIGSw5wgaLT6GeAH0KsqDmRZdVWW2OiSeVvElVoatk3f7nicwXlElXsoFkARiGE2yg=="
     },
-    "ts-morph@22.0.0": {
-      "integrity": "sha512-M9MqFGZREyeb5fTl6gNHKZLqBQA0TjA1lea+CR48R8EBTDuWrNqW6ccC5QvjNR4s6wDumD3LTCjOFSp9iwlzaw==",
-      "dependencies": [
-        "@ts-morph/common",
-        "code-block-writer"
-      ]
-    },
     "tslib@2.6.3": {
       "integrity": "sha512-xNvxJEOUiWPGhUuUdQgAJPKOOJfGnIyKySOc09XkKsgdUV/3E2zvwZYdejjmRgPCgcym1juLH3226yA7sEFJKQ=="
     },
@@ -2875,7 +2811,6 @@
     "dependencies": [
       "jsr:@oak/oak@^17.1.6",
       "jsr:@std/assert@1",
-      "npm:@eddeee888/gcg-typescript-resolver-files@~0.12.1",
       "npm:@graphql-codegen/cli@^5.0.7",
       "npm:@prisma/client@^6.13.0",
       "npm:better-auth@^1.3.7",
