@@ -1,4 +1,4 @@
-import type   { InvitationTokenResolvers } from './../types.generated';
-    export const InvitationToken: InvitationTokenResolvers = {
-    /* Implement InvitationToken resolver logic here */
-  };
+import type { InvitationTokenResolvers } from "./../types.generated.ts";
+export const InvitationToken: InvitationTokenResolvers = {
+  /* Implement InvitationToken resolver logic here */
+};
