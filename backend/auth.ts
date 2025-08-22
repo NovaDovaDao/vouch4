@@ -1,6 +1,5 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { openAPI } from "better-auth/plugins";
 import { db } from "./db.ts";
 
 export const auth = betterAuth({
@@ -19,7 +18,6 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
-  plugins: [openAPI()],
   secret: Deno.env.get("JWT_SECRET_KEY"),
   session: {
     cookieCache: {
