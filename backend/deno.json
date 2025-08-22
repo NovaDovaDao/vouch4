@@ -1,6 +1,6 @@
 {
   "tasks": {
-    "dev": "deno run -A --env --watch --unstable-sloppy-imports main.ts",
+    "dev": "deno run -A main.ts",
     "prisma": "deno run -A npm:prisma",
     "prisma:generate": "deno task prisma generate --schema ./prisma/schema.prisma && deno task prisma:patch",
     "prisma:patch": "deno run -A ./prisma/patch.ts",
