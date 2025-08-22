@@ -1,4 +1,4 @@
-import { JWTPayload, jwtVerify, SignJWT } from "jose";
+import { JWTPayload, jwtVerify, SignJWT } from "npm:jose";
 
 const secret = new TextEncoder().encode(Deno.env.get("JWT_SECRET_KEY"));
 
