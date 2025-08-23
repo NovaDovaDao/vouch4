@@ -1,0 +1,327 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "./generated"
+  runtime  = "node"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// --- Core Tenant Model ---
+// Represents the top-level gym owner or LLC. Your primary tenant identifier.
+
+model Tenancy {
+  id           String   @id @default(uuid())
+  name         String // e.g., "MegaGym Holdings"
+  legalName    String? // Optional: For separate legal entities for the overarching group
+  contactEmail String   @unique // Contact email for the tenancy
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  gyms           Gym[] // A tenancy can have multiple gyms/locations
+  users          User[] // Users (members primarily, or staff whose primary affiliation is here)
+  membershipNFTs MembershipNFT[] // Memberships are tied to a tenancy
+
+  // The User account that *is* the TENANCY_OWNER for this Tenancy
+  tenancyOwnerUser     User?                  @relation("TenancyOwnerAccount", fields: [tenancyOwnerUserId], references: [id])
+  tenancyOwnerUserId   String?                @unique
+  UserTenancyAgreement UserTenancyAgreement[]
+
+  @@map("tenants")
+}
+
+// --- Gym/Location Model ---
+// Represents a single physical gym location under a Tenancy
+
+model Gym {
+  id              String   @id @default(uuid())
+  name            String
+  address         Json // Flexible JSON for street, city, state, zip, etc.
+  tenancyId       String // Foreign key to the Tenancy
+  legalEntityName String? // Optional: If each gym has its own legal entity name
+  legalDocsUrl    String? // Optional: Link to legal documents
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relationships
+  tenancy          Tenancy              @relation(fields: [tenancyId], references: [id])
+  classes          Class[] // Classes are specific to a gym location
+  userAssociations UserGymAssociation[] // Many-to-many for users associated with this specific gym
+  checkIns         CheckIn[] // Check-ins are specific to a gym
+
+  @@map("gyms")
+}
+
+// --- User Model ---
+// Represents a single person with their core identity and all relevant attributes
+// This model now consolidates all attributes from the previous 'Member' model.
+// Their specific role/permissions at a gym are defined in UserGymAssociation.
+
+enum UserCategory {
+  MEMBER // A user whose primary interaction is as a gym member
+  STAFF // A user who performs staff functions (manager, trainer, route setter, front desk, etc.)
+
+  @@map("user_categories")
+}
+
+model User {
+  id          String       @id @default(uuid())
+  email       String       @unique
+  firstName   String
+  lastName    String
+  category    UserCategory // High-level categorization (MEMBER or STAFF)
+  isSuperUser Boolean      @default(false) // True if this user is a Super Admin (replaces SUPER_ADMIN role)
+  isActive    Boolean      @default(true) // For disabling user accounts
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  // Member-specific attributes (merged from your 'Member' model)
+  walletAddress String? @unique // Optional, a user might link their wallet later
+  phoneNumber   String?
+
+  // Multi-tenancy scoping:
+  // For MEMBERs, this is their primary Tenancy. For STAFF, it can be their primary employer Tenancy, or null if external.
+  tenancyId String?
+  tenancy   Tenancy? @relation(fields: [tenancyId], references: [id])
+
+  // Relationships defining specific roles/access within a Tenancy/Gym
+  ownedTenancy Tenancy? @relation("TenancyOwnerAccount") // If this user IS the TENANCY_OWNER for a Tenancy
+
+  // User's associations with specific gyms (where per-gym roles and permissions are defined)
+  userGymAssociations UserGymAssociation[]
+
+  // Activity-specific relations
+  checkIns      CheckIn[] @relation("UserCheckIns") // Check-ins performed by this user
+  bookings      Booking[] // Class bookings made by this user
+  classesTaught Class[]   @relation("InstructorClasses") // Classes taught by this user (if STAFF)
+
+  // Blockchain references for Memberships
+  membershipNFTs    MembershipNFT[] // Membership NFTs owned by this user
+  rentedMemberships MembershipNFT[] @relation("RentedMemberships") // Memberships this user is currently renting
+
+  // Invitation flow
+  invitationToken InvitationToken?
+
+  // Agreements with different tenancies (e.g., waivers, terms of service)
+  userTenancyAgreements UserTenancyAgreement[]
+
+  name          String?
+  emailVerified Boolean
+  image         String?
+  sessions      Session[]
+  accounts      Account[]
+
+  @@map("users")
+}
+
+// --- Join Table for User-Gym Association (for Per-Gym Roles & Permissions) ---
+// This defines a user's specific role and permissions within a particular Gym.
+
+enum UserAtGymRole {
+  MANAGER // Manages operations within this specific gym
+  TRAINER // Teaches classes at this specific gym
+  ROUTE_SETTER // Sets routes at this specific gym
+  FRONT_DESK_STAFF // Works at the front desk of this specific gym
+  CLEANING_STAFF // Cleans at this specific gym
+
+  // MEMBER_AT_GYM is explicitly removed here, as membership status is handled by User.category and MembershipNFT.
+  @@map("user_at_gym_role_enums")
+}
+
+model UserGymAssociation {
+  userId        String
+  gymId         String
+  roleAtGym     UserAtGymRole // The specific functional role this user has at THIS gym (primarily for STAFF category users)
+  permissions   Json? // JSONB array of strings: e.g., ["classes:create", "members:view-details"] for THIS gym
+  isActiveAtGym Boolean       @default(true) // If the user's access to this gym is currently active
+  assignedAt    DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+  gym  Gym  @relation(fields: [gymId], references: [id])
+
+  // Composite primary key: A user has one association per gym
+  @@id([userId, gymId])
+  @@map("user_gym_associations")
+}
+
+// --- Check-In Model (Now references User directly) ---
+
+model CheckIn {
+  id        String   @id @default(uuid()) // Changed to String for consistency with other IDs
+  userId    String   @map("user_id") // References the consolidated User model
+  gymId     String   @map("gym_id") // Check-in also belongs to a specific gym
+  timestamp DateTime @default(now())
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation("UserCheckIns", fields: [userId], references: [id])
+  gym  Gym  @relation(fields: [gymId], references: [id])
+
+  @@map("check_ins")
+}
+
+// --- Blockchain-Integrated Membership NFT ---
+// This model represents a cached view of an NFT membership on the blockchain.
+// The blockchain is the source of truth for its existence, ownership, and key properties.
+
+model MembershipNFT {
+  id                String    @id @default(uuid())
+  userId            String // FK to User who owns the NFT (the 'Member' from old context)
+  tenancyId         String // FK to Tenancy this membership is for
+  tokenId           String    @unique // The unique NFT token ID on the blockchain
+  contractAddress   String // The address of the NFT smart contract
+  transactionHash   String    @unique // Hash of the transaction that minted/transferred this NFT
+  tokenType         String? // e.g., "Monthly Pass", "Annual Elite" - cached metadata
+  expiresAt         DateTime? // Cache of expiration timestamp from NFT metadata or smart contract
+  isActive          Boolean   @default(true) // Cached: derived from on-chain status (e.g., not expired, not burned)
+  isCurrentlyRented Boolean   @default(false) // Cached: indicates if the NFT is currently rented out
+  renterUserId      String? // FK to User who is currently renting this NFT (if applicable)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  user       User    @relation(fields: [userId], references: [id])
+  tenancy    Tenancy @relation(fields: [tenancyId], references: [id])
+  renterUser User?   @relation("RentedMemberships", fields: [renterUserId], references: [id])
+
+  @@map("memberships")
+}
+
+// --- Class Model ---
+
+model Class {
+  id               String   @id @default(uuid())
+  name             String
+  description      String?
+  scheduleDateTime DateTime
+  capacity         Int
+  gymId            String // Classes are specific to a gym
+  instructorId     String? // Optional: If an instructor (User with STAFF category) is assigned
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  gym        Gym       @relation(fields: [gymId], references: [id])
+  instructor User?     @relation("InstructorClasses", fields: [instructorId], references: [id])
+  bookings   Booking[]
+
+  @@map("classes")
+}
+
+// --- Booking Model ---
+
+model Booking {
+  id       String   @id @default(uuid())
+  userId   String
+  classId  String
+  bookedAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id])
+  class Class @relation(fields: [classId], references: [id])
+
+  @@unique([userId, classId])
+  @@map("bookings")
+}
+
+// --- Invitation Token Model ---
+
+model InvitationToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String   @unique // One token per user being invited
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("invitation_tokens")
+}
+
+// --- NEW MODEL: UserTenancyAgreement ---
+// Captures specific agreements (like waivers, terms of service) between a User and a Tenancy.
+
+enum AgreementType {
+  WAIVER
+  TERMS_OF_SERVICE
+  PRIVACY_POLICY
+  // Add other agreement types as needed
+}
+
+enum AgreementStatus {
+  PENDING_SIGNATURE // Waiting for the user to sign
+  SIGNED // Agreement has been signed
+  EXPIRED // Agreement has an expiration date and is past it
+  REVOKED // Agreement was signed but later revoked/invalidated
+}
+
+model UserTenancyAgreement {
+  id              String          @id @default(uuid())
+  userId          String
+  tenancyId       String
+  type            AgreementType // e.g., WAIVER, TERMS_OF_SERVICE
+  status          AgreementStatus @default(PENDING_SIGNATURE)
+  documentHash    String?         @map("document_hash") // Hash of the specific version of the document signed
+  documentVersion String?         @map("document_version") // e.g., "1.0", "2024-01-01". Allows for multiple versions of agreements.
+  signedAt        DateTime? // Timestamp when the agreement was signed
+  expiresAt       DateTime? // Optional: for agreements that expire (e.g., annual waivers)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id])
+  tenancy Tenancy @relation(fields: [tenancyId], references: [id])
+
+  // A user signs a specific version of an agreement for a tenancy once
+  @@unique([userId, tenancyId, type, documentVersion])
+  @@map("user_tenancy_agreements")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@map("sessions")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+
+  @@map("accounts")
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verifications")
+}

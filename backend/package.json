@@ -1,0 +1,41 @@
+{
+  "name": "@vouch4/backend",
+  "version": "1.0.0",
+  "main": "dist/main.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "cross-env NODE_ENV=development tsx watch src/main.ts",
+    "start": "node ./dist/main.js",
+    "prisma:seed": "tsx ./src/prisma/seed.ts",
+    "prisma:reset": "npx prisma db push --force-reset --schema src/prisma/schema.prisma",
+    "generate-token": "tsx jwt.ts",
+    "codegen": "graphql-codegen",
+    "postinstall": "prisma generate --schema src/prisma/schema.prisma"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@eddeee888/gcg-typescript-resolver-files": "0.11.0",
+    "@graphql-codegen/cli": "5.0.3",
+    "@types/koa": "^3.0.0",
+    "@types/node": "22.10.1",
+    "prisma": "^6.14.0",
+    "cross-env": "7.0.3",
+    "prettier": "3.4.2",
+    "tsx": "4.19.2",
+    "typescript": "5.7.2"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.14.0",
+    "better-auth": "^1.3.7",
+    "graphql": "16.10.0",
+    "graphql-codegen": "^0.4.0",
+    "graphql-scalars": "^1.24.2",
+    "graphql-yoga": "5.10.4",
+    "jose": "^5.9.6",
+    "koa": "^3.0.1"
+  }
+}
