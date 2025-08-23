@@ -14,11 +14,16 @@
     "jsr:@std/path@1": "1.0.9",
     "npm:@prisma/client@^6.13.0": "6.14.0_prisma@6.14.0",
     "npm:@types/node@*": "22.15.15",
+    "npm:better-auth@*": "1.3.7_zod@4.0.17",
     "npm:better-auth@^1.3.7": "1.3.7_zod@4.0.17",
     "npm:dotenv-cli@10": "10.0.0",
+    "npm:graphql-scalars@*": "1.24.2_graphql@16.11.0",
     "npm:graphql-scalars@^1.24.2": "1.24.2_graphql@16.11.0",
+    "npm:graphql-yoga@*": "3.9.1_graphql@16.11.0_@envelop+core@3.0.6",
     "npm:graphql-yoga@^3.7.3": "3.9.1_graphql@16.11.0_@envelop+core@3.0.6",
+    "npm:graphql@*": "16.11.0",
     "npm:graphql@^16.11.0": "16.11.0",
+    "npm:jose@*": "5.9.6",
     "npm:jose@5.9.6": "5.9.6",
     "npm:path-to-regexp@^6.3.0": "6.3.0",
     "npm:prisma@^6.13.0": "6.14.0"
@@ -714,6 +719,18 @@
     "zod@4.0.17": {
       "integrity": "sha512-1PHjlYRevNxxdy2JZ8JcNAw7rX8V9P1AKkP+x/xZfxB0K5FYfuV+Ug6P/6NVSR2jHQ+FzDDoDHS04nYUsOIyLQ=="
     }
+  },
+  "remote": {
+    "https://deno.land/std@0.157.0/async/abortable.ts": "87aa7230be8360c24ad437212311c9e8d4328854baec27b4c7abb26e85515c06",
+    "https://deno.land/std@0.157.0/async/deadline.ts": "48ac998d7564969f3e6ec6b6f9bf0217ebd00239b1b2292feba61272d5dd58d0",
+    "https://deno.land/std@0.157.0/async/debounce.ts": "de5433bff08a2bb61416fc53b3bd2d5867090c8a815465e5b4a10a77495b1051",
+    "https://deno.land/std@0.157.0/async/deferred.ts": "c01de44b9192359cebd3fe93273fcebf9e95110bf3360023917da9a2d1489fae",
+    "https://deno.land/std@0.157.0/async/delay.ts": "0419dfc993752849692d1f9647edf13407c7facc3509b099381be99ffbc9d699",
+    "https://deno.land/std@0.157.0/async/mod.ts": "dd0a8ed4f3984ffabe2fcca7c9f466b7932d57b1864ffee148a5d5388316db6b",
+    "https://deno.land/std@0.157.0/async/mux_async_iterator.ts": "3447b28a2a582224a3d4d3596bccbba6e85040da3b97ed64012f7decce98d093",
+    "https://deno.land/std@0.157.0/async/pool.ts": "ef9eb97b388543acbf0ac32647121e4dbe629236899586c4d4311a8770fbb239",
+    "https://deno.land/std@0.157.0/async/tee.ts": "d27680d911816fcb3d231e16d690e7588079e66a9b2e5ce8cc354db94fdce95f",
+    "https://deno.land/std@0.157.0/http/server.ts": "c1bce1cbf4060055f622d5c3f0e406fd553e5dca111ca836d28c6268f170ebeb"
   },
   "workspace": {
     "dependencies": [
