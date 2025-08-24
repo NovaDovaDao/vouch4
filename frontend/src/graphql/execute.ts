@@ -4,7 +4,7 @@ export async function execute<TResult, TVariables>(
   query: TypedDocumentString<TResult, TVariables>,
   ...[variables]: TVariables extends Record<string, never> ? [] : [TVariables]
 ) {
-  const endpoint = new URL("/graphql", import.meta.env.VITE_BETTER_AUTH_URL);
+  const endpoint = import.meta.env.VITE_GRAPHQL_URL;
   const response = await fetch(endpoint, {
     method: "POST",
     headers: {
