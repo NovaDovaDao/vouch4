@@ -7,7 +7,11 @@ import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { graphql } from "@/graphql";
 import { execute } from "@/graphql/execute";
 import { useDialogStore } from "@/stores/dialog-store";
-import { IconCircleCheckFilled, IconLoader, IconPlus } from "@tabler/icons-react";
+import {
+  IconCircleCheckFilled,
+  IconLoader,
+  IconPlus,
+} from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import { useState } from "react";
@@ -24,11 +28,11 @@ export default function ReportsMembershipsPage() {
   const { data: memberships, isLoading } = useQuery({
     queryKey: ["members"],
     queryFn: () => execute(GET_MEMBERS),
-    select: data => data.memberships
+    select: (data) => data.memberships,
   });
 
-    const [editMembershipId, setEditMembershipId] = useState<string | null>(null);
-    const dialogStore = useDialogStore();
+  const [, setEditMembershipId] = useState<string | null>(null);
+  const dialogStore = useDialogStore();
 
   return (
     <Tabs
@@ -40,8 +44,11 @@ export default function ReportsMembershipsPage() {
           View
         </Label>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" 
-            onClick={() => dialogStore.openDialog({ type: "createStaff" })}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => dialogStore.openDialog({ type: "createStaff" })}
+          >
             <IconPlus />
             <span className="hidden lg:inline">Add Membership</span>
           </Button>
@@ -51,7 +58,7 @@ export default function ReportsMembershipsPage() {
         value="outline"
         className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
       >
-<DataTable
+        <DataTable
           data={memberships ?? []}
           loading={isLoading}
           columns={[
@@ -119,7 +126,6 @@ export default function ReportsMembershipsPage() {
           ]}
         />
       </TabsContent>
-            <UpdateStaffForm id={editMembershipId} onClose={() => setEditMembershipId(null)} />
     </Tabs>
   );
 }
