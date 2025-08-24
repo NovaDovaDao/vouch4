@@ -1,34 +1,28 @@
-import React, { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
+import { IconGymnastics } from "@tabler/icons-react";
 import { toast } from "sonner";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../components/ui/card.tsx";
-import { Label } from "@/components/ui/label.tsx";
-import { Input } from "../components/ui/input.tsx";
-import { Button } from "../components/ui/button.tsx";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { LoginForm } from "@/features/auth/login-form.tsx";
+
+import { loginSchema } from "@/features/auth/login.schema";
 import { useAuth } from "@/features/auth/use-auth.ts";
 import { useMutation } from "@tanstack/react-query";
 import { authClient } from "@/lib/auth.ts";
 
-const LoginPage: React.FC = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+export default function LoginPage() {
+  const form = useForm({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
   const navigate = useNavigate();
-
   const { init, user } = useAuth();
-
-  const {
-    mutateAsync: login,
-    isPending: loading,
-    isError,
-    error,
-  } = useMutation({
+  const { mutateAsync: login, isPending: isSubmitting } = useMutation({
     mutationKey: ["login"],
     mutationFn: (variables: { email: string; password: string }) =>
       authClient.signIn.email(variables),
@@ -48,62 +42,38 @@ const LoginPage: React.FC = () => {
     },
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    login({ email, password });
-  };
-
   if (user) {
     return <Navigate to="/" />;
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen ">
-      <Card className="w-[350px]">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center">
-            Admin Login
-          </CardTitle>
-          <CardDescription className="text-center">
-            Enter your credentials to access the dashboard.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="grid gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="username">Username (Email)</Label>
-              <Input
-                id="username"
-                type="email" // Use type email if your username is email
-                placeholder="admin@climbinggym.com"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
+    <div className="grid min-h-svh lg:grid-cols-2">
+      <div className="flex flex-col gap-4 p-6 md:p-10">
+        <div className="flex justify-center gap-2 md:justify-start">
+          <a href="#" className="flex items-center gap-2 font-medium">
+            <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
+              <IconGymnastics className="size-4" />
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Logging in..." : "Login"}
-            </Button>
-            {isError && (
-              <p className="text-red-500 text-sm text-center mt-2">
-                {String(error.message)}
-              </p>
-            )}
-          </form>
-        </CardContent>
-      </Card>
+            Ascend
+          </a>
+        </div>
+        <div className="flex flex-1 items-center justify-center">
+          <div className="w-full max-w-xs">
+            <LoginForm
+              form={form}
+              isSubmitting={isSubmitting}
+              onSubmit={login}
+            />
+          </div>
+        </div>
+      </div>
+      <div className="bg-muted relative hidden lg:block">
+        <img
+          src="/pexels-david-waschbusch-959602-1887836.jpg"
+          alt="Image"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+      </div>
     </div>
   );
-};
-
-export default LoginPage;
+}
