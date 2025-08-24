@@ -1,7 +1,7 @@
 import { $Enums } from "./generated/client.js";
-import { auth, type AuthUser } from "../auth.js";
+import { auth } from "../auth.js";
 import { db } from "../db.js";
-import "dotenv";
+import "dotenv/config";
 
 async function main() {
   // --- Define SUPER_ADMIN Credentials ---
@@ -12,9 +12,11 @@ async function main() {
   const superAdminPassword =
     process.env.SUPER_ADMIN_PASSWORD || "yourVeryStrongDefaultAdminPassword!"; // CHANGE THIS DEFAUULT!
 
-  const superAdminUser = (await db.user.findUnique({
-    where: { email: superAdminEmail },
-  })) as AuthUser;
+  const superAdminUser = await db.user
+    .findUnique({
+      where: { email: superAdminEmail },
+    })
+    .catch(console.error);
 
   if (!superAdminUser) {
     console.log(`Creating SUPER_ADMIN user: ${superAdminEmail}`);
