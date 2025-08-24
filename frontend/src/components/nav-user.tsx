@@ -26,7 +26,7 @@ import { useAuth } from "@/features/auth/use-auth";
 import { useNavigate } from "react-router-dom";
 
 export function NavUser() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const { isMobile } = useSidebar();
   const navigate = useNavigate();
 
@@ -94,7 +94,9 @@ export function NavUser() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={logout}>
+            <DropdownMenuItem
+              onClick={() => navigate("/logout", { replace: true })}
+            >
               <IconLogout />
               Log out
             </DropdownMenuItem>
