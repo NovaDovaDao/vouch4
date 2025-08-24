@@ -1,8 +1,7 @@
 import { $Enums } from "./generated/client.js";
 import { auth, type AuthUser } from "../auth.js";
 import { db } from "../db.js";
-
-process.loadEnvFile();
+import "dotenv";
 
 async function main() {
   // --- Define SUPER_ADMIN Credentials ---

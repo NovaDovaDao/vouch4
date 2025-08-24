@@ -2,8 +2,8 @@ import Koa from "koa";
 import { toNodeHandler } from "better-auth/node";
 import { yogaServer } from "./server.js";
 import { auth } from "./auth.js";
+import "dotenv/config";
 
-process.loadEnvFile();
 const app = new Koa();
 
 // Authentication middleware for /api/auth
