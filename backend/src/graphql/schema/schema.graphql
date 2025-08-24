@@ -151,6 +151,26 @@ input GymUpdateInput {
   legalDocsUrl: String
 }
 
+input MemberCreateInput {
+  email: String!
+  firstName: String!
+  lastName: String!
+  isSuperUser: Boolean
+  isActive: Boolean
+  walletAddress: String
+  phoneNumber: String
+}
+
+input MemberUpdateInput {
+  email: String
+  firstName: String
+  lastName: String
+  isSuperUser: Boolean
+  isActive: Boolean
+  walletAddress: String
+  phoneNumber: String
+}
+
 input StaffCreateInput {
   email: String!
   firstName: String!
@@ -207,7 +227,7 @@ type Query {
   staff: [User!]!
   staffById(id: ID!): User!
 
-  # --- STAFF QUERIES ---
+  # --- CLASS QUERIES ---
   classes: [Class!]!
   classById(id: ID!): Class!
 
@@ -217,6 +237,10 @@ type Query {
   # --- CONTRACT QUERIES ---
   contracts: [UserTenancyAgreement!]!
   contractById(id: ID!): UserTenancyAgreement!
+
+  # --- MEMBER QUERIES ---
+  members: [User!]!
+  memberById(id: ID!): User!
 
   # --- MEMBERSHIPS QUERIES ---
   memberships: [MembershipNFT!]!
@@ -242,8 +266,13 @@ type Mutation {
   updateClass(id: ID!, data: ClassUpdateInput!): Class!
   deleteClass(id: ID!): Boolean!
 
-  # --- Staff MUTATIONS ---
+  # --- STAFF MUTATIONS ---
   createStaff(data: StaffCreateInput!): User!
   updateStaff(id: ID!, data: StaffUpdateInput!): User!
   deleteStaff(id: ID!): Boolean!
+
+  # --- MEMBER MUTATIONS ---
+  createMember(data: MemberCreateInput!): User!
+  updateMember(id: ID!, data: MemberUpdateInput!): User!
+  deleteMember(id: ID!): Boolean!
 }

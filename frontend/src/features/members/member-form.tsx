@@ -1,16 +1,16 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { type UseFormReturn } from "react-hook-form";
-import type { StaffFormData } from "./staff.schema";
+import type { MemberFormData } from "./member.schema";
 
-interface StaffFormProps {
-  form: UseFormReturn<StaffFormData>; // Pass the useForm hook's return value
-  onSubmit: (data: StaffFormData) => void;
+interface MemberFormProps {
+  form: UseFormReturn<MemberFormData>; // Pass the useForm hook's return value
+  onSubmit: (data: MemberFormData) => void;
   isLoading?: boolean;
   isSubmitting: boolean;
 }
 
-export default function StaffForm({ form, onSubmit }: StaffFormProps) {
+export default function MemberForm({ form, onSubmit }: MemberFormProps) {
   const {
     register,
     handleSubmit,

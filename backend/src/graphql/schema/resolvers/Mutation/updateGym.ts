@@ -1,7 +1,7 @@
 import { createGraphQLError } from "graphql-yoga";
 import type { CustomContext } from "../../../../server.js";
 import type { MutationResolvers } from "./../../types.generated.js";
-export const updateGym: NonNullable<MutationResolvers["updateGym"]> = (
+export const updateGym: NonNullable<MutationResolvers['updateGym']> = (
   _parent,
   arg,
   ctx: CustomContext

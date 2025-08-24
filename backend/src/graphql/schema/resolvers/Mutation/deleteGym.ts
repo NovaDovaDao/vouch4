@@ -1,6 +1,6 @@
 import type { CustomContext } from "../../../../server.js";
 import type { MutationResolvers } from "./../../types.generated.js";
-export const deleteGym: NonNullable<MutationResolvers["deleteGym"]> = async (
+export const deleteGym: NonNullable<MutationResolvers['deleteGym']> = async (
   _parent,
   arg,
   ctx: CustomContext

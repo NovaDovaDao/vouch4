@@ -3,8 +3,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 
-import StaffForm from "./staff-form";
-import { staffSchema } from "./staff.schema";
+import MemberForm from "./member-form";
+import { memberSchema } from "./member.schema";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -37,7 +37,7 @@ export default function CreateStaffDialog({
   handleOpen: (open: boolean) => void;
 }) {
   const form = useForm({
-    resolver: zodResolver(staffSchema),
+    resolver: zodResolver(memberSchema),
     defaultValues: {
       email: "",
       firstName: "",
@@ -66,10 +66,10 @@ export default function CreateStaffDialog({
     <Dialog open onOpenChange={handleOpen}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add Staff</DialogTitle>
-          <DialogDescription>Enter staff information</DialogDescription>
+          <DialogTitle>Add Member</DialogTitle>
+          <DialogDescription>Enter member information</DialogDescription>
         </DialogHeader>
-        <StaffForm
+        <MemberForm
           form={form}
           isSubmitting={isPending}
           onSubmit={handleSubmit}
@@ -79,7 +79,7 @@ export default function CreateStaffDialog({
             <Button variant="outline">Cancel</Button>
           </DialogClose>
           <Button onClick={() => handleSubmit(form.getValues())}>
-            Save staff
+            Save member
           </Button>
         </DialogFooter>
       </DialogContent>

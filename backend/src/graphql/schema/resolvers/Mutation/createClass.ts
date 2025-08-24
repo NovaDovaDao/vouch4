@@ -1,10 +1,10 @@
 import { createGraphQLError } from "graphql-yoga";
 import type { CustomContext } from "../../../../server.js";
 import type { MutationResolvers } from "../../types.generated.js";
-export const createClass: NonNullable<MutationResolvers["createClass"]> = (
+export const createClass: NonNullable<MutationResolvers['createClass']> = (
   _parent,
   arg,
-  ctx: CustomContext
+  ctx: CustomContext,
 ) => {
   if (!ctx.user?.tenancyId)
     throw createGraphQLError("Woops, classes need to be associated to tenant.");

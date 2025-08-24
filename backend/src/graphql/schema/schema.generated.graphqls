@@ -104,6 +104,26 @@ type InvitationToken {
 
 scalar Json
 
+input MemberCreateInput {
+  email: String!
+  firstName: String!
+  isActive: Boolean
+  isSuperUser: Boolean
+  lastName: String!
+  phoneNumber: String
+  walletAddress: String
+}
+
+input MemberUpdateInput {
+  email: String
+  firstName: String
+  isActive: Boolean
+  isSuperUser: Boolean
+  lastName: String
+  phoneNumber: String
+  walletAddress: String
+}
+
 type MembershipNFT {
   createdAt: DateTime!
   expiresAt: DateTime
@@ -118,13 +138,16 @@ type MembershipNFT {
 type Mutation {
   createClass(data: ClassCreateInput!): Class!
   createGym(data: GymCreateInput!): Gym!
+  createMember(data: MemberCreateInput!): User!
   createStaff(data: StaffCreateInput!): User!
   createTenancy(data: TenancyCreateInput!): Tenancy!
   deleteClass(id: ID!): Boolean!
   deleteGym(id: ID!): Boolean!
+  deleteMember(id: ID!): Boolean!
   deleteStaff(id: ID!): Boolean!
   updateClass(data: ClassUpdateInput!, id: ID!): Class!
   updateGym(data: GymUpdateInput!, id: ID!): Gym!
+  updateMember(data: MemberUpdateInput!, id: ID!): User!
   updateStaff(data: StaffUpdateInput!, id: ID!): User!
   updateTenancy(data: TenancyUpdateInput!, id: ID!): Tenancy!
 }
@@ -136,6 +159,8 @@ type Query {
   contracts: [UserTenancyAgreement!]!
   gymById(id: ID!): Gym
   gyms: [Gym!]!
+  memberById(id: ID!): User!
+  members: [User!]!
   membershipById(id: ID!): MembershipNFT!
   memberships: [MembershipNFT!]!
   staff: [User!]!

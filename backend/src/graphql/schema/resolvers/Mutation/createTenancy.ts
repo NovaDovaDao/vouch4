@@ -3,9 +3,7 @@ import type { CustomContext } from "../../../../server.js";
 import type { MutationResolvers } from "./../../types.generated.js";
 import { auth } from "../../../../auth.js";
 
-export const createTenancy: NonNullable<
-  MutationResolvers["createTenancy"]
-> = async (_parent, arg, ctx: CustomContext) => {
+export const createTenancy: NonNullable<MutationResolvers['createTenancy']> = async (_parent, arg, ctx: CustomContext) => {
   if (ctx.user?.tenancyId)
     throw createGraphQLError("You already have a tenancy");
 

@@ -6,6 +6,8 @@ import { contractById as Query_contractById } from "./resolvers/Query/contractBy
 import { contracts as Query_contracts } from "./resolvers/Query/contracts.js";
 import { gymById as Query_gymById } from "./resolvers/Query/gymById.js";
 import { gyms as Query_gyms } from "./resolvers/Query/gyms.js";
+import { memberById as Query_memberById } from "./resolvers/Query/memberById.js";
+import { members as Query_members } from "./resolvers/Query/members.js";
 import { membershipById as Query_membershipById } from "./resolvers/Query/membershipById.js";
 import { memberships as Query_memberships } from "./resolvers/Query/memberships.js";
 import { staff as Query_staff } from "./resolvers/Query/staff.js";
@@ -13,13 +15,16 @@ import { staffById as Query_staffById } from "./resolvers/Query/staffById.js";
 import { tenancy as Query_tenancy } from "./resolvers/Query/tenancy.js";
 import { createClass as Mutation_createClass } from "./resolvers/Mutation/createClass.js";
 import { createGym as Mutation_createGym } from "./resolvers/Mutation/createGym.js";
+import { createMember as Mutation_createMember } from "./resolvers/Mutation/createMember.js";
 import { createStaff as Mutation_createStaff } from "./resolvers/Mutation/createStaff.js";
 import { createTenancy as Mutation_createTenancy } from "./resolvers/Mutation/createTenancy.js";
 import { deleteClass as Mutation_deleteClass } from "./resolvers/Mutation/deleteClass.js";
 import { deleteGym as Mutation_deleteGym } from "./resolvers/Mutation/deleteGym.js";
+import { deleteMember as Mutation_deleteMember } from "./resolvers/Mutation/deleteMember.js";
 import { deleteStaff as Mutation_deleteStaff } from "./resolvers/Mutation/deleteStaff.js";
 import { updateClass as Mutation_updateClass } from "./resolvers/Mutation/updateClass.js";
 import { updateGym as Mutation_updateGym } from "./resolvers/Mutation/updateGym.js";
+import { updateMember as Mutation_updateMember } from "./resolvers/Mutation/updateMember.js";
 import { updateStaff as Mutation_updateStaff } from "./resolvers/Mutation/updateStaff.js";
 import { updateTenancy as Mutation_updateTenancy } from "./resolvers/Mutation/updateTenancy.js";
 import { Booking } from "./resolvers/Booking.js";
@@ -43,6 +48,8 @@ export const resolvers: Resolvers = {
     contracts: Query_contracts,
     gymById: Query_gymById,
     gyms: Query_gyms,
+    memberById: Query_memberById,
+    members: Query_members,
     membershipById: Query_membershipById,
     memberships: Query_memberships,
     staff: Query_staff,
@@ -52,13 +59,16 @@ export const resolvers: Resolvers = {
   Mutation: {
     createClass: Mutation_createClass,
     createGym: Mutation_createGym,
+    createMember: Mutation_createMember,
     createStaff: Mutation_createStaff,
     createTenancy: Mutation_createTenancy,
     deleteClass: Mutation_deleteClass,
     deleteGym: Mutation_deleteGym,
+    deleteMember: Mutation_deleteMember,
     deleteStaff: Mutation_deleteStaff,
     updateClass: Mutation_updateClass,
     updateGym: Mutation_updateGym,
+    updateMember: Mutation_updateMember,
     updateStaff: Mutation_updateStaff,
     updateTenancy: Mutation_updateTenancy,
   },

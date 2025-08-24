@@ -1,9 +1,9 @@
 import type { CustomContext } from "../../../../server.js";
 import type { MutationResolvers } from "../../types.generated.js";
-export const updateStaff: NonNullable<MutationResolvers["updateStaff"]> = (
+export const updateStaff: NonNullable<MutationResolvers['updateStaff']> = (
   _parent,
   arg,
-  ctx: CustomContext
+  ctx: CustomContext,
 ) => {
   return ctx.db.user.update({
     data: {

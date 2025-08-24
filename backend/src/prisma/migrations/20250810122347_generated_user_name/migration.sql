@@ -12,7 +12,7 @@ CREATE TYPE "public"."AgreementStatus" AS ENUM ('PENDING_SIGNATURE', 'SIGNED', '
 
 -- CreateTable
 CREATE TABLE "public"."tenants" (
-    "id" TEXT NOT NULL,
+    id TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "legalName" TEXT,
     "contactEmail" TEXT NOT NULL,
@@ -51,7 +51,7 @@ CREATE TABLE "public"."users" (
     "walletAddress" TEXT,
     "phoneNumber" TEXT,
     "tenancyId" TEXT,
-    "name" TEXT GENERATED ALWAYS AS (users."firstName" || ' ' || users."lastName") STORED,
+    "name" TEXT GENERATED ALWAYS AS ("firstName" || ' ' || users."lastName") STORED,
     "emailVerified" BOOLEAN NOT NULL,
     "image" TEXT,
 

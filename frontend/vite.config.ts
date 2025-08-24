@@ -18,11 +18,11 @@ export default defineConfig({
     port: 1337,
     proxy: {
       "/api": {
-        target: "http://localhost:4000",
+        target: "http://localhost:8080",
         changeOrigin: true,
       },
       "/graphql": {
-        target: "http://localhost:4000",
+        target: "http://localhost:8080",
         changeOrigin: true,
       },
     },

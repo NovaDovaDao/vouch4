@@ -16,7 +16,7 @@ export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
 };
 export type MakeEmpty<
   T extends { [key: string]: unknown },
-  K extends keyof T
+  K extends keyof T,
 > = { [_ in K]?: never };
 export type Incremental<T> =
   | T
@@ -144,6 +144,26 @@ export type InvitationToken = {
   userId: Scalars["ID"]["output"];
 };
 
+export type MemberCreateInput = {
+  email: Scalars["String"]["input"];
+  firstName: Scalars["String"]["input"];
+  isActive?: InputMaybe<Scalars["Boolean"]["input"]>;
+  isSuperUser?: InputMaybe<Scalars["Boolean"]["input"]>;
+  lastName: Scalars["String"]["input"];
+  phoneNumber?: InputMaybe<Scalars["String"]["input"]>;
+  walletAddress?: InputMaybe<Scalars["String"]["input"]>;
+};
+
+export type MemberUpdateInput = {
+  email?: InputMaybe<Scalars["String"]["input"]>;
+  firstName?: InputMaybe<Scalars["String"]["input"]>;
+  isActive?: InputMaybe<Scalars["Boolean"]["input"]>;
+  isSuperUser?: InputMaybe<Scalars["Boolean"]["input"]>;
+  lastName?: InputMaybe<Scalars["String"]["input"]>;
+  phoneNumber?: InputMaybe<Scalars["String"]["input"]>;
+  walletAddress?: InputMaybe<Scalars["String"]["input"]>;
+};
+
 export type MembershipNFT = {
   __typename?: "MembershipNFT";
   createdAt: Scalars["DateTime"]["output"];
@@ -160,13 +180,16 @@ export type Mutation = {
   __typename?: "Mutation";
   createClass: Class;
   createGym: Gym;
+  createMember: User;
   createStaff: User;
   createTenancy: Tenancy;
   deleteClass: Scalars["Boolean"]["output"];
   deleteGym: Scalars["Boolean"]["output"];
+  deleteMember: Scalars["Boolean"]["output"];
   deleteStaff: Scalars["Boolean"]["output"];
   updateClass: Class;
   updateGym: Gym;
+  updateMember: User;
   updateStaff: User;
   updateTenancy: Tenancy;
 };
@@ -177,6 +200,10 @@ export type MutationcreateClassArgs = {
 
 export type MutationcreateGymArgs = {
   data: GymCreateInput;
+};
+
+export type MutationcreateMemberArgs = {
+  data: MemberCreateInput;
 };
 
 export type MutationcreateStaffArgs = {
@@ -195,6 +222,10 @@ export type MutationdeleteGymArgs = {
   id: Scalars["ID"]["input"];
 };
 
+export type MutationdeleteMemberArgs = {
+  id: Scalars["ID"]["input"];
+};
+
 export type MutationdeleteStaffArgs = {
   id: Scalars["ID"]["input"];
 };
@@ -206,6 +237,11 @@ export type MutationupdateClassArgs = {
 
 export type MutationupdateGymArgs = {
   data: GymUpdateInput;
+  id: Scalars["ID"]["input"];
+};
+
+export type MutationupdateMemberArgs = {
+  data: MemberUpdateInput;
   id: Scalars["ID"]["input"];
 };
 
@@ -227,6 +263,8 @@ export type Query = {
   contracts: Array<UserTenancyAgreement>;
   gymById?: Maybe<Gym>;
   gyms: Array<Gym>;
+  memberById: User;
+  members: Array<User>;
   membershipById: MembershipNFT;
   memberships: Array<MembershipNFT>;
   staff: Array<User>;
@@ -243,6 +281,10 @@ export type QuerycontractByIdArgs = {
 };
 
 export type QuerygymByIdArgs = {
+  id: Scalars["ID"]["input"];
+};
+
+export type QuerymemberByIdArgs = {
   id: Scalars["ID"]["input"];
 };
 
@@ -376,7 +418,7 @@ export interface SubscriptionSubscriberObject<
   TKey extends string,
   TParent,
   TContext,
-  TArgs
+  TArgs,
 > {
   subscribe: SubscriptionSubscribeFn<
     { [key in TKey]: TResult },
@@ -402,7 +444,7 @@ export type SubscriptionObject<
   TKey extends string,
   TParent,
   TContext,
-  TArgs
+  TArgs,
 > =
   | SubscriptionSubscriberObject<TResult, TKey, TParent, TContext, TArgs>
   | SubscriptionResolverObject<TResult, TParent, TContext, TArgs>;
@@ -412,7 +454,7 @@ export type SubscriptionResolver<
   TKey extends string,
   TParent = {},
   TContext = {},
-  TArgs = {}
+  TArgs = {},
 > =
   | ((
       ...args: any[]
@@ -437,7 +479,7 @@ export type DirectiveResolverFn<
   TResult = {},
   TParent = {},
   TContext = {},
-  TArgs = {}
+  TArgs = {},
 > = (
   next: NextResolverFn<TResult>,
   parent: TParent,
@@ -470,8 +512,10 @@ export type ResolversTypes = {
   GymUpdateInput: GymUpdateInput;
   InvitationToken: ResolverTypeWrapper<InvitationToken>;
   Json: ResolverTypeWrapper<Scalars["Json"]["output"]>;
-  MembershipNFT: ResolverTypeWrapper<MembershipNFT>;
+  MemberCreateInput: MemberCreateInput;
   Boolean: ResolverTypeWrapper<Scalars["Boolean"]["output"]>;
+  MemberUpdateInput: MemberUpdateInput;
+  MembershipNFT: ResolverTypeWrapper<MembershipNFT>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   StaffCreateInput: StaffCreateInput;
@@ -518,8 +562,10 @@ export type ResolversParentTypes = {
   GymUpdateInput: GymUpdateInput;
   InvitationToken: InvitationToken;
   Json: Scalars["Json"]["output"];
-  MembershipNFT: MembershipNFT;
+  MemberCreateInput: MemberCreateInput;
   Boolean: Scalars["Boolean"]["output"];
+  MemberUpdateInput: MemberUpdateInput;
+  MembershipNFT: MembershipNFT;
   Mutation: {};
   Query: {};
   StaffCreateInput: StaffCreateInput;
@@ -544,7 +590,8 @@ export type AgreementTypeResolvers = EnumResolverSignature<
 
 export type BookingResolvers<
   ContextType = any,
-  ParentType extends ResolversParentTypes["Booking"] = ResolversParentTypes["Booking"]
+  ParentType extends
+    ResolversParentTypes["Booking"] = ResolversParentTypes["Booking"],
 > = {
   bookedAt?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
   id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
@@ -553,7 +600,8 @@ export type BookingResolvers<
 
 export type CheckInResolvers<
   ContextType = any,
-  ParentType extends ResolversParentTypes["CheckIn"] = ResolversParentTypes["CheckIn"]
+  ParentType extends
+    ResolversParentTypes["CheckIn"] = ResolversParentTypes["CheckIn"],
 > = {
   id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   timestamp?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
@@ -562,7 +610,8 @@ export type CheckInResolvers<
 
 export type ClassResolvers<
   ContextType = any,
-  ParentType extends ResolversParentTypes["Class"] = ResolversParentTypes["Class"]
+  ParentType extends
+    ResolversParentTypes["Class"] = ResolversParentTypes["Class"],
 > = {
   bookings?: Resolver<
     Maybe<Array<ResolversTypes["Booking"]>>,
@@ -604,7 +653,7 @@ export interface DateTimeScalarConfig
 
 export type GymResolvers<
   ContextType = any,
-  ParentType extends ResolversParentTypes["Gym"] = ResolversParentTypes["Gym"]
+  ParentType extends ResolversParentTypes["Gym"] = ResolversParentTypes["Gym"],
 > = {
   address?: Resolver<Maybe<ResolversTypes["Json"]>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
@@ -626,7 +675,8 @@ export type GymResolvers<
 
 export type GymAddressResolvers<
   ContextType = any,
-  ParentType extends ResolversParentTypes["GymAddress"] = ResolversParentTypes["GymAddress"]
+  ParentType extends
+    ResolversParentTypes["GymAddress"] = ResolversParentTypes["GymAddress"],
 > = {
   city?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
   country?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
@@ -638,7 +688,8 @@ export type GymAddressResolvers<
 
 export type InvitationTokenResolvers<
   ContextType = any,
-  ParentType extends ResolversParentTypes["InvitationToken"] = ResolversParentTypes["InvitationToken"]
+  ParentType extends
+    ResolversParentTypes["InvitationToken"] = ResolversParentTypes["InvitationToken"],
 > = {
   createdAt?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
   expiresAt?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
@@ -655,7 +706,8 @@ export interface JsonScalarConfig
 
 export type MembershipNFTResolvers<
   ContextType = any,
-  ParentType extends ResolversParentTypes["MembershipNFT"] = ResolversParentTypes["MembershipNFT"]
+  ParentType extends
+    ResolversParentTypes["MembershipNFT"] = ResolversParentTypes["MembershipNFT"],
 > = {
   createdAt?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
   expiresAt?: Resolver<
@@ -678,7 +730,8 @@ export type MembershipNFTResolvers<
 
 export type MutationResolvers<
   ContextType = any,
-  ParentType extends ResolversParentTypes["Mutation"] = ResolversParentTypes["Mutation"]
+  ParentType extends
+    ResolversParentTypes["Mutation"] = ResolversParentTypes["Mutation"],
 > = {
   createClass?: Resolver<
     ResolversTypes["Class"],
@@ -691,6 +744,12 @@ export type MutationResolvers<
     ParentType,
     ContextType,
     RequireFields<MutationcreateGymArgs, "data">
+  >;
+  createMember?: Resolver<
+    ResolversTypes["User"],
+    ParentType,
+    ContextType,
+    RequireFields<MutationcreateMemberArgs, "data">
   >;
   createStaff?: Resolver<
     ResolversTypes["User"],
@@ -716,6 +775,12 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationdeleteGymArgs, "id">
   >;
+  deleteMember?: Resolver<
+    ResolversTypes["Boolean"],
+    ParentType,
+    ContextType,
+    RequireFields<MutationdeleteMemberArgs, "id">
+  >;
   deleteStaff?: Resolver<
     ResolversTypes["Boolean"],
     ParentType,
@@ -734,6 +799,12 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationupdateGymArgs, "data" | "id">
   >;
+  updateMember?: Resolver<
+    ResolversTypes["User"],
+    ParentType,
+    ContextType,
+    RequireFields<MutationupdateMemberArgs, "data" | "id">
+  >;
   updateStaff?: Resolver<
     ResolversTypes["User"],
     ParentType,
@@ -750,7 +821,8 @@ export type MutationResolvers<
 
 export type QueryResolvers<
   ContextType = any,
-  ParentType extends ResolversParentTypes["Query"] = ResolversParentTypes["Query"]
+  ParentType extends
+    ResolversParentTypes["Query"] = ResolversParentTypes["Query"],
 > = {
   classById?: Resolver<
     ResolversTypes["Class"],
@@ -777,6 +849,13 @@ export type QueryResolvers<
     RequireFields<QuerygymByIdArgs, "id">
   >;
   gyms?: Resolver<Array<ResolversTypes["Gym"]>, ParentType, ContextType>;
+  memberById?: Resolver<
+    ResolversTypes["User"],
+    ParentType,
+    ContextType,
+    RequireFields<QuerymemberByIdArgs, "id">
+  >;
+  members?: Resolver<Array<ResolversTypes["User"]>, ParentType, ContextType>;
   membershipById?: Resolver<
     ResolversTypes["MembershipNFT"],
     ParentType,
@@ -800,7 +879,8 @@ export type QueryResolvers<
 
 export type TenancyResolvers<
   ContextType = any,
-  ParentType extends ResolversParentTypes["Tenancy"] = ResolversParentTypes["Tenancy"]
+  ParentType extends
+    ResolversParentTypes["Tenancy"] = ResolversParentTypes["Tenancy"],
 > = {
   contactEmail?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
@@ -817,7 +897,8 @@ export type TenancyResolvers<
 
 export type UserResolvers<
   ContextType = any,
-  ParentType extends ResolversParentTypes["User"] = ResolversParentTypes["User"]
+  ParentType extends
+    ResolversParentTypes["User"] = ResolversParentTypes["User"],
 > = {
   createdAt?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
   email?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
@@ -854,7 +935,8 @@ export type UserAtGymRoleResolvers = EnumResolverSignature<
 
 export type UserGymAssociationResolvers<
   ContextType = any,
-  ParentType extends ResolversParentTypes["UserGymAssociation"] = ResolversParentTypes["UserGymAssociation"]
+  ParentType extends
+    ResolversParentTypes["UserGymAssociation"] = ResolversParentTypes["UserGymAssociation"],
 > = {
   assignedAt?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
   gymId?: Resolver<ResolversTypes["ID"], ParentType, ContextType>;
@@ -876,7 +958,8 @@ export type UserGymAssociationResolvers<
 
 export type UserTenancyAgreementResolvers<
   ContextType = any,
-  ParentType extends ResolversParentTypes["UserTenancyAgreement"] = ResolversParentTypes["UserTenancyAgreement"]
+  ParentType extends
+    ResolversParentTypes["UserTenancyAgreement"] = ResolversParentTypes["UserTenancyAgreement"],
 > = {
   createdAt?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
   documentVersion?: Resolver<
