@@ -16,7 +16,9 @@ const config = {
     },
   }),
   plugins: [openAPI()],
-  trustedOrigins: ["http://localhost:1337"],
+  trustedOrigins: ["http://localhost:1337"].concat(
+    String(process.env.TRUSTED_ORIGINS).split(",")
+  ),
   emailAndPassword: {
     enabled: true,
   },
