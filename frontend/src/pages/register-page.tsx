@@ -3,34 +3,43 @@ import { toast } from "sonner";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LoginForm } from "@/features/auth/login-form.tsx";
 
-import { loginSchema } from "@/features/auth/login.schema";
 import { useAuth } from "@/features/auth/use-auth.ts";
 import { useMutation } from "@tanstack/react-query";
 import { authClient } from "@/lib/auth.ts";
 import Logo from "@/components/ui/logo";
 
-export default function LoginPage() {
+import { RegisterForm } from "@/features/auth/register-form";
+import {
+  registerSchema,
+  RegisterFormData,
+} from "@/features/auth/register.schema";
+
+export default function RegisterPage() {
   const form = useForm({
-    resolver: zodResolver(loginSchema),
+    resolver: zodResolver(registerSchema),
     defaultValues: {
       email: "",
       password: "",
+      firstName: "",
+      lastName: "",
     },
   });
 
   const navigate = useNavigate();
   const { init, user } = useAuth();
-  const { mutateAsync: login, isPending: isSubmitting } = useMutation({
-    mutationKey: ["login"],
-    mutationFn: (variables: { email: string; password: string }) =>
-      authClient.signIn.email(variables),
+  const { mutateAsync: signUp, isPending: isSubmitting } = useMutation({
+    mutationKey: ["sign-up"],
+    mutationFn: (variables: RegisterFormData) =>
+      authClient.signUp.email({
+        ...variables,
+        name: "",
+      }),
     onSuccess: async (data) => {
       if (data.data?.user) {
         await init();
         toast.success("Success", {
-          description: "Welcome back! " + data.data.user.name,
+          description: "Welcome! " + data.data.user.name,
         });
         navigate("/dashboard"); // Redirect to dashboard after successful login
       }
@@ -57,15 +66,15 @@ export default function LoginPage() {
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs space-y-6">
-            <LoginForm
+            <RegisterForm
               form={form}
               isSubmitting={isSubmitting}
-              onSubmit={login}
+              onSubmit={signUp}
             />
             <div className="text-center text-sm">
-              Don&apos;t have an account?{" "}
-              <Link to="/register" className="underline underline-offset-4">
-                Sign up
+              Already have an account?{" "}
+              <Link to="/login" className="underline underline-offset-4">
+                Login
               </Link>
             </div>
           </div>

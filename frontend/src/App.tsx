@@ -11,6 +11,7 @@ import { Toaster } from "./components/ui/sonner.tsx";
 import ProtectedRoute from "./components/common/protected-route.tsx";
 
 import LoginPage from "./pages/login-page.tsx";
+import RegisterPage from "./pages/register-page.tsx";
 import DashboardPage from "./pages/dashboard-page.tsx";
 import NotFoundPage from "./pages/not-found-page.tsx";
 import AppLayout from "./layouts/app-layout.tsx";
@@ -61,6 +62,7 @@ function App() {
 
             {/* Public Routes */}
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
             <Route path="/logout" element={<LogoutPage />} />
             <Route path="/set-password" element={<SetPasswordPage />} />
             <Route path="/not-found" element={<NotFoundPage />} />

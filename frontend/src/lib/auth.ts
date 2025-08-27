@@ -18,26 +18,31 @@ export const authClient = createAuthClient({
         category: {
           type: "string",
           required: true,
+          input: false,
         },
         isSuperUser: {
           type: "boolean",
           required: false,
           defaultValue: false,
+          input: false,
         },
         isActive: {
           type: "boolean",
           required: false,
           defaultValue: true,
+          input: false,
         },
         walletAddress: {
           type: "string",
           unique: true,
           required: false,
+          input: false,
         },
         phoneNumber: {
           type: "string",
           unique: true,
           required: false,
+          input: false,
         },
         tenancyId: {
           type: "string",

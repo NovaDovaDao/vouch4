@@ -3,17 +3,20 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-import type { LoginFormData } from "./login.schema";
+import type { RegisterFormData } from "./register.schema";
 import { UseFormReturn } from "react-hook-form";
-import { Link } from "react-router-dom";
 
-interface LoginFormProps {
-  form: UseFormReturn<LoginFormData>; // Pass the useForm hook's return value
-  onSubmit: (data: LoginFormData) => void;
+interface RegisterFormProps {
+  form: UseFormReturn<RegisterFormData>; // Pass the useForm hook's return value
+  onSubmit: (data: RegisterFormData) => void;
   isSubmitting: boolean;
 }
 
-export function LoginForm({ form, isSubmitting, onSubmit }: LoginFormProps) {
+export function RegisterForm({
+  form,
+  isSubmitting,
+  onSubmit,
+}: RegisterFormProps) {
   const {
     register,
     handleSubmit,
@@ -26,9 +29,9 @@ export function LoginForm({ form, isSubmitting, onSubmit }: LoginFormProps) {
       onSubmit={handleSubmit(onSubmit)}
     >
       <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-bold">Login to your account</h1>
+        <h1 className="text-2xl font-bold">Register your account</h1>
         <p className="text-muted-foreground text-sm text-balance">
-          Enter your email below to login to your account
+          Enter your deets below to register your account
         </p>
       </div>
       <div className="grid gap-6">
@@ -49,12 +52,6 @@ export function LoginForm({ form, isSubmitting, onSubmit }: LoginFormProps) {
         <div className="grid gap-3">
           <div className="flex items-center">
             <Label htmlFor="password">Password</Label>
-            <Link
-              to="/forgot-password"
-              className="ml-auto text-sm underline-offset-4 hover:underline"
-            >
-              Forgot your password?
-            </Link>
           </div>
           <Input
             id="password"
@@ -66,8 +63,26 @@ export function LoginForm({ form, isSubmitting, onSubmit }: LoginFormProps) {
             <p className="text-red-500 text-sm">{errors.password.message}</p>
           )}
         </div>
+        <div className="grid gap-3">
+          <div className="flex items-center">
+            <Label htmlFor="password">First Name</Label>
+          </div>
+          <Input id="first-name" required {...register("firstName")} />
+          {errors.firstName && (
+            <p className="text-red-500 text-sm">{errors.firstName.message}</p>
+          )}
+        </div>
+        <div className="grid gap-3">
+          <div className="flex items-center">
+            <Label htmlFor="password">Last Name</Label>
+          </div>
+          <Input id="last-name" required {...register("lastName")} />
+          {errors.lastName && (
+            <p className="text-red-500 text-sm">{errors.lastName.message}</p>
+          )}
+        </div>
         <Button type="submit" className="w-full" disabled={isSubmitting}>
-          {isSubmitting ? "Logging in" : "Login"}
+          {isSubmitting ? "Registering..." : "Register"}
         </Button>
       </div>
     </form>

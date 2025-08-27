@@ -2,16 +2,19 @@ import { Navigate } from "react-router-dom";
 import { toast } from "sonner";
 
 import { useAuth } from "@/features/auth/use-auth";
+import AppLoading from "@/components/app-loading";
 
-const LogoutPage: React.FC = () => {
+function LoggingOut() {
   const auth = useAuth();
 
-  if (auth.user) {
-    auth.logout();
-    toast("Logging out...");
-  }
+  auth.logout();
+  toast("Logging out...");
 
-  return <Navigate to="/" />;
-};
+  return <AppLoading />;
+}
 
-export default LogoutPage;
+export default function LogoutPage() {
+  const auth = useAuth();
+
+  return auth.user ? <LoggingOut /> : <Navigate to="/login" />;
+}

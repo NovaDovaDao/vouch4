@@ -2,6 +2,9 @@ import { betterAuth, type BetterAuthOptions } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { openAPI } from "better-auth/plugins";
 import { db } from "./db.js";
+import "dotenv/config";
+import type { User } from "./prisma/generated/client.js";
+import { sendVerificationEmail } from "./email.js";
 
 const config = {
   advanced: {
@@ -39,17 +42,19 @@ const config = {
       },
       category: {
         type: "string",
-        required: true,
+        input: false,
       },
       isSuperUser: {
         type: "boolean",
         required: false,
         defaultValue: false,
+        input: false,
       },
       isActive: {
         type: "boolean",
         required: false,
         defaultValue: true,
+        input: false,
       },
       walletAddress: {
         type: "string",
@@ -64,7 +69,30 @@ const config = {
       tenancyId: {
         type: "string",
         required: false,
+        input: false,
       },
+    },
+  },
+  databaseHooks: {
+    user: {
+      create: {
+        async before(user) {
+          return {
+            data: {
+              ...user,
+              name: undefined as unknown as string,
+              category: user.category ?? "STAFF",
+            },
+          };
+        },
+      },
+    },
+  },
+  emailVerification: {
+    sendOnSignIn: true,
+    sendOnSignUp: true,
+    async sendVerificationEmail(data) {
+      await sendVerificationEmail(data.user.email, data.url);
     },
   },
 } satisfies BetterAuthOptions;
