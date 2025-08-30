@@ -26,12 +26,17 @@ async function main() {
         email: superAdminEmail,
         password: superAdminPassword,
         name: undefined as unknown as string,
-        category: $Enums.UserCategory.STAFF,
         firstName: "SYSTEM",
         lastName: "ADMIN",
-        isActive: true,
-        isSuperUser: true,
       },
+    });
+    await db.user.update({
+      data: {
+        isSuperUser: true,
+        isActive: true,
+        category: $Enums.UserCategory.STAFF,
+      },
+      where: { id: newAdmin.user.id },
     });
     console.log(`SUPER_ADMIN user created with ID: ${newAdmin.user.id}`);
   }
