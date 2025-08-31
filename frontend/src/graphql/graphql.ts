@@ -126,6 +126,26 @@ export type InvitationToken = {
   userId: Scalars['ID']['output'];
 };
 
+export type MemberCreateInput = {
+  email: Scalars['String']['input'];
+  firstName: Scalars['String']['input'];
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
+  isSuperUser?: InputMaybe<Scalars['Boolean']['input']>;
+  lastName: Scalars['String']['input'];
+  phoneNumber?: InputMaybe<Scalars['String']['input']>;
+  walletAddress?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type MemberUpdateInput = {
+  email?: InputMaybe<Scalars['String']['input']>;
+  firstName?: InputMaybe<Scalars['String']['input']>;
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
+  isSuperUser?: InputMaybe<Scalars['Boolean']['input']>;
+  lastName?: InputMaybe<Scalars['String']['input']>;
+  phoneNumber?: InputMaybe<Scalars['String']['input']>;
+  walletAddress?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type MembershipNft = {
   __typename?: 'MembershipNFT';
   createdAt: Scalars['DateTime']['output'];
@@ -142,13 +162,16 @@ export type Mutation = {
   __typename?: 'Mutation';
   createClass: Class;
   createGym: Gym;
+  createMember: User;
   createStaff: User;
   createTenancy: Tenancy;
   deleteClass: Scalars['Boolean']['output'];
   deleteGym: Scalars['Boolean']['output'];
+  deleteMember: Scalars['Boolean']['output'];
   deleteStaff: Scalars['Boolean']['output'];
   updateClass: Class;
   updateGym: Gym;
+  updateMember: User;
   updateStaff: User;
   updateTenancy: Tenancy;
 };
@@ -161,6 +184,11 @@ export type MutationCreateClassArgs = {
 
 export type MutationCreateGymArgs = {
   data: GymCreateInput;
+};
+
+
+export type MutationCreateMemberArgs = {
+  data: MemberCreateInput;
 };
 
 
@@ -184,6 +212,11 @@ export type MutationDeleteGymArgs = {
 };
 
 
+export type MutationDeleteMemberArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
 export type MutationDeleteStaffArgs = {
   id: Scalars['ID']['input'];
 };
@@ -197,6 +230,12 @@ export type MutationUpdateClassArgs = {
 
 export type MutationUpdateGymArgs = {
   data: GymUpdateInput;
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationUpdateMemberArgs = {
+  data: MemberUpdateInput;
   id: Scalars['ID']['input'];
 };
 
@@ -220,6 +259,8 @@ export type Query = {
   contracts: Array<UserTenancyAgreement>;
   gymById?: Maybe<Gym>;
   gyms: Array<Gym>;
+  memberById: User;
+  members: Array<User>;
   membershipById: MembershipNft;
   memberships: Array<MembershipNft>;
   staff: Array<User>;
@@ -239,6 +280,11 @@ export type QueryContractByIdArgs = {
 
 
 export type QueryGymByIdArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryMemberByIdArgs = {
   id: Scalars['ID']['input'];
 };
 
@@ -394,6 +440,28 @@ export type UpdateGymMutationVariables = Exact<{
 
 export type UpdateGymMutation = { __typename?: 'Mutation', updateGym: { __typename?: 'Gym', id: string, name: string } };
 
+export type CreateMemberMutationVariables = Exact<{
+  data: MemberCreateInput;
+}>;
+
+
+export type CreateMemberMutation = { __typename?: 'Mutation', createMember: { __typename?: 'User', id: string, firstName: string } };
+
+export type GetMemberByIdQueryVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type GetMemberByIdQuery = { __typename?: 'Query', memberById: { __typename?: 'User', createdAt: any, email: string, firstName: string, id: string, isActive: boolean, lastName: string, walletAddress?: string | null, updatedAt: any, phoneNumber?: string | null } };
+
+export type UpdateMemberMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+  data: MemberUpdateInput;
+}>;
+
+
+export type UpdateMemberMutation = { __typename?: 'Mutation', updateMember: { __typename?: 'User', id: string, firstName: string } };
+
 export type CreateStaffMutationVariables = Exact<{
   data: StaffCreateInput;
 }>;
@@ -437,6 +505,11 @@ export type GetGymsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetGymsQuery = { __typename?: 'Query', gyms: Array<{ __typename?: 'Gym', id: string, address?: any | null, name: string, legalDocsUrl?: string | null, updatedAt: any }> };
+
+export type GetMembersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetMembersQuery = { __typename?: 'Query', members: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, updatedAt: any, isActive: boolean }> };
 
 export type GetContractsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -554,6 +627,37 @@ export const UpdateGymDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<UpdateGymMutation, UpdateGymMutationVariables>;
+export const CreateMemberDocument = new TypedDocumentString(`
+    mutation CreateMember($data: MemberCreateInput!) {
+  createMember(data: $data) {
+    id
+    firstName
+  }
+}
+    `) as unknown as TypedDocumentString<CreateMemberMutation, CreateMemberMutationVariables>;
+export const GetMemberByIdDocument = new TypedDocumentString(`
+    query GetMemberById($id: ID!) {
+  memberById(id: $id) {
+    createdAt
+    email
+    firstName
+    id
+    isActive
+    lastName
+    walletAddress
+    updatedAt
+    phoneNumber
+  }
+}
+    `) as unknown as TypedDocumentString<GetMemberByIdQuery, GetMemberByIdQueryVariables>;
+export const UpdateMemberDocument = new TypedDocumentString(`
+    mutation UpdateMember($id: ID!, $data: MemberUpdateInput!) {
+  updateMember(id: $id, data: $data) {
+    id
+    firstName
+  }
+}
+    `) as unknown as TypedDocumentString<UpdateMemberMutation, UpdateMemberMutationVariables>;
 export const CreateStaffDocument = new TypedDocumentString(`
     mutation CreateStaff($data: StaffCreateInput!) {
   createStaff(data: $data) {
@@ -632,6 +736,17 @@ export const GetGymsDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<GetGymsQuery, GetGymsQueryVariables>;
+export const GetMembersDocument = new TypedDocumentString(`
+    query GetMembers {
+  members {
+    id
+    firstName
+    lastName
+    updatedAt
+    isActive
+  }
+}
+    `) as unknown as TypedDocumentString<GetMembersQuery, GetMembersQueryVariables>;
 export const GetContractsDocument = new TypedDocumentString(`
     query GetContracts {
   contracts {

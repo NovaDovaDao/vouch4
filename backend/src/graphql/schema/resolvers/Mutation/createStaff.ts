@@ -1,22 +1,36 @@
-import { createGraphQLError } from "graphql-yoga";
 import type { CustomContext } from "../../../../server.js";
 import type { MutationResolvers } from "./../../types.generated.js";
-export const createStaff: NonNullable<MutationResolvers['createStaff']> = (
-  _parent,
-  arg,
-  ctx: CustomContext
-) => {
-  if (!ctx.user?.tenancyId)
-    throw createGraphQLError("Staff must be associated to a tenancy");
+import { auth } from "../../../../auth.js";
+import { db } from "../../../../db.js";
+import { errors } from "../../../errors.js";
 
-  return ctx.db.user.create({
-    data: {
-      category: "STAFF",
-      email: arg.data.email,
-      emailVerified: false,
-      firstName: arg.data.firstName,
-      lastName: arg.data.lastName,
-      tenancyId: ctx.user.tenancyId,
+export const createStaff: NonNullable<
+  MutationResolvers["createStaff"]
+> = async (_parent, { data }, ctx: CustomContext) => {
+  if (!ctx.user?.tenancyId) throw errors.missingTenant();
+
+  const response = await auth.api.signUpEmail({
+    body: {
+      email: data.email,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      name: undefined as unknown as string,
+      password: data.email,
     },
   });
+  const user = db.user.update({
+    data: {
+      category: "STAFF",
+      tenancyId: ctx.user.tenancyId,
+    },
+    where: {
+      id: response.user.id,
+    },
+  });
+
+  if (!user) {
+    throw errors.couldNotCreateUser();
+  }
+
+  return user;
 };

@@ -8,9 +8,9 @@ import { sendVerificationEmail } from "./email.js";
 
 const config = {
   advanced: {
-    cookiePrefix: "ascend",
+    cookiePrefix: "ale",
   },
-  appName: "Ascend",
+  appName: "Alé",
   database: prismaAdapter(db, {
     provider: "postgresql",
     debugLogs: {
@@ -53,7 +53,7 @@ const config = {
       isActive: {
         type: "boolean",
         required: false,
-        defaultValue: true,
+        defaultValue: false,
         input: false,
       },
       walletAddress: {

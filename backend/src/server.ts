@@ -2,8 +2,8 @@ import {
   createSchema,
   createYoga,
   type YogaInitialContext,
-  createGraphQLError,
 } from "graphql-yoga";
+import { errors } from "./graphql/errors.js";
 import type { ParameterizedContext } from "koa";
 import { typeDefs } from "./graphql/schema/typeDefs.generated.js";
 import { resolvers } from "./graphql/schema/resolvers.generated.js";
@@ -29,10 +29,9 @@ export const yogaServer = createYoga<ParameterizedContext>({
     if (!session) {
       const internalAccessToken = await verifyJWT(
         request.headers.get("authorization")?.split("bearer").at(1)?.trim() ??
-          ""
+          "",
       );
-      if (!internalAccessToken)
-        throw createGraphQLError("Wow cowboy 🤠, you gotta login first!");
+      if (!internalAccessToken) throw errors.notAuthenticated();
     }
 
     return {

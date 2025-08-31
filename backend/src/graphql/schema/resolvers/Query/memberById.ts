@@ -1,7 +1,7 @@
 import { createGraphQLError } from "graphql-yoga";
 import type { CustomContext } from "../../../../server.js";
 import type { QueryResolvers } from "./../../types.generated.js";
-export const memberById: NonNullable<QueryResolvers["memberById"]> = async (
+export const memberById: NonNullable<QueryResolvers['memberById']> = async (
   _parent,
   arg,
   ctx: CustomContext

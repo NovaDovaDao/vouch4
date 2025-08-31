@@ -17,21 +17,21 @@ import {
 } from "@/components/ui/dialog";
 import { graphql } from "@/graphql";
 import type {
-  CreateStaffMutationVariables,
-  StaffCreateInput,
+  CreateMemberMutationVariables,
+  MemberCreateInput,
 } from "@/graphql/graphql";
 import { execute } from "@/graphql/execute";
 
-const CREATE_STAFF = graphql(`
-  mutation CreateStaff($data: StaffCreateInput!) {
-    createStaff(data: $data) {
+const CREATE_MEMBER = graphql(`
+  mutation CreateMember($data: MemberCreateInput!) {
+    createMember(data: $data) {
       id
       firstName
     }
   }
 `);
 
-export default function CreateStaffDialog({
+export default function CreateMemberDialog({
   handleOpen,
 }: {
   handleOpen: (open: boolean) => void;
@@ -48,19 +48,19 @@ export default function CreateStaffDialog({
   });
   const queryClient = useQueryClient();
   const { mutate, isPending } = useMutation({
-    mutationKey: ["staff", "create"],
-    mutationFn: (variables: CreateStaffMutationVariables) =>
-      execute(CREATE_STAFF, variables),
+    mutationKey: ["members", "create"],
+    mutationFn: (variables: CreateMemberMutationVariables) =>
+      execute(CREATE_MEMBER, variables),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["staff"] });
+      queryClient.invalidateQueries({ queryKey: ["members"] });
       toast.success("Success!", {
-        description: `Added ${data.createStaff.firstName}!`,
+        description: `Added ${data.createMember.firstName}!`,
       });
       handleOpen(false);
     },
   });
 
-  const handleSubmit = (body: StaffCreateInput) => mutate({ data: body });
+  const handleSubmit = (body: MemberCreateInput) => mutate({ data: body });
 
   return (
     <Dialog open onOpenChange={handleOpen}>

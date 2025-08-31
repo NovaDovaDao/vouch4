@@ -1,15 +1,12 @@
-import { createGraphQLError } from "graphql-yoga";
 import type { CustomContext } from "../../../../server.js";
+import { errors } from "../../../errors.js";
 import type { MutationResolvers } from "./../../types.generated.js";
-export const updateTenancy: NonNullable<MutationResolvers['updateTenancy']> = (
+export const updateTenancy: NonNullable<MutationResolvers["updateTenancy"]> = (
   _parent,
   arg,
-  ctx: CustomContext
+  ctx: CustomContext,
 ) => {
-  if (ctx.user?.tenancyId !== arg.id)
-    throw createGraphQLError(
-      "Wow, these are not the drones you are looking for!"
-    );
+  if (ctx.user?.tenancyId !== arg.id) throw errors.missingTenant();
 
   return ctx.db.tenancy.update({
     data: {

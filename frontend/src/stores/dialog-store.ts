@@ -2,6 +2,7 @@ import { create } from "zustand";
 
 export type DialogPayload =
   | { type: "createStaff" }
+  | { type: "createMember" }
   | { type: "createClass" }
   | { type: "createGym" }
   | { type: "search" }

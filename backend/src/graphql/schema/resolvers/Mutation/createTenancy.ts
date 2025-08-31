@@ -1,11 +1,12 @@
-import { createGraphQLError } from "graphql-yoga";
+import { errors } from "../../../errors.js";
 import type { CustomContext } from "../../../../server.js";
 import type { MutationResolvers } from "./../../types.generated.js";
 import { auth } from "../../../../auth.js";
 
-export const createTenancy: NonNullable<MutationResolvers['createTenancy']> = async (_parent, arg, ctx: CustomContext) => {
-  if (ctx.user?.tenancyId)
-    throw createGraphQLError("You already have a tenancy");
+export const createTenancy: NonNullable<
+  MutationResolvers["createTenancy"]
+> = async (_parent, arg, ctx: CustomContext) => {
+  if (ctx.user?.tenancyId) throw errors.alreadyHaveTenant();
 
   const tenancy = await ctx.db.tenancy.create({
     data: {
@@ -23,7 +24,7 @@ export const createTenancy: NonNullable<MutationResolvers['createTenancy']> = as
       ctx.user.id,
       {
         tenancyId: tenancy.id,
-      }
+      },
     );
     console.log({ updatedUser });
   }

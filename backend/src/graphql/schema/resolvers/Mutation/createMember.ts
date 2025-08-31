@@ -1,11 +1,37 @@
-import { createGraphQLError } from "graphql-yoga";
+import { errors } from "../../../errors.js";
 import type { CustomContext } from "../../../../server.js";
 import type { MutationResolvers } from "./../../types.generated.js";
+import { auth } from "../../../../auth.js";
+import { db } from "../../../../db.js";
+
 export const createMember: NonNullable<
   MutationResolvers["createMember"]
-> = async (_parent, _arg, ctx: CustomContext) => {
-  if (!ctx.user?.tenancyId)
-    throw createGraphQLError("Wow, you need a tenant first!");
+> = async (_parent, { data }, ctx: CustomContext) => {
+  if (!ctx.user?.tenancyId) throw errors.missingTenant();
 
-  throw createGraphQLError("Not implemented yet");
+  const response = await auth.api.signUpEmail({
+    body: {
+      email: data.email,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      name: undefined as unknown as string,
+      password: data.email,
+    },
+  });
+
+  const user = db.user.update({
+    data: {
+      category: "MEMBER",
+      tenancyId: ctx.user.tenancyId,
+    },
+    where: {
+      id: response.user.id,
+    },
+  });
+
+  if (!user) {
+    throw errors.couldNotCreateUser();
+  }
+
+  return user;
 };

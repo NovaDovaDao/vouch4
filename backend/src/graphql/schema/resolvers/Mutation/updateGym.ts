@@ -1,13 +1,12 @@
-import { createGraphQLError } from "graphql-yoga";
 import type { CustomContext } from "../../../../server.js";
+import { errors } from "../../../errors.js";
 import type { MutationResolvers } from "./../../types.generated.js";
-export const updateGym: NonNullable<MutationResolvers['updateGym']> = (
+export const updateGym: NonNullable<MutationResolvers["updateGym"]> = (
   _parent,
   arg,
-  ctx: CustomContext
+  ctx: CustomContext,
 ) => {
-  if (!ctx.user?.tenancyId)
-    throw createGraphQLError("Gym must be associated to a tenant");
+  if (!ctx.user?.tenancyId) throw errors.missingTenant();
 
   return ctx.db.gym.update({
     data: {

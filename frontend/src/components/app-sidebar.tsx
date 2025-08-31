@@ -44,6 +44,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         icon: IconUsers,
       },
       {
+        title: "Members",
+        url: "/members",
+        icon: IconUsers,
+      },
+      {
         title: "Classes",
         url: "/classes",
         icon: IconListDetails,
@@ -139,7 +144,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             >
               <a href="#">
                 <IconGymnastics className="!size-5" />
-                <span className="text-base font-semibold">Ascend</span>
+                <span className="text-base font-semibold">Alé</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>

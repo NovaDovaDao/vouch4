@@ -2,18 +2,26 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 import type { LoginFormData } from "./login.schema";
 import { UseFormReturn } from "react-hook-form";
 import { Link } from "react-router-dom";
+import { IconAlertTriangle } from "@tabler/icons-react";
 
 interface LoginFormProps {
   form: UseFormReturn<LoginFormData>; // Pass the useForm hook's return value
   onSubmit: (data: LoginFormData) => void;
   isSubmitting: boolean;
+  error: Error | null;
 }
 
-export function LoginForm({ form, isSubmitting, onSubmit }: LoginFormProps) {
+export function LoginForm({
+  form,
+  isSubmitting,
+  onSubmit,
+  error,
+}: LoginFormProps) {
   const {
     register,
     handleSubmit,
@@ -31,6 +39,13 @@ export function LoginForm({ form, isSubmitting, onSubmit }: LoginFormProps) {
           Enter your email below to login to your account
         </p>
       </div>
+      {error && (
+        <Alert variant="destructive">
+          <IconAlertTriangle />
+          <AlertTitle>Login Failed</AlertTitle>
+          <AlertDescription>{error.message}</AlertDescription>
+        </Alert>
+      )}
       <div className="grid gap-6">
         <div className="grid gap-3">
           <Label htmlFor="email">Email</Label>
