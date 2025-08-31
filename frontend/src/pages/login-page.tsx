@@ -22,10 +22,22 @@ export default function LoginPage() {
 
   const navigate = useNavigate();
   const { init, user } = useAuth();
-  const { mutateAsync: login, isPending: isSubmitting } = useMutation({
+  const {
+    mutateAsync: login,
+    isPending: isSubmitting,
+    error,
+  } = useMutation({
     mutationKey: ["login"],
-    mutationFn: (variables: { email: string; password: string }) =>
-      authClient.signIn.email(variables),
+    mutationFn: async (variables: { email: string; password: string }) => {
+      const response = await authClient.signIn.email(variables);
+      if (response.error || !response.data?.user) {
+        throw new Error(
+          response.error?.message ||
+            "Login failed. Please check your credentials.",
+        );
+      }
+      return response;
+    },
     onSuccess: async (data) => {
       if (data.data?.user) {
         await init();
@@ -34,11 +46,6 @@ export default function LoginPage() {
         });
         navigate("/dashboard"); // Redirect to dashboard after successful login
       }
-    },
-    onError: (err) => {
-      toast.error("Login Error", {
-        description: err.message,
-      });
     },
   });
 
@@ -61,6 +68,7 @@ export default function LoginPage() {
               form={form}
               isSubmitting={isSubmitting}
               onSubmit={login}
+              error={error}
             />
             <div className="text-center text-sm">
               Don&apos;t have an account?{" "}
