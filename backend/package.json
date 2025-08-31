@@ -1,5 +1,5 @@
 {
-  "name": "@vouch4/backend",
+  "name": "@ale/backend",
   "version": "1.0.0",
   "main": "dist/main.js",
   "type": "module",
