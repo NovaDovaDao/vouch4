@@ -28,6 +28,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { useDialogStore } from "@/stores/dialog-store";
+import Logo from "./ui/logo";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const dialogStore = useDialogStore();
@@ -143,7 +144,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
               <a href="#">
-                <IconGymnastics className="!size-5" />
+                <Logo className="size-4" />
                 <span className="text-base font-semibold">Alé</span>
               </a>
             </SidebarMenuButton>
