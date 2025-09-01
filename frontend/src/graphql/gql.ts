@@ -33,7 +33,7 @@ type Documents = {
     "\n  mutation CreateTenancy($data: TenancyCreateInput!) {\n    createTenancy(data: $data) {\n      id\n    }\n  }\n": typeof types.CreateTenancyDocument,
     "\n  query GetClasses {\n    classes {\n      id\n      description\n      name\n      capacity\n      scheduleDateTime\n      instructor {\n        id\n        name\n      }\n      gym {\n        id\n        name\n      }\n    }\n  }\n": typeof types.GetClassesDocument,
     "\n  query GetGyms {\n    gyms {\n      id\n      address\n      name\n      legalDocsUrl\n      updatedAt\n    }\n  }\n": typeof types.GetGymsDocument,
-    "\n  query GetMembers {\n    members {\n      id\n      firstName\n      lastName\n      updatedAt\n      isActive\n    }\n  }\n": typeof types.GetMembersDocument,
+    "\n  query GetMembers {\n    members {\n      id\n      firstName\n      lastName\n      email\n      updatedAt\n      isActive\n      phoneNumber\n    }\n  }\n": typeof types.GetMembersDocument,
     "\n  query GetContracts {\n    contracts {\n      id\n    }\n  }\n": typeof types.GetContractsDocument,
     "\n  query GetMemberships {\n    memberships {\n      id\n    }\n  }\n": typeof types.GetMembershipsDocument,
     "\n  query GetStaff {\n    staff {\n      id\n      firstName\n      lastName\n      updatedAt\n      isActive\n    }\n  }\n": typeof types.GetStaffDocument,
@@ -57,7 +57,7 @@ const documents: Documents = {
     "\n  mutation CreateTenancy($data: TenancyCreateInput!) {\n    createTenancy(data: $data) {\n      id\n    }\n  }\n": types.CreateTenancyDocument,
     "\n  query GetClasses {\n    classes {\n      id\n      description\n      name\n      capacity\n      scheduleDateTime\n      instructor {\n        id\n        name\n      }\n      gym {\n        id\n        name\n      }\n    }\n  }\n": types.GetClassesDocument,
     "\n  query GetGyms {\n    gyms {\n      id\n      address\n      name\n      legalDocsUrl\n      updatedAt\n    }\n  }\n": types.GetGymsDocument,
-    "\n  query GetMembers {\n    members {\n      id\n      firstName\n      lastName\n      updatedAt\n      isActive\n    }\n  }\n": types.GetMembersDocument,
+    "\n  query GetMembers {\n    members {\n      id\n      firstName\n      lastName\n      email\n      updatedAt\n      isActive\n      phoneNumber\n    }\n  }\n": types.GetMembersDocument,
     "\n  query GetContracts {\n    contracts {\n      id\n    }\n  }\n": types.GetContractsDocument,
     "\n  query GetMemberships {\n    memberships {\n      id\n    }\n  }\n": types.GetMembershipsDocument,
     "\n  query GetStaff {\n    staff {\n      id\n      firstName\n      lastName\n      updatedAt\n      isActive\n    }\n  }\n": types.GetStaffDocument,
@@ -138,7 +138,7 @@ export function graphql(source: "\n  query GetGyms {\n    gyms {\n      id\n    
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query GetMembers {\n    members {\n      id\n      firstName\n      lastName\n      updatedAt\n      isActive\n    }\n  }\n"): typeof import('./graphql').GetMembersDocument;
+export function graphql(source: "\n  query GetMembers {\n    members {\n      id\n      firstName\n      lastName\n      email\n      updatedAt\n      isActive\n      phoneNumber\n    }\n  }\n"): typeof import('./graphql').GetMembersDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

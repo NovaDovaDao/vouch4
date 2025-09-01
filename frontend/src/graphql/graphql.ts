@@ -509,7 +509,7 @@ export type GetGymsQuery = { __typename?: 'Query', gyms: Array<{ __typename?: 'G
 export type GetMembersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMembersQuery = { __typename?: 'Query', members: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, updatedAt: any, isActive: boolean }> };
+export type GetMembersQuery = { __typename?: 'Query', members: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, email: string, updatedAt: any, isActive: boolean, phoneNumber?: string | null }> };
 
 export type GetContractsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -742,8 +742,10 @@ export const GetMembersDocument = new TypedDocumentString(`
     id
     firstName
     lastName
+    email
     updatedAt
     isActive
+    phoneNumber
   }
 }
     `) as unknown as TypedDocumentString<GetMembersQuery, GetMembersQueryVariables>;

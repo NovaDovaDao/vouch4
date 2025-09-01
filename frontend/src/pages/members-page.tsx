@@ -23,8 +23,10 @@ const GET_MEMBERS = graphql(`
       id
       firstName
       lastName
+      email
       updatedAt
       isActive
+      phoneNumber
     }
   }
 `);
