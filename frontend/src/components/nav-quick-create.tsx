@@ -18,17 +18,22 @@ type Option = {
 const options: Option[] = [
   {
     label: "Staff",
-    shortcut: "s",
+    shortcut: "S",
     type: "createStaff",
   },
   {
+    label: "Member",
+    shortcut: "M",
+    type: "createMember",
+  },
+  {
     label: "Class",
-    shortcut: "c",
+    shortcut: "C",
     type: "createClass",
   },
   {
     label: "Gym",
-    shortcut: "g",
+    shortcut: "G",
     type: "createGym",
   },
 ];
