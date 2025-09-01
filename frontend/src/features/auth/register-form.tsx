@@ -5,6 +5,8 @@ import { Label } from "@/components/ui/label";
 
 import type { RegisterFormData } from "./register.schema";
 import { UseFormReturn } from "react-hook-form";
+import { useState } from "react";
+import { IconEye, IconEyeOff } from "@tabler/icons-react";
 
 interface RegisterFormProps {
   form: UseFormReturn<RegisterFormData>; // Pass the useForm hook's return value
@@ -22,6 +24,7 @@ export function RegisterForm({
     handleSubmit,
     formState: { errors },
   } = form;
+  const [showPassword, setShowPassword] = useState(false);
 
   return (
     <form
@@ -53,12 +56,27 @@ export function RegisterForm({
           <div className="flex items-center">
             <Label htmlFor="password">Password</Label>
           </div>
-          <Input
-            id="password"
-            type="password"
-            required
-            {...register("password")}
-          />
+          <div className="relative">
+            <Input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              required
+              {...register("password")}
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="absolute top-0 right-0"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? (
+                <IconEyeOff className="h-4 w-4" />
+              ) : (
+                <IconEye className="h-4 w-4" />
+              )}
+            </Button>
+          </div>
           {errors.password && (
             <p className="text-red-500 text-sm">{errors.password.message}</p>
           )}

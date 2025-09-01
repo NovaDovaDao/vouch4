@@ -7,7 +7,8 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import type { LoginFormData } from "./login.schema";
 import { UseFormReturn } from "react-hook-form";
 import { Link } from "react-router-dom";
-import { IconAlertTriangle } from "@tabler/icons-react";
+import { IconAlertTriangle, IconEye, IconEyeOff } from "@tabler/icons-react";
+import { useState } from "react";
 
 interface LoginFormProps {
   form: UseFormReturn<LoginFormData>; // Pass the useForm hook's return value
@@ -27,6 +28,7 @@ export function LoginForm({
     handleSubmit,
     formState: { errors },
   } = form;
+  const [showPassword, setShowPassword] = useState(false);
 
   return (
     <form
@@ -71,12 +73,27 @@ export function LoginForm({
               Forgot your password?
             </Link>
           </div>
-          <Input
-            id="password"
-            type="password"
-            required
-            {...register("password")}
-          />
+          <div className="relative">
+            <Input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              required
+              {...register("password")}
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="absolute top-0 right-0"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? (
+                <IconEyeOff className="h-4 w-4" />
+              ) : (
+                <IconEye className="h-4 w-4" />
+              )}
+            </Button>
+          </div>
           {errors.password && (
             <p className="text-red-500 text-sm">{errors.password.message}</p>
           )}
