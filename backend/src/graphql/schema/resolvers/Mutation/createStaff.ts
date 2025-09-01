@@ -14,7 +14,7 @@ export const createStaff: NonNullable<
       email: data.email,
       firstName: data.firstName,
       lastName: data.lastName,
-      name: undefined as unknown as string,
+      name: "",
       password: data.email,
     },
   });

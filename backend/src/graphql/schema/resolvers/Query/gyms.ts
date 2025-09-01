@@ -1,9 +1,12 @@
 import { db } from "../../../../db.js";
+import type { CustomContext } from "../../../../server.js";
+import { errors } from "../../../errors.js";
 import type { QueryResolvers } from "./../../types.generated.js";
-export const gyms: NonNullable<QueryResolvers['gyms']> = (
+export const gyms: NonNullable<QueryResolvers["gyms"]> = (
   _parent,
   _arg,
-  _ctx
+  ctx: CustomContext,
 ) => {
-  return db.gym.findMany();
+  if (!ctx.user?.tenancyId) throw errors.missingTenant();
+  return db.gym.findMany({ where: { tenancyId: ctx.user.tenancyId } });
 };

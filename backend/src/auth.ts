@@ -81,7 +81,6 @@ const config = {
             data: {
               ...user,
               name: undefined as unknown as string,
-              category: user.category ?? "STAFF",
             },
           };
         },
