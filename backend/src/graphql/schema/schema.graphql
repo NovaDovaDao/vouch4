@@ -22,6 +22,11 @@ enum AgreementStatus {
   REVOKED
 }
 
+enum CalendarView {
+    MONTH
+    WEEK
+}
+
 # --- OBJECTS ---
 type Tenancy {
   id: ID!
@@ -192,6 +197,17 @@ input StaffUpdateInput {
   phoneNumber: String
 }
 
+input ClassesByDateInput {
+    gymId: ID
+    date: DateTime!
+    view: CalendarView!
+}
+
+type ClassesByDate {
+    calendarDay: DateTime!
+    classes: [Class!]!
+}
+
 type Booking {
   id: String!
   bookedAt: DateTime!
@@ -231,6 +247,7 @@ type Query {
   # --- CLASS QUERIES ---
   classes: [Class!]!
   classById(id: ID!): Class!
+  classesByDate(input: ClassesByDateInput!): [ClassesByDate!]!
 
   # --- TENANCY QUERIES ---
   tenancy: Tenancy!

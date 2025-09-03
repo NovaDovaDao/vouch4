@@ -13,13 +13,20 @@ import {
   IconPlus,
 } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
-import { formatDistanceToNow } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
 import { useState } from "react";
 
 const GET_MEMBERS = graphql(`
   query GetMemberships {
     memberships {
       id
+      createdAt
+      expiresAt
+      isActive
+      isCurrentlyRented
+      renterUserId
+      updatedAt
+      userId
     }
   }
 `);
@@ -63,16 +70,12 @@ export default function ReportsMembershipsPage() {
           loading={isLoading}
           columns={[
             {
-              accessorKey: "firstName",
-              header: "First Name",
+              accessorKey: "id",
+              header: "ID",
             },
             {
-              accessorKey: "lastName",
-              header: "Last Name",
-            },
-            {
-              accessorKey: "email",
-              header: "Email",
+              accessorKey: "isCurrentlyRented",
+              header: "Rented",
             },
             {
               accessorKey: "isActive",
@@ -92,16 +95,26 @@ export default function ReportsMembershipsPage() {
               ),
             },
             {
-              accessorKey: "phoneNumber",
-              header: "Phone",
+              accessorKey: "createdAt",
+              header: "Created",
+              cell: ({ row }) =>
+                format(row.original.updatedAt, "MMMM do, yyyy"),
             },
             {
               accessorKey: "updatedAt",
               header: "Updated",
               cell: ({ row }) =>
-                formatDistanceToNow(row.original.id, {
+                formatDistanceToNow(row.original.updatedAt, {
                   addSuffix: true,
                   includeSeconds: true,
+                }),
+            },
+            {
+              accessorKey: "expiresAt",
+              header: "Expiration",
+              cell: ({ row }) =>
+                formatDistanceToNow(row.original.expiresAt, {
+                  addSuffix: true,
                 }),
             },
             {
@@ -115,7 +128,7 @@ export default function ReportsMembershipsPage() {
                         onClick: () => setEditMembershipId(row.original.id),
                       },
                       {
-                        children: "Send Invite",
+                        children: "Check in",
                       },
                     ],
                     [{ children: "Delete", variant: "destructive" }],

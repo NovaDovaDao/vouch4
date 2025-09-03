@@ -37,6 +37,11 @@ export type Booking = {
   id: Scalars['String']['output'];
 };
 
+export enum CalendarView {
+  Month = 'MONTH',
+  Week = 'WEEK'
+}
+
 export type CheckIn = {
   __typename?: 'CheckIn';
   id: Scalars['String']['output'];
@@ -73,6 +78,18 @@ export type ClassUpdateInput = {
   instructorId?: InputMaybe<Scalars['ID']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   scheduleDateTime?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type ClassesByDate = {
+  __typename?: 'ClassesByDate';
+  calendarDay: Scalars['DateTime']['output'];
+  classes: Array<Class>;
+};
+
+export type ClassesByDateInput = {
+  date: Scalars['DateTime']['input'];
+  gymId?: InputMaybe<Scalars['ID']['input']>;
+  view: CalendarView;
 };
 
 export type Gym = {
@@ -262,6 +279,7 @@ export type Query = {
   __typename?: 'Query';
   classById: Class;
   classes: Array<Class>;
+  classesByDate: Array<ClassesByDate>;
   contractById: UserTenancyAgreement;
   contracts: Array<UserTenancyAgreement>;
   gymById?: Maybe<Gym>;
@@ -278,6 +296,11 @@ export type Query = {
 
 export type QueryClassByIdArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type QueryClassesByDateArgs = {
+  input: ClassesByDateInput;
 };
 
 
@@ -535,7 +558,7 @@ export type GetContractsQuery = { __typename?: 'Query', contracts: Array<{ __typ
 export type GetMembershipsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMembershipsQuery = { __typename?: 'Query', memberships: Array<{ __typename?: 'MembershipNFT', id: string }> };
+export type GetMembershipsQuery = { __typename?: 'Query', memberships: Array<{ __typename?: 'MembershipNFT', id: string, createdAt: any, expiresAt?: any | null, isActive: boolean, isCurrentlyRented: boolean, renterUserId?: string | null, updatedAt: any, userId: string }> };
 
 export type GetStaffQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -783,6 +806,13 @@ export const GetMembershipsDocument = new TypedDocumentString(`
     query GetMemberships {
   memberships {
     id
+    createdAt
+    expiresAt
+    isActive
+    isCurrentlyRented
+    renterUserId
+    updatedAt
+    userId
   }
 }
     `) as unknown as TypedDocumentString<GetMembershipsQuery, GetMembershipsQueryVariables>;

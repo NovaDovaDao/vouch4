@@ -35,6 +35,7 @@ export default function ClassesPage() {
     queryKey: ["classes"],
     queryFn: () => execute(GET_CLASSES),
   });
+
   const dialogStore = useDialogStore();
   const [editClassId, setEditClassId] = useState<string | null>(null);
 

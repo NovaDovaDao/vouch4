@@ -16,6 +16,11 @@ type Booking {
   id: String!
 }
 
+enum CalendarView {
+  MONTH
+  WEEK
+}
+
 type CheckIn {
   id: String!
   timestamp: DateTime!
@@ -50,6 +55,17 @@ input ClassUpdateInput {
   instructorId: ID
   name: String
   scheduleDateTime: String
+}
+
+type ClassesByDate {
+  calendarDay: DateTime!
+  classes: [Class!]!
+}
+
+input ClassesByDateInput {
+  date: DateTime!
+  gymId: ID
+  view: CalendarView!
 }
 
 scalar DateTime
@@ -156,6 +172,7 @@ type Mutation {
 type Query {
   classById(id: ID!): Class!
   classes: [Class!]!
+  classesByDate(input: ClassesByDateInput!): [ClassesByDate!]!
   contractById(id: ID!): UserTenancyAgreement!
   contracts: [UserTenancyAgreement!]!
   gymById(id: ID!): Gym
@@ -234,6 +251,7 @@ enum UserAtGymRole {
 
 type UserGymAssociation {
   assignedAt: DateTime!
+  gym: Gym!
   gymId: ID!
   isActiveAtGym: Boolean!
   permissions: Json

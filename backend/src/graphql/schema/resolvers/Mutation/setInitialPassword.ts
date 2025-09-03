@@ -3,9 +3,7 @@ import type { MutationResolvers } from "./../../types.generated.js";
 import { auth } from "../../../../auth.js";
 import type { CustomContext } from "../../../../server.js";
 
-export const setInitialPassword: NonNullable<
-  MutationResolvers["setInitialPassword"]
-> = async (_parent, args, ctx: CustomContext) => {
+export const setInitialPassword: NonNullable<MutationResolvers['setInitialPassword']> = async (_parent, args, ctx: CustomContext) => {
   const invitationToken = await ctx.db.invitationToken.findUniqueOrThrow({
     where: { token: args.token },
   });

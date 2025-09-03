@@ -1,9 +1,17 @@
 import { db } from "../../../../db.js";
+import type { CustomContext } from "../../../../server.js";
+import { errors } from "../../../errors.js";
 import type { QueryResolvers } from "./../../types.generated.js";
 export const memberships: NonNullable<QueryResolvers['memberships']> = (
   _parent,
   _arg,
-  _ctx
+  ctx: CustomContext,
 ) => {
-  return db.membershipNFT.findMany();
+  if (!ctx.user?.tenancyId) throw errors.missingTenant();
+
+  return db.membershipNFT.findMany({
+    where: {
+      tenancyId: ctx.user.tenancyId,
+    },
+  });
 };

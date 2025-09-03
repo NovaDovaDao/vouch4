@@ -5,9 +5,7 @@ import { errors } from "../../../errors.js";
 import { randomUUID } from "crypto";
 import { sendSetPasswordEmail } from "../../../../email.js";
 
-export const createStaff: NonNullable<
-  MutationResolvers["createStaff"]
-> = async (_parent, { data }, ctx: CustomContext) => {
+export const createStaff: NonNullable<MutationResolvers['createStaff']> = async (_parent, { data }, ctx: CustomContext) => {
   if (!ctx.user?.tenancyId) throw errors.missingTenant();
 
   const user = await db.user.create({

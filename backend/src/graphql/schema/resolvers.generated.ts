@@ -2,6 +2,7 @@
 import type { Resolvers } from "./types.generated.js";
 import { classById as Query_classById } from "./resolvers/Query/classById.js";
 import { classes as Query_classes } from "./resolvers/Query/classes.js";
+import { classesByDate as Query_classesByDate } from "./resolvers/Query/classesByDate.js";
 import { contractById as Query_contractById } from "./resolvers/Query/contractById.js";
 import { contracts as Query_contracts } from "./resolvers/Query/contracts.js";
 import { gymById as Query_gymById } from "./resolvers/Query/gymById.js";
@@ -31,6 +32,7 @@ import { updateTenancy as Mutation_updateTenancy } from "./resolvers/Mutation/up
 import { Booking } from "./resolvers/Booking.js";
 import { CheckIn } from "./resolvers/CheckIn.js";
 import { Class } from "./resolvers/Class.js";
+import { ClassesByDate } from "./resolvers/ClassesByDate.js";
 import { Gym } from "./resolvers/Gym.js";
 import { GymAddress } from "./resolvers/GymAddress.js";
 import { InvitationToken } from "./resolvers/InvitationToken.js";
@@ -45,6 +47,7 @@ export const resolvers: Resolvers = {
   Query: {
     classById: Query_classById,
     classes: Query_classes,
+    classesByDate: Query_classesByDate,
     contractById: Query_contractById,
     contracts: Query_contracts,
     gymById: Query_gymById,
@@ -78,6 +81,7 @@ export const resolvers: Resolvers = {
   Booking: Booking,
   CheckIn: CheckIn,
   Class: Class,
+  ClassesByDate: ClassesByDate,
   Gym: Gym,
   GymAddress: GymAddress,
   InvitationToken: InvitationToken,

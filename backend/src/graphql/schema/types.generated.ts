@@ -55,6 +55,8 @@ export type Booking = {
   id: Scalars["String"]["output"];
 };
 
+export type CalendarView = "MONTH" | "WEEK";
+
 export type CheckIn = {
   __typename?: "CheckIn";
   id: Scalars["String"]["output"];
@@ -91,6 +93,18 @@ export type ClassUpdateInput = {
   instructorId?: InputMaybe<Scalars["ID"]["input"]>;
   name?: InputMaybe<Scalars["String"]["input"]>;
   scheduleDateTime?: InputMaybe<Scalars["String"]["input"]>;
+};
+
+export type ClassesByDate = {
+  __typename?: "ClassesByDate";
+  calendarDay: Scalars["DateTime"]["output"];
+  classes: Array<Class>;
+};
+
+export type ClassesByDateInput = {
+  date: Scalars["DateTime"]["input"];
+  gymId?: InputMaybe<Scalars["ID"]["input"]>;
+  view: CalendarView;
 };
 
 export type Gym = {
@@ -265,6 +279,7 @@ export type Query = {
   __typename?: "Query";
   classById: Class;
   classes: Array<Class>;
+  classesByDate: Array<ClassesByDate>;
   contractById: UserTenancyAgreement;
   contracts: Array<UserTenancyAgreement>;
   gymById?: Maybe<Gym>;
@@ -280,6 +295,10 @@ export type Query = {
 
 export type QueryclassByIdArgs = {
   id: Scalars["ID"]["input"];
+};
+
+export type QueryclassesByDateArgs = {
+  input: ClassesByDateInput;
 };
 
 export type QuerycontractByIdArgs = {
@@ -369,6 +388,7 @@ export type UserAtGymRole =
 export type UserGymAssociation = {
   __typename?: "UserGymAssociation";
   assignedAt: Scalars["DateTime"]["output"];
+  gym: Gym;
   gymId: Scalars["ID"]["output"];
   isActiveAtGym: Scalars["Boolean"]["output"];
   permissions?: Maybe<Scalars["Json"]["output"]>;
@@ -504,12 +524,15 @@ export type ResolversTypes = {
   >;
   Booking: ResolverTypeWrapper<Booking>;
   String: ResolverTypeWrapper<Scalars["String"]["output"]>;
+  CalendarView: ResolverTypeWrapper<"MONTH" | "WEEK">;
   CheckIn: ResolverTypeWrapper<CheckIn>;
   Class: ResolverTypeWrapper<Class>;
   Int: ResolverTypeWrapper<Scalars["Int"]["output"]>;
   ClassCreateInput: ClassCreateInput;
   ID: ResolverTypeWrapper<Scalars["ID"]["output"]>;
   ClassUpdateInput: ClassUpdateInput;
+  ClassesByDate: ResolverTypeWrapper<ClassesByDate>;
+  ClassesByDateInput: ClassesByDateInput;
   DateTime: ResolverTypeWrapper<Scalars["DateTime"]["output"]>;
   Gym: ResolverTypeWrapper<Gym>;
   GymAddress: ResolverTypeWrapper<GymAddress>;
@@ -560,6 +583,8 @@ export type ResolversParentTypes = {
   ClassCreateInput: ClassCreateInput;
   ID: Scalars["ID"]["output"];
   ClassUpdateInput: ClassUpdateInput;
+  ClassesByDate: ClassesByDate;
+  ClassesByDateInput: ClassesByDateInput;
   DateTime: Scalars["DateTime"]["output"];
   Gym: Gym;
   GymAddress: GymAddress;
@@ -603,6 +628,11 @@ export type BookingResolvers<
   id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
+
+export type CalendarViewResolvers = EnumResolverSignature<
+  { MONTH?: any; WEEK?: any },
+  ResolversTypes["CalendarView"]
+>;
 
 export type CheckInResolvers<
   ContextType = any,
@@ -649,6 +679,16 @@ export type ClassResolvers<
     ParentType,
     ContextType
   >;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ClassesByDateResolvers<
+  ContextType = any,
+  ParentType extends
+    ResolversParentTypes["ClassesByDate"] = ResolversParentTypes["ClassesByDate"],
+> = {
+  calendarDay?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
+  classes?: Resolver<Array<ResolversTypes["Class"]>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -843,6 +883,12 @@ export type QueryResolvers<
     RequireFields<QueryclassByIdArgs, "id">
   >;
   classes?: Resolver<Array<ResolversTypes["Class"]>, ParentType, ContextType>;
+  classesByDate?: Resolver<
+    Array<ResolversTypes["ClassesByDate"]>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryclassesByDateArgs, "input">
+  >;
   contractById?: Resolver<
     ResolversTypes["UserTenancyAgreement"],
     ParentType,
@@ -951,6 +997,7 @@ export type UserGymAssociationResolvers<
     ResolversParentTypes["UserGymAssociation"] = ResolversParentTypes["UserGymAssociation"],
 > = {
   assignedAt?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
+  gym?: Resolver<ResolversTypes["Gym"], ParentType, ContextType>;
   gymId?: Resolver<ResolversTypes["ID"], ParentType, ContextType>;
   isActiveAtGym?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
   permissions?: Resolver<
@@ -1000,8 +1047,10 @@ export type Resolvers<ContextType = any> = {
   AgreementStatus?: AgreementStatusResolvers;
   AgreementType?: AgreementTypeResolvers;
   Booking?: BookingResolvers<ContextType>;
+  CalendarView?: CalendarViewResolvers;
   CheckIn?: CheckInResolvers<ContextType>;
   Class?: ClassResolvers<ContextType>;
+  ClassesByDate?: ClassesByDateResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
   Gym?: GymResolvers<ContextType>;
   GymAddress?: GymAddressResolvers<ContextType>;
