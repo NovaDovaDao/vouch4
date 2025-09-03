@@ -95,7 +95,10 @@ async function main() {
         isActive: isActive,
         tenancyId: tenancy.id,
         emailVerified: isActive,
-        phoneNumber: Math.random() > 0.5 ? faker.phone.number() : null,
+        phoneNumber:
+          Math.random() > 0.5
+            ? faker.phone.number({ style: "national" })
+            : null,
       },
     });
     staff.push(user);
@@ -125,7 +128,10 @@ async function main() {
         isActive: isActive,
         tenancyId: tenancy.id,
         emailVerified: isActive,
-        phoneNumber: Math.random() > 0.5 ? faker.phone.number() : null,
+        phoneNumber:
+          Math.random() > 0.5
+            ? faker.phone.number({ style: "national" })
+            : null,
       },
     });
     members.push(user);
@@ -138,7 +144,7 @@ async function main() {
     const gym = gyms[Math.floor(Math.random() * gyms.length)]!;
     const course = await db.class.create({
       data: {
-        name: faker.lorem.text(),
+        name: faker.commerce.productName(),
         description: faker.lorem.sentence(),
         scheduleDateTime: faker.date.future(),
         capacity: faker.number.int({ min: 5, max: 20 }),
@@ -171,6 +177,23 @@ async function main() {
         );
       }
     }
+  }
+
+  // Create memberships
+  const contractAddress = faker.finance.ethereumAddress();
+  for (const member of members) {
+    await db.membershipNFT.create({
+      data: {
+        userId: member.id,
+        tenancyId: tenancy.id,
+        tokenId: faker.string.uuid(),
+        contractAddress,
+        transactionHash: faker.string.uuid(),
+        tokenType: faker.commerce.productName(),
+        expiresAt: faker.date.future(),
+      },
+    });
+    console.log(`Membership created for member ${member.id}`);
   }
 }
 
