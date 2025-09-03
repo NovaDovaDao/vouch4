@@ -27,7 +27,7 @@ export default function HelpDialog({ handleOpen }: HelpDialogProps) {
             questions and get you back on track.
           </DialogDescription>
         </DialogHeader>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid lg:grid-cols-2 gap-4">
           <a
             href="https://join.slack.com/t/climbtampabay/shared_invite/zt-3bztncody-CeFyZjRMDl5wzbOe5fII~A"
             target="_blank"
