@@ -187,6 +187,7 @@ export type Mutation = {
   deleteGym: Scalars["Boolean"]["output"];
   deleteMember: Scalars["Boolean"]["output"];
   deleteStaff: Scalars["Boolean"]["output"];
+  setInitialPassword: User;
   updateClass: Class;
   updateGym: Gym;
   updateMember: User;
@@ -228,6 +229,11 @@ export type MutationdeleteMemberArgs = {
 
 export type MutationdeleteStaffArgs = {
   id: Scalars["ID"]["input"];
+};
+
+export type MutationsetInitialPasswordArgs = {
+  password: Scalars["String"]["input"];
+  token: Scalars["String"]["input"];
 };
 
 export type MutationupdateClassArgs = {
@@ -786,6 +792,12 @@ export type MutationResolvers<
     ParentType,
     ContextType,
     RequireFields<MutationdeleteStaffArgs, "id">
+  >;
+  setInitialPassword?: Resolver<
+    ResolversTypes["User"],
+    ParentType,
+    ContextType,
+    RequireFields<MutationsetInitialPasswordArgs, "password" | "token">
   >;
   updateClass?: Resolver<
     ResolversTypes["Class"],

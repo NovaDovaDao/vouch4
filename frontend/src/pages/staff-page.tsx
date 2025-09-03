@@ -21,6 +21,8 @@ const GET_STAFF = graphql(`
   query GetStaff {
     staff {
       id
+      email
+      phoneNumber
       firstName
       lastName
       updatedAt

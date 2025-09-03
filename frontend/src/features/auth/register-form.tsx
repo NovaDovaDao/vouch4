@@ -2,34 +2,62 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { registerSchema, RegisterFormData } from "./register.schema";
+import { useMutation } from "@tanstack/react-query";
+import { authClient } from "@/lib/auth";
+import { useAuth } from "./use-auth";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
+import PasswordInput from "@/components/ui/password-input";
 
-import type { RegisterFormData } from "./register.schema";
-import { UseFormReturn } from "react-hook-form";
-import { useState } from "react";
-import { IconEye, IconEyeOff } from "@tabler/icons-react";
+export function RegisterForm() {
+  const form = useForm({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+      firstName: "",
+      lastName: "",
+    },
+  });
 
-interface RegisterFormProps {
-  form: UseFormReturn<RegisterFormData>; // Pass the useForm hook's return value
-  onSubmit: (data: RegisterFormData) => void;
-  isSubmitting: boolean;
-}
+  const navigate = useNavigate();
+  const { init } = useAuth();
+  const { mutate: signUp, isPending: isSubmitting } = useMutation({
+    mutationKey: ["sign-up"],
+    mutationFn: (variables: RegisterFormData) =>
+      authClient.signUp.email({
+        ...variables,
+        name: "",
+      }),
+    onSuccess: async (data) => {
+      if (data.data?.user) {
+        await init();
+        toast.success("Success", {
+          description: "Welcome! " + data.data.user.name,
+        });
+        navigate("/dashboard"); // Redirect to dashboard after successful login
+      }
+    },
+    onError: (err) => {
+      toast.error("Login Error", {
+        description: err.message,
+      });
+    },
+  });
 
-export function RegisterForm({
-  form,
-  isSubmitting,
-  onSubmit,
-}: RegisterFormProps) {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = form;
-  const [showPassword, setShowPassword] = useState(false);
 
   return (
     <form
       className={cn("flex flex-col gap-6")}
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit((data) => signUp(data))}
     >
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-bold">Register your account</h1>
@@ -56,27 +84,7 @@ export function RegisterForm({
           <div className="flex items-center">
             <Label htmlFor="password">Password</Label>
           </div>
-          <div className="relative">
-            <Input
-              id="password"
-              type={showPassword ? "text" : "password"}
-              required
-              {...register("password")}
-            />
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className="absolute top-0 right-0"
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? (
-                <IconEyeOff className="h-4 w-4" />
-              ) : (
-                <IconEye className="h-4 w-4" />
-              )}
-            </Button>
-          </div>
+          <PasswordInput id="password" required {...register("password")} />
           {errors.password && (
             <p className="text-red-500 text-sm">{errors.password.message}</p>
           )}

@@ -20,6 +20,27 @@ export const sendVerificationEmail = async (email: string, url: string) => {
   if (response.error) throw response.error;
 
   console.log(
-    `Emaill ${response.data.id} with customer HTML content has been sent.`
+    `Emaill ${response.data.id} with customer HTML content has been sent.`,
+  );
+};
+
+export const sendSetPasswordEmail = async (email: string, url: string) => {
+  const html = `
+    <p>
+        <a href="${url}">Set your password!</a>
+    </p>
+    `;
+  const response = await resend.emails.send({
+    from: "dev@enzo.games",
+    to: email,
+    replyTo: "dev@enzo.games",
+    subject: "Set your password",
+    html,
+  });
+
+  if (response.error) throw response.error;
+
+  console.log(
+    `Emaill ${response.data.id} with customer HTML content has been sent.`,
   );
 };

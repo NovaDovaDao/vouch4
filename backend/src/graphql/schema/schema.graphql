@@ -94,6 +94,7 @@ type UserGymAssociation {
   isActiveAtGym: Boolean!
   assignedAt: DateTime!
   updatedAt: DateTime!
+  gym: Gym!
 }
 
 # --- TENANCY INPUTS ---
@@ -275,4 +276,5 @@ type Mutation {
   createMember(data: MemberCreateInput!): User!
   updateMember(id: ID!, data: MemberUpdateInput!): User!
   deleteMember(id: ID!): Boolean!
+  setInitialPassword(token: String!, password: String!): User!
 }

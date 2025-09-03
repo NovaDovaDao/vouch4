@@ -2,7 +2,7 @@ import { errors } from "../../../errors.js";
 import type { CustomContext } from "../../../../server.js";
 import type { MutationResolvers } from "./../../types.generated.js";
 
-export const createGym: NonNullable<MutationResolvers["createGym"]> = (
+export const createGym: NonNullable<MutationResolvers['createGym']> = (
   _parent,
   arg,
   ctx: CustomContext,

@@ -26,6 +26,7 @@ import ReportsContractsPage from "./pages/reports-contracts-page.tsx";
 import ReportsMembershipsPage from "./pages/reports-memberships-page.tsx";
 import GymsPage from "./pages/gyms-page.tsx";
 import MembersPage from "./pages/members-page.tsx";
+import { AuthLayout } from "./layouts/auth-layout.tsx";
 
 const queryClient = new QueryClient();
 
@@ -63,10 +64,15 @@ function App() {
             </Route>
 
             {/* Public Routes */}
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
+            <Route element={<AuthLayout />}>
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route
+                path="/set-password/:token"
+                element={<SetPasswordPage />}
+              />
+            </Route>
             <Route path="/logout" element={<LogoutPage />} />
-            <Route path="/set-password" element={<SetPasswordPage />} />
             <Route path="/not-found" element={<NotFoundPage />} />
 
             {/* Fallback for unauthenticated or non-matching routes */}

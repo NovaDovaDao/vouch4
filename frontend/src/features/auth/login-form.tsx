@@ -1,39 +1,68 @@
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-
-import type { LoginFormData } from "./login.schema";
-import { UseFormReturn } from "react-hook-form";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginSchema, LoginFormData } from "./login.schema";
+import { useMutation } from "@tanstack/react-query";
+import { authClient } from "@/lib/auth";
+import { useAuth } from "./use-auth";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { IconAlertTriangle, IconEye, IconEyeOff } from "@tabler/icons-react";
-import { useState } from "react";
+import { IconAlertTriangle } from "@tabler/icons-react";
+import PasswordInput from "@/components/ui/password-input";
+import { Input } from "@/components/ui/input";
 
-interface LoginFormProps {
-  form: UseFormReturn<LoginFormData>; // Pass the useForm hook's return value
-  onSubmit: (data: LoginFormData) => void;
-  isSubmitting: boolean;
-  error: Error | null;
-}
+export function LoginForm() {
+  const form = useForm({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
 
-export function LoginForm({
-  form,
-  isSubmitting,
-  onSubmit,
-  error,
-}: LoginFormProps) {
+  const navigate = useNavigate();
+  const { init } = useAuth();
+  const {
+    mutate: login,
+    isPending: isSubmitting,
+    error,
+  } = useMutation({
+    mutationKey: ["login"],
+    mutationFn: async (variables: LoginFormData) => {
+      const response = await authClient.signIn.email(variables);
+      if (response.error || !response.data?.user) {
+        throw new Error(
+          response.error?.message ||
+            "Login failed. Please check your credentials.",
+        );
+      }
+      return response;
+    },
+    onSuccess: async (data) => {
+      if (data.data?.user) {
+        await init();
+        toast.success("Success", {
+          description: "Welcome back! " + data.data.user.name,
+        });
+        navigate("/dashboard"); // Redirect to dashboard after successful login
+      }
+    },
+  });
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = form;
-  const [showPassword, setShowPassword] = useState(false);
 
   return (
     <form
       className={cn("flex flex-col gap-6")}
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit((data) => login(data))}
     >
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-bold">Login to your account</h1>
@@ -73,27 +102,7 @@ export function LoginForm({
               Forgot your password?
             </Link>
           </div>
-          <div className="relative">
-            <Input
-              id="password"
-              type={showPassword ? "text" : "password"}
-              required
-              {...register("password")}
-            />
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className="absolute top-0 right-0"
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? (
-                <IconEyeOff className="h-4 w-4" />
-              ) : (
-                <IconEye className="h-4 w-4" />
-              )}
-            </Button>
-          </div>
+          <PasswordInput id="password" required {...register("password")} />
           {errors.password && (
             <p className="text-red-500 text-sm">{errors.password.message}</p>
           )}

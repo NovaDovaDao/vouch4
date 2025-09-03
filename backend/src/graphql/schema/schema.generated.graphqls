@@ -145,6 +145,7 @@ type Mutation {
   deleteGym(id: ID!): Boolean!
   deleteMember(id: ID!): Boolean!
   deleteStaff(id: ID!): Boolean!
+  setInitialPassword(password: String!, token: String!): User!
   updateClass(data: ClassUpdateInput!, id: ID!): Class!
   updateGym(data: GymUpdateInput!, id: ID!): Gym!
   updateMember(data: MemberUpdateInput!, id: ID!): User!

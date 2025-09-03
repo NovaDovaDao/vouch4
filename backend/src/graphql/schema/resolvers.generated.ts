@@ -22,6 +22,7 @@ import { deleteClass as Mutation_deleteClass } from "./resolvers/Mutation/delete
 import { deleteGym as Mutation_deleteGym } from "./resolvers/Mutation/deleteGym.js";
 import { deleteMember as Mutation_deleteMember } from "./resolvers/Mutation/deleteMember.js";
 import { deleteStaff as Mutation_deleteStaff } from "./resolvers/Mutation/deleteStaff.js";
+import { setInitialPassword as Mutation_setInitialPassword } from "./resolvers/Mutation/setInitialPassword.js";
 import { updateClass as Mutation_updateClass } from "./resolvers/Mutation/updateClass.js";
 import { updateGym as Mutation_updateGym } from "./resolvers/Mutation/updateGym.js";
 import { updateMember as Mutation_updateMember } from "./resolvers/Mutation/updateMember.js";
@@ -66,6 +67,7 @@ export const resolvers: Resolvers = {
     deleteGym: Mutation_deleteGym,
     deleteMember: Mutation_deleteMember,
     deleteStaff: Mutation_deleteStaff,
+    setInitialPassword: Mutation_setInitialPassword,
     updateClass: Mutation_updateClass,
     updateGym: Mutation_updateGym,
     updateMember: Mutation_updateMember,

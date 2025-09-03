@@ -1,7 +1,7 @@
 import type { CustomContext } from "../../../../server.js";
 import type { QueryResolvers } from "./../../types.generated.js";
 import { errors } from "../../../errors.js";
-export const memberById: NonNullable<QueryResolvers["memberById"]> = async (
+export const memberById: NonNullable<QueryResolvers['memberById']> = async (
   _parent,
   arg,
   ctx: CustomContext,

@@ -1,52 +1,186 @@
-import { $Enums } from "./generated/client.js";
+import { UserCategory, UserAtGymRole } from "./generated/client.js";
 import { auth } from "../auth.js";
 import { db } from "../db.js";
 import "dotenv/config";
+import { faker } from "@faker-js/faker";
 
 async function main() {
+  // Clear existing data
+  await db.invitationToken.deleteMany({});
+  await db.booking.deleteMany({});
+  await db.class.deleteMany({});
+  await db.userGymAssociation.deleteMany({});
+  await db.gym.deleteMany({});
+  await db.tenancy.deleteMany({});
+  await db.account.deleteMany({});
+  await db.user.deleteMany({});
+
   // --- Define SUPER_ADMIN Credentials ---
-  // IMPORTANT: For production, these values MUST come from environment variables
-  // for security. DO NOT hardcode sensitive information in production code.
   const superAdminEmail =
     process.env.SUPER_ADMIN_EMAIL || "superadmin@example.com";
-  const superAdminPassword =
-    process.env.SUPER_ADMIN_PASSWORD || "yourVeryStrongDefaultAdminPassword!"; // CHANGE THIS DEFAUULT!
+  const superAdminPassword = process.env.SUPER_ADMIN_PASSWORD || "password";
 
-  const superAdminUser = await db.user
-    .findUnique({
-      where: { email: superAdminEmail },
-    })
-    .catch(console.error);
+  let superAdminUser = await db.user.create({
+    data: {
+      email: superAdminEmail,
+      firstName: "SYSTEM",
+      lastName: "ADMIN",
+      isActive: true,
+      isSuperUser: true,
+      category: UserCategory.STAFF,
+      emailVerified: true,
+    },
+  });
+  const authContext = await auth.$context;
+  const hashedPassword = await authContext.password.hash(superAdminPassword);
+  await authContext.internalAdapter.createAccount({
+    accountId: superAdminUser.email,
+    password: hashedPassword,
+    userId: superAdminUser.id,
+    providerId: "credential",
+  });
 
-  if (!superAdminUser) {
-    console.log(`Creating SUPER_ADMIN user: ${superAdminEmail}`);
+  console.log(`SUPER_ADMIN user created with ID: ${superAdminUser.id}`);
 
-    const newAdmin = await auth.api.signUpEmail({
-      body: {
-        email: superAdminEmail,
-        password: superAdminPassword,
-        name: undefined as unknown as string,
-        firstName: "SYSTEM",
-        lastName: "ADMIN",
-      },
-    });
-    await db.user.update({
+  // Create a tenancy
+  const tenancy = await db.tenancy.create({
+    data: {
+      name: "MegaGym Holdings",
+      contactEmail: "contact@megagym.com",
+      tenancyOwnerUserId: superAdminUser.id,
+    },
+  });
+  superAdminUser = await db.user.update({
+    data: {
+      tenancyId: tenancy.id,
+    },
+    where: {
+      id: superAdminUser.id,
+    },
+  });
+
+  console.log(`Tenancy created with ID: ${tenancy.id}`);
+
+  // Create gyms
+  const gyms = [];
+  for (let i = 0; i < 3; i++) {
+    const gym = await db.gym.create({
       data: {
-        isSuperUser: true,
-        isActive: true,
-        category: $Enums.UserCategory.STAFF,
+        name: faker.company.name() + " Gym",
+        address: {
+          street1: faker.location.streetAddress(),
+          city: faker.location.city(),
+          state: faker.location.state(),
+          zip: faker.location.zipCode(),
+          country: "USA",
+        },
+        tenancyId: tenancy.id,
       },
-      where: { id: newAdmin.user.id },
     });
-    console.log(`SUPER_ADMIN user created with ID: ${newAdmin.user.id}`);
+    gyms.push(gym);
+    console.log(`Gym created with ID: ${gym.id}`);
+  }
+
+  // Create staff
+  const staff = [];
+  for (let i = 0; i < 10; i++) {
+    const email = faker.internet.email();
+    const isActive = Math.random() > 0.5;
+    const user = await db.user.create({
+      data: {
+        email,
+        firstName: faker.person.firstName(),
+        lastName: faker.person.lastName(),
+        category: UserCategory.STAFF,
+        isActive: isActive,
+        tenancyId: tenancy.id,
+        emailVerified: isActive,
+        phoneNumber: Math.random() > 0.5 ? faker.phone.number() : null,
+      },
+    });
+    staff.push(user);
+    console.log(`Staff created with ID: ${user.id}`);
+
+    // Assign staff to a random gym
+    await db.userGymAssociation.create({
+      data: {
+        userId: user.id,
+        gymId: gyms[Math.floor(Math.random() * gyms.length)]!.id,
+        roleAtGym: faker.helpers.arrayElement(Object.values(UserAtGymRole)),
+      },
+    });
+  }
+
+  // Create members
+  const members = [];
+  for (let i = 0; i < 50; i++) {
+    const email = faker.internet.email();
+    const isActive = Math.random() > 0.5;
+    const user = await db.user.create({
+      data: {
+        email,
+        firstName: faker.person.firstName(),
+        lastName: faker.person.lastName(),
+        category: UserCategory.MEMBER,
+        isActive: isActive,
+        tenancyId: tenancy.id,
+        emailVerified: isActive,
+        phoneNumber: Math.random() > 0.5 ? faker.phone.number() : null,
+      },
+    });
+    members.push(user);
+    console.log(`Member created with ID: ${user.id}`);
+  }
+
+  // Create classes
+  for (let i = 0; i < 20; i++) {
+    const instructor = staff[Math.floor(Math.random() * staff.length)]!;
+    const gym = gyms[Math.floor(Math.random() * gyms.length)]!;
+    const course = await db.class.create({
+      data: {
+        name: faker.lorem.text(),
+        description: faker.lorem.sentence(),
+        scheduleDateTime: faker.date.future(),
+        capacity: faker.number.int({ min: 5, max: 20 }),
+        gymId: gym.id,
+        instructorId: instructor.id,
+      },
+    });
+    console.log(`Class created with ID: ${course.id}`);
+
+    // Create bookings
+    const numBookings = faker.number.int({ min: 0, max: 5 });
+    for (let j = 0; j < numBookings; j++) {
+      const member = members[Math.floor(Math.random() * members.length)]!;
+      // check if member is already booked
+      const existingBooking = await db.booking.findFirst({
+        where: {
+          classId: course.id,
+          userId: member.id,
+        },
+      });
+      if (!existingBooking) {
+        await db.booking.create({
+          data: {
+            userId: member.id,
+            classId: course.id,
+          },
+        });
+        console.log(
+          `Booking created for member ${member.id} in class ${course.id}`,
+        );
+      }
+    }
   }
 }
 
 // Execute the main seeding function
 main()
   .catch((e) => {
-    console.error("Auth seeding failed:", e);
+    console.error("Seeding failed:", e);
+    process.exit(1);
   })
   .finally(async () => {
-    await db.$disconnect(); // Ensure the Prisma client connection is closed
+    console.info("DONE SEEDING!");
+    await db.$disconnect();
   });

@@ -9,7 +9,8 @@
   },
   "scripts": {
     "build": "tsc",
-    "dev": "cross-env NODE_ENV=development tsx watch src/main.ts",
+    "dev": "tsx src/main.ts",
+    "db:seed": "tsx src/prisma/seed.ts",
     "start": "node ./dist/main.js",
     "prisma:seed": "tsx ./src/prisma/seed.ts",
     "prisma:reset": "npx prisma db push --force-reset --schema src/prisma/schema.prisma",
@@ -23,6 +24,7 @@
   "description": "",
   "devDependencies": {
     "@eddeee888/gcg-typescript-resolver-files": "^0.12.1",
+    "@faker-js/faker": "^10.0.0",
     "@graphql-codegen/cli": "5.0.7",
     "@types/koa": "^3.0.0",
     "@types/node": "22.10.1",

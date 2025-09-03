@@ -169,6 +169,7 @@ export type Mutation = {
   deleteGym: Scalars['Boolean']['output'];
   deleteMember: Scalars['Boolean']['output'];
   deleteStaff: Scalars['Boolean']['output'];
+  setInitialPassword: User;
   updateClass: Class;
   updateGym: Gym;
   updateMember: User;
@@ -219,6 +220,12 @@ export type MutationDeleteMemberArgs = {
 
 export type MutationDeleteStaffArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type MutationSetInitialPasswordArgs = {
+  password: Scalars['String']['input'];
+  token: Scalars['String']['input'];
 };
 
 
@@ -366,6 +373,7 @@ export enum UserAtGymRole {
 export type UserGymAssociation = {
   __typename?: 'UserGymAssociation';
   assignedAt: Scalars['DateTime']['output'];
+  gym: Gym;
   gymId: Scalars['ID']['output'];
   isActiveAtGym: Scalars['Boolean']['output'];
   permissions?: Maybe<Scalars['Json']['output']>;
@@ -385,6 +393,14 @@ export type UserTenancyAgreement = {
   type: AgreementType;
   updatedAt: Scalars['DateTime']['output'];
 };
+
+export type SetInitialPasswordMutationVariables = Exact<{
+  token: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+}>;
+
+
+export type SetInitialPasswordMutation = { __typename?: 'Mutation', setInitialPassword: { __typename?: 'User', id: string } };
 
 export type ClassOptionsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -524,7 +540,7 @@ export type GetMembershipsQuery = { __typename?: 'Query', memberships: Array<{ _
 export type GetStaffQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetStaffQuery = { __typename?: 'Query', staff: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, updatedAt: any, isActive: boolean }> };
+export type GetStaffQuery = { __typename?: 'Query', staff: Array<{ __typename?: 'User', id: string, email: string, phoneNumber?: string | null, firstName: string, lastName: string, updatedAt: any, isActive: boolean }> };
 
 export class TypedDocumentString<TResult, TVariables>
   extends String
@@ -545,6 +561,13 @@ export class TypedDocumentString<TResult, TVariables>
   }
 }
 
+export const SetInitialPasswordDocument = new TypedDocumentString(`
+    mutation SetInitialPassword($token: String!, $password: String!) {
+  setInitialPassword(token: $token, password: $password) {
+    id
+  }
+}
+    `) as unknown as TypedDocumentString<SetInitialPasswordMutation, SetInitialPasswordMutationVariables>;
 export const ClassOptionsDocument = new TypedDocumentString(`
     query ClassOptions {
   staff {
@@ -767,6 +790,8 @@ export const GetStaffDocument = new TypedDocumentString(`
     query GetStaff {
   staff {
     id
+    email
+    phoneNumber
     firstName
     lastName
     updatedAt
