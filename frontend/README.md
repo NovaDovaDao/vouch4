@@ -1,54 +1,95 @@
-# React + TypeScript + Vite
+# Alé Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The frontend application for Alé, a gym management system built with React, TypeScript, and Vite.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Modern React**: Built with React 19 and TypeScript
+- **UI Components**: shadcn/ui components with Tailwind CSS v4
+- **State Management**: Zustand for global state
+- **Data Fetching**: TanStack Query for server state management
+- **Authentication**: better-auth integration
+- **GraphQL**: Type-safe GraphQL queries with code generation
+- **Routing**: React Router v7
 
-## Expanding the ESLint configuration
+## Prerequisites
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Node.js v22.11.0 or higher
+- pnpm v9.15.0 or higher
+- Backend server running on port 8080
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## Getting Started
+
+### Installation
+
+1. Navigate to the frontend directory:
+   ```bash
+   cd frontend
+   ```
+
+2. Install dependencies:
+   ```bash
+   pnpm install
+   ```
+
+### Development
+
+1. Start the development server:
+   ```bash
+   pnpm dev
+   ```
+
+2. The application will be available at `http://localhost:1337`
+
+3. API requests are automatically proxied to the backend server at `http://localhost:8080`
+
+### GraphQL Code Generation
+
+Generate TypeScript types from GraphQL schema:
+```bash
+pnpm codegen
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+This should be run whenever the GraphQL schema changes in the backend.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Available Scripts
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+- `pnpm dev` - Start development server with hot reload
+- `pnpm build` - Build for production
+- `pnpm preview` - Preview production build locally
+- `pnpm lint` - Run ESLint
+- `pnpm codegen` - Generate GraphQL types
+
+## Project Structure
+
 ```
+src/
+├── components/          # Reusable UI components
+│   ├── ui/             # shadcn/ui components
+│   └── common/         # Shared application components
+├── features/           # Feature-based modules
+│   ├── auth/          # Authentication
+│   ├── gyms/          # Gym management
+│   ├── members/       # Member management
+│   ├── staff/         # Staff management
+│   └── classes/       # Class scheduling
+├── pages/             # Page components
+├── layouts/           # Layout components
+├── hooks/             # Custom React hooks
+├── stores/            # Zustand stores
+├── lib/               # Utility functions
+└── graphql/           # Generated GraphQL types
+```
+
+## Key Technologies
+
+- **React 19** - Modern React with concurrent features
+- **TypeScript** - Type safety
+- **Vite** - Fast build tool and dev server
+- **Tailwind CSS v4** - Utility-first CSS framework
+- **Radix UI** - Headless UI components
+- **TanStack Query** - Server state management
+- **React Router v7** - Client-side routing
+- **Zustand** - Lightweight state management
+- **React Hook Form** - Form handling with validation
+- **Zod** - Schema validation
