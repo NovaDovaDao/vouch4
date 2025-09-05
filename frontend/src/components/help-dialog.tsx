@@ -6,11 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  IconBrandSlack,
-  IconExternalLink,
-  IconMail,
-} from "@tabler/icons-react";
+import { IconBrandSlack, IconMail } from "@tabler/icons-react";
 
 interface HelpDialogProps {
   handleOpen: (isOpen: boolean) => void;
