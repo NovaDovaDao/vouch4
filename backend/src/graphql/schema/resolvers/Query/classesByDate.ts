@@ -1,3 +1,7 @@
-
-        import type   { QueryResolvers } from './../../types.generated';
-        export const classesByDate: NonNullable<QueryResolvers['classesByDate']> = async (_parent, _arg, _ctx) => { /* Implement Query.classesByDate resolver logic here */ };
+import { errors } from "../../../errors.js";
+import type { QueryResolvers } from "./../../types.generated.js";
+export const classesByDate: NonNullable<
+  QueryResolvers["classesByDate"]
+> = async (_parent, _arg, _ctx) => {
+  throw errors.notImplemented();
+};
