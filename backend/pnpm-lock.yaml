@@ -13,7 +13,7 @@ importers:
         version: 6.14.0(prisma@6.14.0(typescript@5.7.2))(typescript@5.7.2)
       better-auth:
         specifier: ^1.3.7
-        version: 1.3.7(zod@4.1.1)
+        version: 1.3.7(zod@4.1.5)
       dotenv:
         specifier: ^17.2.1
         version: 17.2.1
@@ -35,6 +35,9 @@ importers:
       resend:
         specifier: ^6.0.1
         version: 6.0.1
+      zod:
+        specifier: ^4.1.5
+        version: 4.1.5
     devDependencies:
       '@eddeee888/gcg-typescript-resolver-files':
         specifier: ^0.12.1
@@ -2042,8 +2045,8 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
 
-  zod@4.1.1:
-    resolution: {integrity: sha512-SgMZK/h8Tigt9nnKkfJMvB/mKjiJXaX26xegP4sa+0wHIFVFWVlsQGdhklDmuargBD3Hsi3rsQRIzwJIhTPJHA==}
+  zod@4.1.5:
+    resolution: {integrity: sha512-rcUUZqlLJgBC33IT3PNMgsCq6TzLQEG/Ei/KTCU0PedSWRMAXoOUN+4t/0H+Q8bdnLPdqUYnvboJT0bn/229qg==}
 
 snapshots:
 
@@ -3084,7 +3087,7 @@ snapshots:
 
   base64-js@1.5.1: {}
 
-  better-auth@1.3.7(zod@4.1.1):
+  better-auth@1.3.7(zod@4.1.5):
     dependencies:
       '@better-auth/utils': 0.2.6
       '@better-fetch/fetch': 1.1.18
@@ -3097,7 +3100,7 @@ snapshots:
       jose: 5.10.0
       kysely: 0.28.5
       nanostores: 0.11.4
-      zod: 4.1.1
+      zod: 4.1.5
 
   better-call@1.0.16:
     dependencies:
@@ -4262,4 +4265,4 @@ snapshots:
 
   yocto-queue@0.1.0: {}
 
-  zod@4.1.1: {}
+  zod@4.1.5: {}

@@ -12,7 +12,7 @@ CREATE TYPE "public"."AgreementStatus" AS ENUM ('PENDING_SIGNATURE', 'SIGNED', '
 
 -- CreateTable
 CREATE TABLE "public"."tenants" (
-    id TEXT NOT NULL,
+    "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "legalName" TEXT,
     "contactEmail" TEXT NOT NULL,
@@ -45,13 +45,13 @@ CREATE TABLE "public"."users" (
     "lastName" TEXT NOT NULL,
     "category" "public"."user_categories" NOT NULL,
     "isSuperUser" BOOLEAN NOT NULL DEFAULT false,
-    "isActive" BOOLEAN NOT NULL DEFAULT true,
+    "isActive" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "walletAddress" TEXT,
     "phoneNumber" TEXT,
     "tenancyId" TEXT,
-    "name" TEXT GENERATED ALWAYS AS ("firstName" || ' ' || users."lastName") STORED,
+    "name" TEXT GENERATED ALWAYS AS ("users"."firstName" || ' ' || "users"."lastName") STORED,
     "emailVerified" BOOLEAN NOT NULL,
     "image" TEXT,
 
@@ -102,25 +102,36 @@ CREATE TABLE "public"."memberships" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."classes" (
+CREATE TABLE "public"."class_templates" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "description" TEXT,
-    "scheduleDateTime" TIMESTAMP(3) NOT NULL,
-    "capacity" INTEGER NOT NULL,
+    "metadata" JSONB NOT NULL,
     "gymId" TEXT NOT NULL,
     "instructorId" TEXT,
+    "recurrence" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "classes_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "class_templates_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "public"."scheduled_classes" (
+    "id" TEXT NOT NULL,
+    "classTemplateId" TEXT NOT NULL,
+    "startTime" TIMESTAMP(3) NOT NULL,
+    "endTime" TIMESTAMP(3) NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "scheduled_classes_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "public"."bookings" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
-    "classId" TEXT NOT NULL,
+    "scheduledClassId" TEXT NOT NULL,
     "bookedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "bookings_pkey" PRIMARY KEY ("id")
@@ -218,7 +229,7 @@ CREATE UNIQUE INDEX "memberships_tokenId_key" ON "public"."memberships"("tokenId
 CREATE UNIQUE INDEX "memberships_transactionHash_key" ON "public"."memberships"("transactionHash");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "bookings_userId_classId_key" ON "public"."bookings"("userId", "classId");
+CREATE UNIQUE INDEX "bookings_userId_scheduledClassId_key" ON "public"."bookings"("userId", "scheduledClassId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "invitation_tokens_token_key" ON "public"."invitation_tokens"("token");
@@ -263,16 +274,19 @@ ALTER TABLE "public"."memberships" ADD CONSTRAINT "memberships_tenancyId_fkey" F
 ALTER TABLE "public"."memberships" ADD CONSTRAINT "memberships_renterUserId_fkey" FOREIGN KEY ("renterUserId") REFERENCES "public"."users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."classes" ADD CONSTRAINT "classes_gymId_fkey" FOREIGN KEY ("gymId") REFERENCES "public"."gyms"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."class_templates" ADD CONSTRAINT "class_templates_gymId_fkey" FOREIGN KEY ("gymId") REFERENCES "public"."gyms"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."classes" ADD CONSTRAINT "classes_instructorId_fkey" FOREIGN KEY ("instructorId") REFERENCES "public"."users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "public"."class_templates" ADD CONSTRAINT "class_templates_instructorId_fkey" FOREIGN KEY ("instructorId") REFERENCES "public"."users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."scheduled_classes" ADD CONSTRAINT "scheduled_classes_classTemplateId_fkey" FOREIGN KEY ("classTemplateId") REFERENCES "public"."class_templates"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."bookings" ADD CONSTRAINT "bookings_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."bookings" ADD CONSTRAINT "bookings_classId_fkey" FOREIGN KEY ("classId") REFERENCES "public"."classes"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."bookings" ADD CONSTRAINT "bookings_scheduledClassId_fkey" FOREIGN KEY ("scheduledClassId") REFERENCES "public"."scheduled_classes"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."invitation_tokens" ADD CONSTRAINT "invitation_tokens_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

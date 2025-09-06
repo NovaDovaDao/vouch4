@@ -7,19 +7,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { IconCalendar, IconUsersGroup } from "@tabler/icons-react";
-import { format } from "date-fns";
+import { IconUsersGroup } from "@tabler/icons-react";
 import type { ComponentProps, PropsWithoutRef } from "react";
 
-export default function ClassCard({
-  gymClass,
+export default function ClassTemplateCard({
+  classTemplate,
   cardProps,
 }: PropsWithoutRef<{
-  gymClass: {
+  classTemplate: {
     name: string;
     description?: string;
     capacity: number;
-    scheduleDateTime: string;
+    recurrence: string;
     instructorName?: string;
     gymName?: string;
   };
@@ -28,23 +27,24 @@ export default function ClassCard({
   return (
     <Card className="@container/card" {...cardProps}>
       <CardHeader>
-        <CardDescription>{gymClass.description}</CardDescription>
+        <CardDescription>{classTemplate.description}</CardDescription>
         <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-          {gymClass.name}
+          {classTemplate.name}
         </CardTitle>
         <CardAction>
           <Badge variant="outline">
             <IconUsersGroup />
-            {gymClass.capacity}
+            {classTemplate.capacity}
           </Badge>
         </CardAction>
       </CardHeader>
       <CardFooter className="flex-col items-start gap-1.5 text-sm">
         <div className="line-clamp-1 flex gap-2 font-medium">
-          {format(gymClass.scheduleDateTime, "MMMM do, yyyy h:mm aa")}{" "}
-          <IconCalendar className="size-4" />
+          {classTemplate.recurrence}
         </div>
-        <div className="text-muted-foreground">{gymClass.instructorName}</div>
+        <div className="text-muted-foreground">
+          {classTemplate.instructorName}
+        </div>
       </CardFooter>
     </Card>
   );

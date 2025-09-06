@@ -17,15 +17,16 @@ const GET_GYMS = graphql(`
       address
       name
       legalDocsUrl
-      updatedAt
+      legalEntityName
     }
   }
 `);
 
 export default function GymsPage() {
-  const { data, isLoading } = useQuery({
+  const { data: gyms, isLoading } = useQuery({
     queryKey: ["gyms"],
     queryFn: () => execute(GET_GYMS),
+    select: (data) => data.gyms ?? [],
   });
   const dialogStore = useDialogStore();
   const [editGymId, setEditGymId] = useState<string | null>(null);
@@ -46,7 +47,7 @@ export default function GymsPage() {
         Array(5)
           .fill(null)
           .map((_, i) => <Skeleton className="h-full min-h-36" key={i} />)}
-      {data?.gyms.map((gym) => (
+      {gyms?.map((gym) => (
         <GymCard
           key={gym.id}
           gym={gym}

@@ -1,20 +1,13 @@
 import type { CustomContext } from "../../../../server.js";
 import { errors } from "../../../errors.js";
 import type { QueryResolvers } from "./../../types.generated.js";
-export const memberships: NonNullable<QueryResolvers["memberships"]> = (
+
+export const bookings: NonNullable<QueryResolvers["bookings"]> = async (
   _parent,
-  _arg,
+  _args,
   ctx: CustomContext,
 ) => {
   if (!ctx.user?.tenancyId) throw errors.missingTenant();
 
-  return ctx.db.membershipNFT.findMany({
-    where: {
-      tenancyId: ctx.user.tenancyId,
-    },
-    include: {
-      user: true,
-      renterUser: true,
-    },
-  });
+  throw errors.notImplemented();
 };

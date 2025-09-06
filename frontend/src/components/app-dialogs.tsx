@@ -1,4 +1,4 @@
-import CreateClassDialog from "@/features/classes/create-class-dialog";
+import CreateClassTemplateDialog from "@/features/classes/create-class-template-dialog";
 import CreateGymDialog from "@/features/gyms/create-gym-dialog";
 import CreateMemberDialog from "@/features/members/create-member-dialog";
 import SearchDialog from "@/features/search/search-dialog";
@@ -10,8 +10,8 @@ export default function AppDialogs() {
   const { closeDialog, currentDialog } = useDialogStore();
 
   switch (currentDialog.type) {
-    case "createClass":
-      return <CreateClassDialog handleOpen={closeDialog} />;
+    case "createClassTemplate":
+      return <CreateClassTemplateDialog handleOpen={closeDialog} />;
     case "createStaff":
       return <CreateStaffDialog handleOpen={closeDialog} />;
     case "createMember":

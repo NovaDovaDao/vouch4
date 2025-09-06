@@ -53,7 +53,7 @@ model Gym {
 
   // Relationships
   tenancy          Tenancy              @relation(fields: [tenancyId], references: [id])
-  classes          Class[] // Classes are specific to a gym location
+  classTemplates   ClassTemplate[]
   userAssociations UserGymAssociation[] // Many-to-many for users associated with this specific gym
   checkIns         CheckIn[] // Check-ins are specific to a gym
 
@@ -99,9 +99,9 @@ model User {
   userGymAssociations UserGymAssociation[]
 
   // Activity-specific relations
-  checkIns      CheckIn[] @relation("UserCheckIns") // Check-ins performed by this user
-  bookings      Booking[] // Class bookings made by this user
-  classesTaught Class[]   @relation("InstructorClasses") // Classes taught by this user (if STAFF)
+  checkIns             CheckIn[]       @relation("UserCheckIns") // Check-ins performed by this user
+  bookings             Booking[] // Class bookings made by this user
+  classTemplatesTaught ClassTemplate[]
 
   // Blockchain references for Memberships
   membershipNFTs    MembershipNFT[] // Membership NFTs owned by this user
@@ -196,36 +196,49 @@ model MembershipNFT {
 
 // --- Class Model ---
 
-model Class {
-  id               String   @id @default(uuid())
-  name             String
-  description      String?
-  scheduleDateTime DateTime
-  capacity         Int
-  gymId            String // Classes are specific to a gym
-  instructorId     String? // Optional: If an instructor (User with STAFF category) is assigned
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+model ClassTemplate {
+  id           String   @id @default(uuid())
+  name         String
+  metadata     Json
+  gymId        String
+  instructorId String?
+  recurrence   String // e.g., "6 * 1 * *"
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  gym        Gym       @relation(fields: [gymId], references: [id])
-  instructor User?     @relation("InstructorClasses", fields: [instructorId], references: [id])
-  bookings   Booking[]
+  gym              Gym              @relation(fields: [gymId], references: [id])
+  instructor       User?            @relation(fields: [instructorId], references: [id])
+  scheduledClasses ScheduledClass[]
 
-  @@map("classes")
+  @@map("class_templates")
+}
+
+model ScheduledClass {
+  id              String   @id @default(uuid())
+  classTemplateId String
+  startTime       DateTime
+  endTime         DateTime
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  classTemplate ClassTemplate @relation(fields: [classTemplateId], references: [id])
+  bookings      Booking[]
+
+  @@map("scheduled_classes")
 }
 
 // --- Booking Model ---
 
 model Booking {
-  id       String   @id @default(uuid())
-  userId   String
-  classId  String
-  bookedAt DateTime @default(now())
+  id               String   @id @default(uuid())
+  userId           String
+  scheduledClassId String
+  bookedAt         DateTime @default(now())
 
-  user  User  @relation(fields: [userId], references: [id])
-  class Class @relation(fields: [classId], references: [id])
+  user           User           @relation(fields: [userId], references: [id])
+  scheduledClass ScheduledClass @relation(fields: [scheduledClassId], references: [id])
 
-  @@unique([userId, classId])
+  @@unique([userId, scheduledClassId])
   @@map("bookings")
 }
 

@@ -19,22 +19,20 @@ import type {
 const GET_STAFF_BY_ID = graphql(`
   query GetStaffById($id: ID!) {
     staffById(id: $id) {
-      createdAt
       email
       firstName
       id
       isActive
       lastName
       walletAddress
-      updatedAt
       phoneNumber
     }
   }
 `);
 
 const UPDATE_STAFF = graphql(`
-  mutation UpdateStaff($id: ID!, $data: StaffUpdateInput!) {
-    updateStaff(id: $id, data: $data) {
+  mutation UpdateStaff($id: ID!, $input: StaffUpdateInput!) {
+    updateStaff(id: $id, input: $input) {
       id
       firstName
     }
@@ -69,7 +67,7 @@ export default function UpdateStaffForm({
     },
   });
   const handleSubmit = (body: StaffUpdateInput) =>
-    updateStaff({ id: id!, data: body });
+    updateStaff({ id: id!, input: body });
 
   if (data)
     return (

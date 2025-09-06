@@ -16,22 +16,20 @@ import { UpdateMemberMutationVariables } from "@/graphql/graphql";
 const GET_MEMBER_BY_ID = graphql(`
   query GetMemberById($id: ID!) {
     memberById(id: $id) {
-      createdAt
       email
       firstName
       id
       isActive
       lastName
       walletAddress
-      updatedAt
       phoneNumber
     }
   }
 `);
 
 const UPDATE_MEMBER = graphql(`
-  mutation UpdateMember($id: ID!, $data: MemberUpdateInput!) {
-    updateMember(id: $id, data: $data) {
+  mutation UpdateMember($id: ID!, $input: MemberUpdateInput!) {
+    updateMember(id: $id, input: $input) {
       id
       firstName
     }
@@ -66,7 +64,7 @@ export default function UpdateMemberForm({
     },
   });
   const handleSubmit = (body: MemberFormData) =>
-    updateMember({ id: id!, data: body });
+    updateMember({ id: id!, input: body });
 
   if (data)
     return (

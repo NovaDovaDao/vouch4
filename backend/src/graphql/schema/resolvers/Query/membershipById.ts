@@ -1,11 +1,18 @@
-import { db } from "../../../../db.js";
+import type { CustomContext } from "../../../../server.js";
+import { errors } from "../../../errors.js";
 import type { QueryResolvers } from "./../../types.generated.js";
-export const membershipById: NonNullable<QueryResolvers['membershipById']> = (
+export const membershipById: NonNullable<QueryResolvers["membershipById"]> = (
   _parent,
   arg,
-  _ctx
+  ctx: CustomContext,
 ) => {
-  return db.membershipNFT.findUniqueOrThrow({
-    where: { id: arg.id },
+  if (!ctx.user?.tenancyId) throw errors.missingTenant();
+
+  return ctx.db.membershipNFT.findUniqueOrThrow({
+    where: { id: arg.id, tenancyId: ctx.user.tenancyId },
+    include: {
+      user: true,
+      renterUser: true,
+    },
   });
 };

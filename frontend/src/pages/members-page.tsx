@@ -14,7 +14,6 @@ import {
   IconPlus,
 } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
-import { formatDistanceToNow } from "date-fns";
 import { useState } from "react";
 
 const GET_MEMBERS = graphql(`
@@ -24,7 +23,6 @@ const GET_MEMBERS = graphql(`
       firstName
       lastName
       email
-      updatedAt
       isActive
       phoneNumber
     }
@@ -101,15 +99,6 @@ export default function MembersPage() {
             {
               accessorKey: "phoneNumber",
               header: "Phone",
-            },
-            {
-              accessorKey: "updatedAt",
-              header: "Updated",
-              cell: ({ row }) =>
-                formatDistanceToNow(row.original.updatedAt, {
-                  addSuffix: true,
-                  includeSeconds: true,
-                }),
             },
             {
               id: "actions",

@@ -8,60 +8,59 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import ClassForm from "./class-form";
+import ClassTemplateForm from "./class-template-form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { classSchema } from "./class.schema";
+import { classTemplateSchema } from "./class-template.schema";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { graphql } from "@/graphql";
 import type {
-  ClassCreateInput,
-  CreateClassMutationVariables,
+  ClassTemplateCreateInput,
+  CreateClassTemplateMutationVariables,
 } from "@/graphql/graphql";
 import { execute } from "@/graphql/execute";
 
-const CREATE_CLASS = graphql(`
-  mutation CreateClass($data: ClassCreateInput!) {
-    createClass(data: $data) {
+const CREATE_CLASS_TEMPLATE = graphql(`
+  mutation CreateClassTemplate($data: ClassTemplateCreateInput!) {
+    createClassTemplate(data: $data) {
       id
       name
     }
   }
 `);
 
-export default function CreateClassDialog({
+export default function CreateClassTemplateDialog({
   handleOpen,
 }: {
   handleOpen: (open: boolean) => void;
 }) {
   const form = useForm({
-    resolver: zodResolver(classSchema),
+    resolver: zodResolver(classTemplateSchema),
     defaultValues: {
       name: "",
       description: "",
       capacity: 0,
       gymId: "",
       instructorId: "",
-      scheduleDateTime: "",
     },
     shouldFocusError: true,
   });
   const queryClient = useQueryClient();
   const { mutate: createClass, isPending } = useMutation({
     mutationKey: ["create-class"],
-    mutationFn: (variables: CreateClassMutationVariables) =>
-      execute(CREATE_CLASS, variables),
+    mutationFn: (variables: CreateClassTemplateMutationVariables) =>
+      execute(CREATE_CLASS_TEMPLATE, variables),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["classes"] });
       toast.success("Success!", {
-        description: `Added ${data.createClass.name}!`,
+        description: `Added ${data.createClassTemplate.name}!`,
       });
       handleOpen(false);
     },
   });
 
-  const handleSubmit = (body: ClassCreateInput) =>
+  const handleSubmit = (body: ClassTemplateCreateInput) =>
     createClass({
       data: body,
     });
@@ -75,7 +74,7 @@ export default function CreateClassDialog({
             Make changes to your profile here. Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
-        <ClassForm
+        <ClassTemplateForm
           form={form}
           onSubmit={handleSubmit}
           isSubmitting={isPending}

@@ -35,72 +35,56 @@ export type Booking = {
   __typename?: 'Booking';
   bookedAt: Scalars['DateTime']['output'];
   id: Scalars['String']['output'];
+  member: User;
 };
 
-export enum CalendarView {
-  Month = 'MONTH',
-  Week = 'WEEK'
-}
+export type BookingsArgs = {
+  gymId?: InputMaybe<Scalars['ID']['input']>;
+};
 
 export type CheckIn = {
   __typename?: 'CheckIn';
   id: Scalars['String']['output'];
+  member: User;
   timestamp: Scalars['DateTime']['output'];
 };
 
-export type Class = {
-  __typename?: 'Class';
-  bookings?: Maybe<Array<Booking>>;
+export type ClassTemplate = {
+  __typename?: 'ClassTemplate';
   capacity: Scalars['Int']['output'];
-  createdAt?: Maybe<Scalars['DateTime']['output']>;
   description?: Maybe<Scalars['String']['output']>;
-  gym?: Maybe<Gym>;
-  id: Scalars['String']['output'];
+  gym: Gym;
+  id: Scalars['ID']['output'];
   instructor?: Maybe<User>;
   name: Scalars['String']['output'];
-  scheduleDateTime: Scalars['DateTime']['output'];
-  updatedAt?: Maybe<Scalars['DateTime']['output']>;
+  recurrence: Scalars['String']['output'];
 };
 
-export type ClassCreateInput = {
+export type ClassTemplateCreateInput = {
   capacity: Scalars['Int']['input'];
   description?: InputMaybe<Scalars['String']['input']>;
   gymId: Scalars['ID']['input'];
   instructorId?: InputMaybe<Scalars['ID']['input']>;
   name: Scalars['String']['input'];
-  scheduleDateTime: Scalars['String']['input'];
+  recurrence: Scalars['String']['input'];
 };
 
-export type ClassUpdateInput = {
+export type ClassTemplateUpdateInput = {
   capacity?: InputMaybe<Scalars['Int']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   gymId?: InputMaybe<Scalars['ID']['input']>;
   instructorId?: InputMaybe<Scalars['ID']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
-  scheduleDateTime?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type ClassesByDate = {
-  __typename?: 'ClassesByDate';
-  calendarDay: Scalars['DateTime']['output'];
-  classes: Array<Class>;
-};
-
-export type ClassesByDateInput = {
-  date: Scalars['DateTime']['input'];
-  gymId?: InputMaybe<Scalars['ID']['input']>;
-  view: CalendarView;
+  recurrence?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type Gym = {
   __typename?: 'Gym';
   address?: Maybe<Scalars['Json']['output']>;
-  createdAt: Scalars['DateTime']['output'];
   id: Scalars['ID']['output'];
   legalDocsUrl?: Maybe<Scalars['String']['output']>;
   legalEntityName?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
-  updatedAt: Scalars['DateTime']['output'];
 };
 
 export type GymAddress = {
@@ -134,15 +118,6 @@ export type GymUpdateInput = {
   name?: InputMaybe<Scalars['String']['input']>;
 };
 
-export type InvitationToken = {
-  __typename?: 'InvitationToken';
-  createdAt: Scalars['DateTime']['output'];
-  expiresAt: Scalars['DateTime']['output'];
-  id: Scalars['String']['output'];
-  token: Scalars['String']['output'];
-  userId: Scalars['ID']['output'];
-};
-
 export type MemberCreateInput = {
   email: Scalars['String']['input'];
   firstName: Scalars['String']['input'];
@@ -165,38 +140,39 @@ export type MemberUpdateInput = {
 
 export type MembershipNft = {
   __typename?: 'MembershipNFT';
-  createdAt: Scalars['DateTime']['output'];
   expiresAt?: Maybe<Scalars['DateTime']['output']>;
   id: Scalars['ID']['output'];
   isActive: Scalars['Boolean']['output'];
   isCurrentlyRented: Scalars['Boolean']['output'];
-  renterUserId?: Maybe<Scalars['ID']['output']>;
-  updatedAt: Scalars['DateTime']['output'];
-  userId: Scalars['ID']['output'];
+  renterUser?: Maybe<User>;
+  user: User;
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createClass: Class;
+  createClassTemplate: ClassTemplate;
   createGym: Gym;
   createMember: User;
+  createScheduledClass: ScheduledClass;
   createStaff: User;
   createTenancy: Tenancy;
-  deleteClass: Scalars['Boolean']['output'];
+  deleteClassTemplate: Scalars['Boolean']['output'];
   deleteGym: Scalars['Boolean']['output'];
   deleteMember: Scalars['Boolean']['output'];
+  deleteScheduledClass: Scalars['Boolean']['output'];
   deleteStaff: Scalars['Boolean']['output'];
   setInitialPassword: User;
-  updateClass: Class;
+  updateClassTemplate: ClassTemplate;
   updateGym: Gym;
   updateMember: User;
+  updateScheduledClass: ScheduledClass;
   updateStaff: User;
   updateTenancy: Tenancy;
 };
 
 
-export type MutationCreateClassArgs = {
-  data: ClassCreateInput;
+export type MutationCreateClassTemplateArgs = {
+  data: ClassTemplateCreateInput;
 };
 
 
@@ -210,6 +186,11 @@ export type MutationCreateMemberArgs = {
 };
 
 
+export type MutationCreateScheduledClassArgs = {
+  input: ScheduledClassCreateInput;
+};
+
+
 export type MutationCreateStaffArgs = {
   data: StaffCreateInput;
 };
@@ -220,7 +201,7 @@ export type MutationCreateTenancyArgs = {
 };
 
 
-export type MutationDeleteClassArgs = {
+export type MutationDeleteClassTemplateArgs = {
   id: Scalars['ID']['input'];
 };
 
@@ -231,6 +212,11 @@ export type MutationDeleteGymArgs = {
 
 
 export type MutationDeleteMemberArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationDeleteScheduledClassArgs = {
   id: Scalars['ID']['input'];
 };
 
@@ -246,9 +232,9 @@ export type MutationSetInitialPasswordArgs = {
 };
 
 
-export type MutationUpdateClassArgs = {
-  data: ClassUpdateInput;
+export type MutationUpdateClassTemplateArgs = {
   id: Scalars['ID']['input'];
+  input: ClassTemplateUpdateInput;
 };
 
 
@@ -259,27 +245,33 @@ export type MutationUpdateGymArgs = {
 
 
 export type MutationUpdateMemberArgs = {
-  data: MemberUpdateInput;
   id: Scalars['ID']['input'];
+  input: MemberUpdateInput;
+};
+
+
+export type MutationUpdateScheduledClassArgs = {
+  id: Scalars['ID']['input'];
+  input: ScheduledClassUpdateInput;
 };
 
 
 export type MutationUpdateStaffArgs = {
-  data: StaffUpdateInput;
   id: Scalars['ID']['input'];
+  input: StaffUpdateInput;
 };
 
 
 export type MutationUpdateTenancyArgs = {
-  data: TenancyUpdateInput;
   id: Scalars['ID']['input'];
+  input: TenancyUpdateInput;
 };
 
 export type Query = {
   __typename?: 'Query';
-  classById: Class;
-  classes: Array<Class>;
-  classesByDate: Array<ClassesByDate>;
+  bookings: Array<Booking>;
+  classTemplateById: ClassTemplate;
+  classTemplates: Array<ClassTemplate>;
   contractById: UserTenancyAgreement;
   contracts: Array<UserTenancyAgreement>;
   gymById?: Maybe<Gym>;
@@ -288,19 +280,21 @@ export type Query = {
   members: Array<User>;
   membershipById: MembershipNft;
   memberships: Array<MembershipNft>;
+  scheduledClassById: ScheduledClass;
+  scheduledClasses: Array<ScheduledClass>;
   staff: Array<User>;
   staffById: User;
   tenancy: Tenancy;
 };
 
 
-export type QueryClassByIdArgs = {
-  id: Scalars['ID']['input'];
+export type QueryBookingsArgs = {
+  input?: InputMaybe<BookingsArgs>;
 };
 
 
-export type QueryClassesByDateArgs = {
-  input: ClassesByDateInput;
+export type QueryClassTemplateByIdArgs = {
+  id: Scalars['ID']['input'];
 };
 
 
@@ -324,8 +318,49 @@ export type QueryMembershipByIdArgs = {
 };
 
 
+export type QueryScheduledClassByIdArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryScheduledClassesArgs = {
+  args: ScheduledClassesArgs;
+};
+
+
 export type QueryStaffByIdArgs = {
   id: Scalars['ID']['input'];
+};
+
+export type ScheduledClass = {
+  __typename?: 'ScheduledClass';
+  bookings: Array<Booking>;
+  description?: Maybe<Scalars['String']['output']>;
+  endTime: Scalars['DateTime']['output'];
+  gym: Gym;
+  id: Scalars['ID']['output'];
+  instructor?: Maybe<User>;
+  name: Scalars['String']['output'];
+  startTime: Scalars['DateTime']['output'];
+};
+
+export type ScheduledClassCreateInput = {
+  classTemplateId: Scalars['ID']['input'];
+  endTime: Scalars['DateTime']['input'];
+  startTime: Scalars['DateTime']['input'];
+};
+
+export type ScheduledClassUpdateInput = {
+  classTemplateId?: InputMaybe<Scalars['ID']['input']>;
+  endTime?: InputMaybe<Scalars['DateTime']['input']>;
+  startTime?: InputMaybe<Scalars['DateTime']['input']>;
+};
+
+export type ScheduledClassesArgs = {
+  classTemplateId?: InputMaybe<Scalars['ID']['input']>;
+  endDate?: InputMaybe<Scalars['DateTime']['input']>;
+  gymId?: InputMaybe<Scalars['ID']['input']>;
+  startDate?: InputMaybe<Scalars['DateTime']['input']>;
 };
 
 export type StaffCreateInput = {
@@ -351,11 +386,9 @@ export type StaffUpdateInput = {
 export type Tenancy = {
   __typename?: 'Tenancy';
   contactEmail: Scalars['String']['output'];
-  createdAt: Scalars['DateTime']['output'];
   id: Scalars['ID']['output'];
   legalName?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
-  updatedAt: Scalars['DateTime']['output'];
 };
 
 export type TenancyCreateInput = {
@@ -372,7 +405,6 @@ export type TenancyUpdateInput = {
 
 export type User = {
   __typename?: 'User';
-  createdAt: Scalars['DateTime']['output'];
   email: Scalars['String']['output'];
   firstName: Scalars['String']['output'];
   id: Scalars['ID']['output'];
@@ -381,7 +413,6 @@ export type User = {
   lastName: Scalars['String']['output'];
   name?: Maybe<Scalars['String']['output']>;
   phoneNumber?: Maybe<Scalars['String']['output']>;
-  updatedAt: Scalars['DateTime']['output'];
   walletAddress?: Maybe<Scalars['String']['output']>;
 };
 
@@ -393,28 +424,14 @@ export enum UserAtGymRole {
   Trainer = 'TRAINER'
 }
 
-export type UserGymAssociation = {
-  __typename?: 'UserGymAssociation';
-  assignedAt: Scalars['DateTime']['output'];
-  gym: Gym;
-  gymId: Scalars['ID']['output'];
-  isActiveAtGym: Scalars['Boolean']['output'];
-  permissions?: Maybe<Scalars['Json']['output']>;
-  roleAtGym: UserAtGymRole;
-  updatedAt: Scalars['DateTime']['output'];
-  userId: Scalars['ID']['output'];
-};
-
 export type UserTenancyAgreement = {
   __typename?: 'UserTenancyAgreement';
-  createdAt: Scalars['DateTime']['output'];
   documentVersion?: Maybe<Scalars['String']['output']>;
   expiresAt?: Maybe<Scalars['DateTime']['output']>;
   id: Scalars['ID']['output'];
   signedAt?: Maybe<Scalars['DateTime']['output']>;
   status: AgreementStatus;
   type: AgreementType;
-  updatedAt: Scalars['DateTime']['output'];
 };
 
 export type SetInitialPasswordMutationVariables = Exact<{
@@ -425,32 +442,32 @@ export type SetInitialPasswordMutationVariables = Exact<{
 
 export type SetInitialPasswordMutation = { __typename?: 'Mutation', setInitialPassword: { __typename?: 'User', id: string } };
 
-export type ClassOptionsQueryVariables = Exact<{ [key: string]: never; }>;
+export type ClassTemplateOptionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ClassOptionsQuery = { __typename?: 'Query', staff: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string }>, gyms: Array<{ __typename?: 'Gym', id: string, name: string, legalEntityName?: string | null }> };
+export type ClassTemplateOptionsQuery = { __typename?: 'Query', staff: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string }>, gyms: Array<{ __typename?: 'Gym', id: string, name: string, legalEntityName?: string | null }> };
 
-export type CreateClassMutationVariables = Exact<{
-  data: ClassCreateInput;
+export type CreateClassTemplateMutationVariables = Exact<{
+  data: ClassTemplateCreateInput;
 }>;
 
 
-export type CreateClassMutation = { __typename?: 'Mutation', createClass: { __typename?: 'Class', id: string, name: string } };
+export type CreateClassTemplateMutation = { __typename?: 'Mutation', createClassTemplate: { __typename?: 'ClassTemplate', id: string, name: string } };
 
-export type GetClassByIdQueryVariables = Exact<{
+export type GetClassTemplateByIdQueryVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
 
 
-export type GetClassByIdQuery = { __typename?: 'Query', classById: { __typename?: 'Class', capacity: number, description?: string | null, name: string, scheduleDateTime: any, gym?: { __typename?: 'Gym', id: string, name: string } | null, instructor?: { __typename?: 'User', id: string, name?: string | null } | null } };
+export type GetClassTemplateByIdQuery = { __typename?: 'Query', classTemplateById: { __typename?: 'ClassTemplate', name: string, description?: string | null, capacity: number, recurrence: string, gym: { __typename?: 'Gym', id: string, name: string }, instructor?: { __typename?: 'User', id: string, name?: string | null } | null } };
 
-export type UpdateClassMutationVariables = Exact<{
+export type UpdateClassTemplateMutationVariables = Exact<{
   id: Scalars['ID']['input'];
-  data: ClassUpdateInput;
+  input: ClassTemplateUpdateInput;
 }>;
 
 
-export type UpdateClassMutation = { __typename?: 'Mutation', updateClass: { __typename?: 'Class', id: string, name: string } };
+export type UpdateClassTemplateMutation = { __typename?: 'Mutation', updateClassTemplate: { __typename?: 'ClassTemplate', id: string, name: string } };
 
 export type CreateGymMutationVariables = Exact<{
   data: GymCreateInput;
@@ -491,11 +508,11 @@ export type GetMemberByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetMemberByIdQuery = { __typename?: 'Query', memberById: { __typename?: 'User', createdAt: any, email: string, firstName: string, id: string, isActive: boolean, lastName: string, walletAddress?: string | null, updatedAt: any, phoneNumber?: string | null } };
+export type GetMemberByIdQuery = { __typename?: 'Query', memberById: { __typename?: 'User', email: string, firstName: string, id: string, isActive: boolean, lastName: string, walletAddress?: string | null, phoneNumber?: string | null } };
 
 export type UpdateMemberMutationVariables = Exact<{
   id: Scalars['ID']['input'];
-  data: MemberUpdateInput;
+  input: MemberUpdateInput;
 }>;
 
 
@@ -513,11 +530,11 @@ export type GetStaffByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetStaffByIdQuery = { __typename?: 'Query', staffById: { __typename?: 'User', createdAt: any, email: string, firstName: string, id: string, isActive: boolean, lastName: string, walletAddress?: string | null, updatedAt: any, phoneNumber?: string | null } };
+export type GetStaffByIdQuery = { __typename?: 'Query', staffById: { __typename?: 'User', email: string, firstName: string, id: string, isActive: boolean, lastName: string, walletAddress?: string | null, phoneNumber?: string | null } };
 
 export type UpdateStaffMutationVariables = Exact<{
   id: Scalars['ID']['input'];
-  data: StaffUpdateInput;
+  input: StaffUpdateInput;
 }>;
 
 
@@ -535,20 +552,27 @@ export type CreateTenancyMutationVariables = Exact<{
 
 export type CreateTenancyMutation = { __typename?: 'Mutation', createTenancy: { __typename?: 'Tenancy', id: string } };
 
-export type GetClassesQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetScheduledClassesQueryVariables = Exact<{
+  args: ScheduledClassesArgs;
+}>;
 
 
-export type GetClassesQuery = { __typename?: 'Query', classes: Array<{ __typename?: 'Class', id: string, description?: string | null, name: string, capacity: number, scheduleDateTime: any, instructor?: { __typename?: 'User', id: string, name?: string | null } | null, gym?: { __typename?: 'Gym', id: string, name: string } | null }> };
+export type GetScheduledClassesQuery = { __typename?: 'Query', scheduledClasses: Array<{ __typename?: 'ScheduledClass', id: string, name: string, startTime: any, endTime: any, gym: { __typename?: 'Gym', name: string }, instructor?: { __typename?: 'User', name?: string | null } | null }> };
+
+export type GetClassTemplatesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetClassTemplatesQuery = { __typename?: 'Query', classTemplates: Array<{ __typename?: 'ClassTemplate', id: string, name: string, capacity: number, description?: string | null, recurrence: string, gym: { __typename?: 'Gym', id: string, name: string }, instructor?: { __typename?: 'User', id: string, name?: string | null } | null }> };
 
 export type GetGymsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetGymsQuery = { __typename?: 'Query', gyms: Array<{ __typename?: 'Gym', id: string, address?: any | null, name: string, legalDocsUrl?: string | null, updatedAt: any }> };
+export type GetGymsQuery = { __typename?: 'Query', gyms: Array<{ __typename?: 'Gym', id: string, address?: any | null, name: string, legalDocsUrl?: string | null, legalEntityName?: string | null }> };
 
 export type GetMembersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMembersQuery = { __typename?: 'Query', members: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, email: string, updatedAt: any, isActive: boolean, phoneNumber?: string | null }> };
+export type GetMembersQuery = { __typename?: 'Query', members: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, email: string, isActive: boolean, phoneNumber?: string | null }> };
 
 export type GetContractsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -558,12 +582,12 @@ export type GetContractsQuery = { __typename?: 'Query', contracts: Array<{ __typ
 export type GetMembershipsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMembershipsQuery = { __typename?: 'Query', memberships: Array<{ __typename?: 'MembershipNFT', id: string, createdAt: any, expiresAt?: any | null, isActive: boolean, isCurrentlyRented: boolean, renterUserId?: string | null, updatedAt: any, userId: string }> };
+export type GetMembershipsQuery = { __typename?: 'Query', memberships: Array<{ __typename?: 'MembershipNFT', id: string, expiresAt?: any | null, isActive: boolean, isCurrentlyRented: boolean, renterUser?: { __typename?: 'User', id: string } | null, user: { __typename?: 'User', id: string } }> };
 
 export type GetStaffQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetStaffQuery = { __typename?: 'Query', staff: Array<{ __typename?: 'User', id: string, email: string, phoneNumber?: string | null, firstName: string, lastName: string, updatedAt: any, isActive: boolean }> };
+export type GetStaffQuery = { __typename?: 'Query', staff: Array<{ __typename?: 'User', id: string, email: string, phoneNumber?: string | null, firstName: string, lastName: string, isActive: boolean }> };
 
 export class TypedDocumentString<TResult, TVariables>
   extends String
@@ -591,8 +615,8 @@ export const SetInitialPasswordDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<SetInitialPasswordMutation, SetInitialPasswordMutationVariables>;
-export const ClassOptionsDocument = new TypedDocumentString(`
-    query ClassOptions {
+export const ClassTemplateOptionsDocument = new TypedDocumentString(`
+    query ClassTemplateOptions {
   staff {
     id
     firstName
@@ -604,20 +628,21 @@ export const ClassOptionsDocument = new TypedDocumentString(`
     legalEntityName
   }
 }
-    `) as unknown as TypedDocumentString<ClassOptionsQuery, ClassOptionsQueryVariables>;
-export const CreateClassDocument = new TypedDocumentString(`
-    mutation CreateClass($data: ClassCreateInput!) {
-  createClass(data: $data) {
+    `) as unknown as TypedDocumentString<ClassTemplateOptionsQuery, ClassTemplateOptionsQueryVariables>;
+export const CreateClassTemplateDocument = new TypedDocumentString(`
+    mutation CreateClassTemplate($data: ClassTemplateCreateInput!) {
+  createClassTemplate(data: $data) {
     id
     name
   }
 }
-    `) as unknown as TypedDocumentString<CreateClassMutation, CreateClassMutationVariables>;
-export const GetClassByIdDocument = new TypedDocumentString(`
-    query GetClassById($id: ID!) {
-  classById(id: $id) {
-    capacity
+    `) as unknown as TypedDocumentString<CreateClassTemplateMutation, CreateClassTemplateMutationVariables>;
+export const GetClassTemplateByIdDocument = new TypedDocumentString(`
+    query GetClassTemplateById($id: ID!) {
+  classTemplateById(id: $id) {
+    name
     description
+    capacity
     gym {
       id
       name
@@ -626,19 +651,18 @@ export const GetClassByIdDocument = new TypedDocumentString(`
       id
       name
     }
-    name
-    scheduleDateTime
+    recurrence
   }
 }
-    `) as unknown as TypedDocumentString<GetClassByIdQuery, GetClassByIdQueryVariables>;
-export const UpdateClassDocument = new TypedDocumentString(`
-    mutation UpdateClass($id: ID!, $data: ClassUpdateInput!) {
-  updateClass(id: $id, data: $data) {
+    `) as unknown as TypedDocumentString<GetClassTemplateByIdQuery, GetClassTemplateByIdQueryVariables>;
+export const UpdateClassTemplateDocument = new TypedDocumentString(`
+    mutation UpdateClassTemplate($id: ID!, $input: ClassTemplateUpdateInput!) {
+  updateClassTemplate(id: $id, input: $input) {
     id
     name
   }
 }
-    `) as unknown as TypedDocumentString<UpdateClassMutation, UpdateClassMutationVariables>;
+    `) as unknown as TypedDocumentString<UpdateClassTemplateMutation, UpdateClassTemplateMutationVariables>;
 export const CreateGymDocument = new TypedDocumentString(`
     mutation CreateGym($data: GymCreateInput!) {
   createGym(data: $data) {
@@ -684,21 +708,19 @@ export const CreateMemberDocument = new TypedDocumentString(`
 export const GetMemberByIdDocument = new TypedDocumentString(`
     query GetMemberById($id: ID!) {
   memberById(id: $id) {
-    createdAt
     email
     firstName
     id
     isActive
     lastName
     walletAddress
-    updatedAt
     phoneNumber
   }
 }
     `) as unknown as TypedDocumentString<GetMemberByIdQuery, GetMemberByIdQueryVariables>;
 export const UpdateMemberDocument = new TypedDocumentString(`
-    mutation UpdateMember($id: ID!, $data: MemberUpdateInput!) {
-  updateMember(id: $id, data: $data) {
+    mutation UpdateMember($id: ID!, $input: MemberUpdateInput!) {
+  updateMember(id: $id, input: $input) {
     id
     firstName
   }
@@ -715,21 +737,19 @@ export const CreateStaffDocument = new TypedDocumentString(`
 export const GetStaffByIdDocument = new TypedDocumentString(`
     query GetStaffById($id: ID!) {
   staffById(id: $id) {
-    createdAt
     email
     firstName
     id
     isActive
     lastName
     walletAddress
-    updatedAt
     phoneNumber
   }
 }
     `) as unknown as TypedDocumentString<GetStaffByIdQuery, GetStaffByIdQueryVariables>;
 export const UpdateStaffDocument = new TypedDocumentString(`
-    mutation UpdateStaff($id: ID!, $data: StaffUpdateInput!) {
-  updateStaff(id: $id, data: $data) {
+    mutation UpdateStaff($id: ID!, $input: StaffUpdateInput!) {
+  updateStaff(id: $id, input: $input) {
     id
     firstName
   }
@@ -752,25 +772,41 @@ export const CreateTenancyDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<CreateTenancyMutation, CreateTenancyMutationVariables>;
-export const GetClassesDocument = new TypedDocumentString(`
-    query GetClasses {
-  classes {
+export const GetScheduledClassesDocument = new TypedDocumentString(`
+    query GetScheduledClasses($args: ScheduledClassesArgs!) {
+  scheduledClasses(args: $args) {
     id
-    description
     name
-    capacity
-    scheduleDateTime
-    instructor {
-      id
+    startTime
+    endTime
+    gym {
       name
     }
-    gym {
-      id
+    instructor {
       name
     }
   }
 }
-    `) as unknown as TypedDocumentString<GetClassesQuery, GetClassesQueryVariables>;
+    `) as unknown as TypedDocumentString<GetScheduledClassesQuery, GetScheduledClassesQueryVariables>;
+export const GetClassTemplatesDocument = new TypedDocumentString(`
+    query GetClassTemplates {
+  classTemplates {
+    id
+    name
+    capacity
+    description
+    gym {
+      id
+      name
+    }
+    instructor {
+      id
+      name
+    }
+    recurrence
+  }
+}
+    `) as unknown as TypedDocumentString<GetClassTemplatesQuery, GetClassTemplatesQueryVariables>;
 export const GetGymsDocument = new TypedDocumentString(`
     query GetGyms {
   gyms {
@@ -778,7 +814,7 @@ export const GetGymsDocument = new TypedDocumentString(`
     address
     name
     legalDocsUrl
-    updatedAt
+    legalEntityName
   }
 }
     `) as unknown as TypedDocumentString<GetGymsQuery, GetGymsQueryVariables>;
@@ -789,7 +825,6 @@ export const GetMembersDocument = new TypedDocumentString(`
     firstName
     lastName
     email
-    updatedAt
     isActive
     phoneNumber
   }
@@ -806,13 +841,15 @@ export const GetMembershipsDocument = new TypedDocumentString(`
     query GetMemberships {
   memberships {
     id
-    createdAt
     expiresAt
     isActive
     isCurrentlyRented
-    renterUserId
-    updatedAt
-    userId
+    renterUser {
+      id
+    }
+    user {
+      id
+    }
   }
 }
     `) as unknown as TypedDocumentString<GetMembershipsQuery, GetMembershipsQueryVariables>;
@@ -824,7 +861,6 @@ export const GetStaffDocument = new TypedDocumentString(`
     phoneNumber
     firstName
     lastName
-    updatedAt
     isActive
   }
 }

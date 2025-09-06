@@ -6,9 +6,11 @@ import { faker } from "@faker-js/faker";
 
 async function main() {
   // Clear existing data
+  await db.membershipNFT.deleteMany({});
   await db.invitationToken.deleteMany({});
   await db.booking.deleteMany({});
-  await db.class.deleteMany({});
+  await db.scheduledClass.deleteMany({});
+  await db.classTemplate.deleteMany({});
   await db.userGymAssociation.deleteMany({});
   await db.gym.deleteMany({});
   await db.tenancy.deleteMany({});
@@ -138,43 +140,61 @@ async function main() {
     console.log(`Member created with ID: ${user.id}`);
   }
 
-  // Create classes
-  for (let i = 0; i < 20; i++) {
+  // Create class templates
+  const classTemplates = [];
+  for (let i = 0; i < 10; i++) {
     const instructor = staff[Math.floor(Math.random() * staff.length)]!;
     const gym = gyms[Math.floor(Math.random() * gyms.length)]!;
-    const course = await db.class.create({
+    const classTemplate = await db.classTemplate.create({
       data: {
-        name: faker.commerce.productName(),
-        description: faker.lorem.sentence(),
-        scheduleDateTime: faker.date.future(),
-        capacity: faker.number.int({ min: 5, max: 20 }),
+        name: faker.lorem.words(3),
+        metadata: {
+          description: faker.lorem.sentence(),
+          capacity: faker.number.int({ min: 5, max: 20 }),
+        },
         gymId: gym.id,
         instructorId: instructor.id,
+        recurrence: faker.system.cron({ includeYear: false }),
       },
     });
-    console.log(`Class created with ID: ${course.id}`);
+    classTemplates.push(classTemplate);
+    console.log(`Class template created with ID: ${classTemplate.id}`);
+  }
 
-    // Create bookings
-    const numBookings = faker.number.int({ min: 0, max: 5 });
-    for (let j = 0; j < numBookings; j++) {
-      const member = members[Math.floor(Math.random() * members.length)]!;
-      // check if member is already booked
-      const existingBooking = await db.booking.findFirst({
-        where: {
-          classId: course.id,
-          userId: member.id,
+  // Create scheduled classes and bookings
+  for (const classTemplate of classTemplates) {
+    for (let i = 0; i < 5; i++) {
+      const startTime = faker.date.future();
+      const endTime = new Date(startTime.getTime() + 60 * 60 * 1000);
+      const scheduledClass = await db.scheduledClass.create({
+        data: {
+          classTemplateId: classTemplate.id,
+          startTime,
+          endTime,
         },
       });
-      if (!existingBooking) {
-        await db.booking.create({
-          data: {
+      console.log(`Scheduled class created with ID: ${scheduledClass.id}`);
+
+      const numBookings = faker.number.int({ min: 0, max: 5 });
+      for (let j = 0; j < numBookings; j++) {
+        const member = members[Math.floor(Math.random() * members.length)]!;
+        const existingBooking = await db.booking.findFirst({
+          where: {
+            scheduledClassId: scheduledClass.id,
             userId: member.id,
-            classId: course.id,
           },
         });
-        console.log(
-          `Booking created for member ${member.id} in class ${course.id}`,
-        );
+        if (!existingBooking) {
+          await db.booking.create({
+            data: {
+              userId: member.id,
+              scheduledClassId: scheduledClass.id,
+            },
+          });
+          console.log(
+            `Booking created for member ${member.id} in scheduled class ${scheduledClass.id}`,
+          );
+        }
       }
     }
   }

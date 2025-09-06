@@ -22,19 +22,13 @@ enum AgreementStatus {
   REVOKED
 }
 
-enum CalendarView {
-    MONTH
-    WEEK
-}
-
 # --- OBJECTS ---
+
 type Tenancy {
   id: ID!
   name: String!
   legalName: String
   contactEmail: String!
-  createdAt: DateTime!
-  updatedAt: DateTime!
 }
 
 type GymAddress {
@@ -51,8 +45,6 @@ type Gym {
   address: Json
   legalEntityName: String
   legalDocsUrl: String
-  createdAt: DateTime!
-  updatedAt: DateTime!
 }
 
 type User {
@@ -63,19 +55,15 @@ type User {
   name: String
   isSuperUser: Boolean!
   isActive: Boolean!
-  createdAt: DateTime!
-  updatedAt: DateTime!
   walletAddress: String
   phoneNumber: String
 }
 
 type MembershipNFT {
   id: ID!
-  userId: ID!
-  renterUserId: ID
+  user: User!
+  renterUser: User
   expiresAt: DateTime
-  createdAt: DateTime!
-  updatedAt: DateTime!
   isActive: Boolean!
   isCurrentlyRented: Boolean!
 }
@@ -87,22 +75,42 @@ type UserTenancyAgreement {
   documentVersion: String
   signedAt: DateTime
   expiresAt: DateTime
-  createdAt: DateTime!
-  updatedAt: DateTime!
 }
 
-type UserGymAssociation {
-  userId: ID!
-  gymId: ID!
-  roleAtGym: UserAtGymRole!
-  permissions: Json
-  isActiveAtGym: Boolean!
-  assignedAt: DateTime!
-  updatedAt: DateTime!
+type Booking {
+  id: String!
+  bookedAt: DateTime!
+  member: User!
+}
+
+type ClassTemplate {
+  id: ID!
+  name: String!
+  description: String
+  capacity: Int!
   gym: Gym!
+  instructor: User
+  recurrence: String!
 }
 
-# --- TENANCY INPUTS ---
+type ScheduledClass {
+  id: ID!
+  name: String!
+  description: String
+  startTime: DateTime!
+  endTime: DateTime!
+  bookings: [Booking!]!
+  gym: Gym!
+  instructor: User
+}
+
+type CheckIn {
+  id: String!
+  timestamp: DateTime!
+  member: User!
+}
+
+# --- INPUTS ---
 input TenancyCreateInput {
   name: String!
   legalName: String
@@ -115,26 +123,43 @@ input TenancyUpdateInput {
   contactEmail: String
 }
 
-# --- CLASS INPUTS ---
-input ClassCreateInput {
+input ClassTemplateCreateInput {
   name: String!
   description: String
   capacity: Int!
   gymId: ID!
   instructorId: ID
-  scheduleDateTime: String!
+  recurrence: String!
 }
 
-input ClassUpdateInput {
+input ClassTemplateUpdateInput {
   name: String
   description: String
   capacity: Int
   gymId: ID
   instructorId: ID
-  scheduleDateTime: String
+  recurrence: String
 }
 
-# --- GYM INPUTS ---
+input ScheduledClassesArgs {
+  classTemplateId: ID
+  gymId: ID
+  startDate: DateTime
+  endDate: DateTime
+}
+
+input ScheduledClassCreateInput {
+  classTemplateId: ID!
+  startTime: DateTime!
+  endTime: DateTime!
+}
+
+input ScheduledClassUpdateInput {
+  classTemplateId: ID
+  startTime: DateTime
+  endTime: DateTime
+}
+
 input GymAddressInput {
   street1: String
   city: String
@@ -197,101 +222,62 @@ input StaffUpdateInput {
   phoneNumber: String
 }
 
-input ClassesByDateInput {
-    gymId: ID
-    date: DateTime!
-    view: CalendarView!
+input BookingsArgs {
+  gymId: ID
 }
 
-type ClassesByDate {
-    calendarDay: DateTime!
-    classes: [Class!]!
-}
-
-type Booking {
-  id: String!
-  bookedAt: DateTime!
-}
-
-type InvitationToken {
-  id: String!
-  token: String!
-  userId: ID!
-  expiresAt: DateTime!
-  createdAt: DateTime!
-}
-
-type Class {
-  id: String!
-  name: String!
-  description: String
-  scheduleDateTime: DateTime!
-  capacity: Int!
-  gym: Gym
-  instructor: User
-  createdAt: DateTime
-  updatedAt: DateTime
-  bookings: [Booking!]
-}
-
-type CheckIn {
-  id: String!
-  timestamp: DateTime!
-}
-
+# --- QUERIES ---
 type Query {
-  # --- STAFF QUERIES ---
   staff: [User!]!
   staffById(id: ID!): User!
 
-  # --- CLASS QUERIES ---
-  classes: [Class!]!
-  classById(id: ID!): Class!
-  classesByDate(input: ClassesByDateInput!): [ClassesByDate!]!
+  classTemplates: [ClassTemplate!]!
+  classTemplateById(id: ID!): ClassTemplate!
+  scheduledClasses(args: ScheduledClassesArgs!): [ScheduledClass!]!
+  scheduledClassById(id: ID!): ScheduledClass!
 
-  # --- TENANCY QUERIES ---
   tenancy: Tenancy!
 
-  # --- CONTRACT QUERIES ---
   contracts: [UserTenancyAgreement!]!
   contractById(id: ID!): UserTenancyAgreement!
 
-  # --- MEMBER QUERIES ---
   members: [User!]!
   memberById(id: ID!): User!
 
-  # --- MEMBERSHIPS QUERIES ---
   memberships: [MembershipNFT!]!
   membershipById(id: ID!): MembershipNFT!
 
-  # --- GYM QUERIES ---
   gyms: [Gym!]!
   gymById(id: ID!): Gym
+
+  bookings(input: BookingsArgs): [Booking!]!
 }
 
+# --- MUTATIONS ---
 type Mutation {
-  # --- TENANCY MUTATIONS ---
   createTenancy(data: TenancyCreateInput!): Tenancy!
-  updateTenancy(id: ID!, data: TenancyUpdateInput!): Tenancy!
+  updateTenancy(id: ID!, input: TenancyUpdateInput!): Tenancy!
 
-  # --- GYM MUTATIONS ---
   createGym(data: GymCreateInput!): Gym!
   updateGym(id: ID!, data: GymUpdateInput!): Gym!
   deleteGym(id: ID!): Boolean!
 
-  # --- CLASS MUTATIONS ---
-  createClass(data: ClassCreateInput!): Class!
-  updateClass(id: ID!, data: ClassUpdateInput!): Class!
-  deleteClass(id: ID!): Boolean!
+  createClassTemplate(data: ClassTemplateCreateInput!): ClassTemplate!
+  updateClassTemplate(id: ID!, input: ClassTemplateUpdateInput!): ClassTemplate!
+  deleteClassTemplate(id: ID!): Boolean!
+  createScheduledClass(input: ScheduledClassCreateInput!): ScheduledClass!
+  updateScheduledClass(
+    id: ID!
+    input: ScheduledClassUpdateInput!
+  ): ScheduledClass!
+  deleteScheduledClass(id: ID!): Boolean!
 
-  # --- STAFF MUTATIONS ---
   createStaff(data: StaffCreateInput!): User!
-  updateStaff(id: ID!, data: StaffUpdateInput!): User!
+  updateStaff(id: ID!, input: StaffUpdateInput!): User!
   deleteStaff(id: ID!): Boolean!
 
-  # --- MEMBER MUTATIONS ---
   createMember(data: MemberCreateInput!): User!
-  updateMember(id: ID!, data: MemberUpdateInput!): User!
+  updateMember(id: ID!, input: MemberUpdateInput!): User!
   deleteMember(id: ID!): Boolean!
   setInitialPassword(token: String!, password: String!): User!
 }

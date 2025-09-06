@@ -13,20 +13,22 @@ import {
   IconPlus,
 } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
-import { format, formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow } from "date-fns";
 import { useState } from "react";
 
 const GET_MEMBERS = graphql(`
   query GetMemberships {
     memberships {
       id
-      createdAt
       expiresAt
       isActive
       isCurrentlyRented
-      renterUserId
-      updatedAt
-      userId
+      renterUser {
+        id
+      }
+      user {
+        id
+      }
     }
   }
 `);
@@ -93,21 +95,6 @@ export default function ReportsMembershipsPage() {
                   {row.original.id ? "Active" : "Inactive"}
                 </Badge>
               ),
-            },
-            {
-              accessorKey: "createdAt",
-              header: "Created",
-              cell: ({ row }) =>
-                format(row.original.updatedAt, "MMMM do, yyyy"),
-            },
-            {
-              accessorKey: "updatedAt",
-              header: "Updated",
-              cell: ({ row }) =>
-                formatDistanceToNow(row.original.updatedAt, {
-                  addSuffix: true,
-                  includeSeconds: true,
-                }),
             },
             {
               accessorKey: "expiresAt",

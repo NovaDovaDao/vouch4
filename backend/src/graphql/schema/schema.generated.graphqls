@@ -14,70 +14,55 @@ enum AgreementType {
 type Booking {
   bookedAt: DateTime!
   id: String!
+  member: User!
 }
 
-enum CalendarView {
-  MONTH
-  WEEK
+input BookingsArgs {
+  gymId: ID
 }
 
 type CheckIn {
   id: String!
+  member: User!
   timestamp: DateTime!
 }
 
-type Class {
-  bookings: [Booking!]
+type ClassTemplate {
   capacity: Int!
-  createdAt: DateTime
   description: String
-  gym: Gym
-  id: String!
+  gym: Gym!
+  id: ID!
   instructor: User
   name: String!
-  scheduleDateTime: DateTime!
-  updatedAt: DateTime
+  recurrence: String!
 }
 
-input ClassCreateInput {
+input ClassTemplateCreateInput {
   capacity: Int!
   description: String
   gymId: ID!
   instructorId: ID
   name: String!
-  scheduleDateTime: String!
+  recurrence: String!
 }
 
-input ClassUpdateInput {
+input ClassTemplateUpdateInput {
   capacity: Int
   description: String
   gymId: ID
   instructorId: ID
   name: String
-  scheduleDateTime: String
-}
-
-type ClassesByDate {
-  calendarDay: DateTime!
-  classes: [Class!]!
-}
-
-input ClassesByDateInput {
-  date: DateTime!
-  gymId: ID
-  view: CalendarView!
+  recurrence: String
 }
 
 scalar DateTime
 
 type Gym {
   address: Json
-  createdAt: DateTime!
   id: ID!
   legalDocsUrl: String
   legalEntityName: String
   name: String!
-  updatedAt: DateTime!
 }
 
 type GymAddress {
@@ -110,14 +95,6 @@ input GymUpdateInput {
   name: String
 }
 
-type InvitationToken {
-  createdAt: DateTime!
-  expiresAt: DateTime!
-  id: String!
-  token: String!
-  userId: ID!
-}
-
 scalar Json
 
 input MemberCreateInput {
@@ -141,38 +118,39 @@ input MemberUpdateInput {
 }
 
 type MembershipNFT {
-  createdAt: DateTime!
   expiresAt: DateTime
   id: ID!
   isActive: Boolean!
   isCurrentlyRented: Boolean!
-  renterUserId: ID
-  updatedAt: DateTime!
-  userId: ID!
+  renterUser: User
+  user: User!
 }
 
 type Mutation {
-  createClass(data: ClassCreateInput!): Class!
+  createClassTemplate(data: ClassTemplateCreateInput!): ClassTemplate!
   createGym(data: GymCreateInput!): Gym!
   createMember(data: MemberCreateInput!): User!
+  createScheduledClass(input: ScheduledClassCreateInput!): ScheduledClass!
   createStaff(data: StaffCreateInput!): User!
   createTenancy(data: TenancyCreateInput!): Tenancy!
-  deleteClass(id: ID!): Boolean!
+  deleteClassTemplate(id: ID!): Boolean!
   deleteGym(id: ID!): Boolean!
   deleteMember(id: ID!): Boolean!
+  deleteScheduledClass(id: ID!): Boolean!
   deleteStaff(id: ID!): Boolean!
   setInitialPassword(password: String!, token: String!): User!
-  updateClass(data: ClassUpdateInput!, id: ID!): Class!
+  updateClassTemplate(id: ID!, input: ClassTemplateUpdateInput!): ClassTemplate!
   updateGym(data: GymUpdateInput!, id: ID!): Gym!
-  updateMember(data: MemberUpdateInput!, id: ID!): User!
-  updateStaff(data: StaffUpdateInput!, id: ID!): User!
-  updateTenancy(data: TenancyUpdateInput!, id: ID!): Tenancy!
+  updateMember(id: ID!, input: MemberUpdateInput!): User!
+  updateScheduledClass(id: ID!, input: ScheduledClassUpdateInput!): ScheduledClass!
+  updateStaff(id: ID!, input: StaffUpdateInput!): User!
+  updateTenancy(id: ID!, input: TenancyUpdateInput!): Tenancy!
 }
 
 type Query {
-  classById(id: ID!): Class!
-  classes: [Class!]!
-  classesByDate(input: ClassesByDateInput!): [ClassesByDate!]!
+  bookings(input: BookingsArgs): [Booking!]!
+  classTemplateById(id: ID!): ClassTemplate!
+  classTemplates: [ClassTemplate!]!
   contractById(id: ID!): UserTenancyAgreement!
   contracts: [UserTenancyAgreement!]!
   gymById(id: ID!): Gym
@@ -181,9 +159,41 @@ type Query {
   members: [User!]!
   membershipById(id: ID!): MembershipNFT!
   memberships: [MembershipNFT!]!
+  scheduledClassById(id: ID!): ScheduledClass!
+  scheduledClasses(args: ScheduledClassesArgs!): [ScheduledClass!]!
   staff: [User!]!
   staffById(id: ID!): User!
   tenancy: Tenancy!
+}
+
+type ScheduledClass {
+  bookings: [Booking!]!
+  description: String
+  endTime: DateTime!
+  gym: Gym!
+  id: ID!
+  instructor: User
+  name: String!
+  startTime: DateTime!
+}
+
+input ScheduledClassCreateInput {
+  classTemplateId: ID!
+  endTime: DateTime!
+  startTime: DateTime!
+}
+
+input ScheduledClassUpdateInput {
+  classTemplateId: ID
+  endTime: DateTime
+  startTime: DateTime
+}
+
+input ScheduledClassesArgs {
+  classTemplateId: ID
+  endDate: DateTime
+  gymId: ID
+  startDate: DateTime
 }
 
 input StaffCreateInput {
@@ -208,11 +218,9 @@ input StaffUpdateInput {
 
 type Tenancy {
   contactEmail: String!
-  createdAt: DateTime!
   id: ID!
   legalName: String
   name: String!
-  updatedAt: DateTime!
 }
 
 input TenancyCreateInput {
@@ -228,7 +236,6 @@ input TenancyUpdateInput {
 }
 
 type User {
-  createdAt: DateTime!
   email: String!
   firstName: String!
   id: ID!
@@ -237,7 +244,6 @@ type User {
   lastName: String!
   name: String
   phoneNumber: String
-  updatedAt: DateTime!
   walletAddress: String
 }
 
@@ -249,24 +255,11 @@ enum UserAtGymRole {
   TRAINER
 }
 
-type UserGymAssociation {
-  assignedAt: DateTime!
-  gym: Gym!
-  gymId: ID!
-  isActiveAtGym: Boolean!
-  permissions: Json
-  roleAtGym: UserAtGymRole!
-  updatedAt: DateTime!
-  userId: ID!
-}
-
 type UserTenancyAgreement {
-  createdAt: DateTime!
   documentVersion: String
   expiresAt: DateTime
   id: ID!
   signedAt: DateTime
   status: AgreementStatus!
   type: AgreementType!
-  updatedAt: DateTime!
 }

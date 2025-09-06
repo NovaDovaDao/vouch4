@@ -29,7 +29,7 @@ const options: Option[] = [
   {
     label: "Class",
     shortcut: "C",
-    type: "createClass",
+    type: "createClassTemplate",
   },
   {
     label: "Gym",

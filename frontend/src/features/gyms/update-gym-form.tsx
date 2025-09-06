@@ -11,7 +11,7 @@ import { useForm } from "react-hook-form";
 import GymForm from "./gym-form";
 import { graphql } from "@/graphql";
 import { execute } from "@/graphql/execute";
-import type { UpdateClassMutationVariables } from "@/graphql/graphql";
+import type { UpdateGymMutationVariables } from "@/graphql/graphql";
 
 const GET_GYM_BY_ID = graphql(`
   query GetGymById($id: ID!) {
@@ -48,7 +48,7 @@ export default function UpdateGymForm({ id, onClose }: UpdateGymDrawerProps) {
   const queryClient = useQueryClient();
   const { mutate: updateStaff, isPending } = useMutation({
     mutationKey: ["staff", "update", id],
-    mutationFn: (variables: UpdateClassMutationVariables) =>
+    mutationFn: (variables: UpdateGymMutationVariables) =>
       execute(UPDATE_GYM, variables),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["gyms"] });

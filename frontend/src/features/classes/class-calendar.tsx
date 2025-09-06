@@ -1,10 +1,13 @@
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { GetClassesQuery } from "@/graphql/graphql";
 import { useState } from "react";
 
 interface ClassCalendarProps {
-  classes: GetClassesQuery["classes"];
+  classes: {
+    id: string;
+    name: string;
+    scheduleDateTime: string;
+  }[];
   onDateChange: (date: Date | undefined) => void;
 }
 
@@ -29,11 +32,14 @@ export function ClassCalendar({ classes, onDateChange }: ClassCalendarProps) {
           className="rounded-md border"
         />
         <div>
-          <h3 className="text-lg font-medium">Classes for {date?.toLocaleDateString()}</h3>
+          <h3 className="text-lg font-medium">
+            Classes for {date?.toLocaleDateString()}
+          </h3>
           <ul>
             {classes.map((c) => (
               <li key={c.id}>
-                <strong>{c.name}</strong> at {new Date(c.scheduleDateTime).toLocaleTimeString()}
+                <strong>{c.name}</strong> at{" "}
+                {new Date(c.scheduleDateTime).toLocaleTimeString()}
               </li>
             ))}
           </ul>

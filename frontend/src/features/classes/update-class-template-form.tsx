@@ -5,19 +5,23 @@ import { DrawerClose, DrawerFooter } from "@/components/ui/drawer";
 import FormDrawer from "@/components/common/form-drawer";
 import { Button } from "@/components/ui/button";
 
-import { classSchema, type ClassFormData } from "./class.schema";
+import {
+  classTemplateSchema,
+  type ClassTemplateFormData,
+} from "./class-template.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import ClassForm from "./class-form";
+import ClassTemplateForm from "./class-template-form";
 import { graphql } from "@/graphql";
 import { execute } from "@/graphql/execute";
-import type { UpdateClassMutationVariables } from "@/graphql/graphql";
+import type { UpdateClassTemplateMutationVariables } from "@/graphql/graphql";
 
-const GET_CLASS_BY_ID = graphql(`
-  query GetClassById($id: ID!) {
-    classById(id: $id) {
-      capacity
+const GET_CLASS_TEMPLATE_BY_ID = graphql(`
+  query GetClassTemplateById($id: ID!) {
+    classTemplateById(id: $id) {
+      name
       description
+      capacity
       gym {
         id
         name
@@ -26,55 +30,54 @@ const GET_CLASS_BY_ID = graphql(`
         id
         name
       }
-      name
-      scheduleDateTime
+      recurrence
     }
   }
 `);
 
-const UPDATE_CLASS = graphql(`
-  mutation UpdateClass($id: ID!, $data: ClassUpdateInput!) {
-    updateClass(id: $id, data: $data) {
+const UPDATE_CLASS_TEMPLATE = graphql(`
+  mutation UpdateClassTemplate($id: ID!, $input: ClassTemplateUpdateInput!) {
+    updateClassTemplate(id: $id, input: $input) {
       id
       name
     }
   }
 `);
 
-type UpdateClassDrawerProps = {
+type UpdateClassTemplateDrawerProps = {
   id: string | null;
   onClose: () => void;
 };
-export default function UpdateClassForm({
+export default function UpdateClassTemplateForm({
   id,
   onClose,
-}: UpdateClassDrawerProps) {
+}: UpdateClassTemplateDrawerProps) {
   const { data } = useQuery({
-    queryKey: ["staff", id],
-    queryFn: () => execute(GET_CLASS_BY_ID, { id: id! }),
+    queryKey: ["classTemplates", id],
+    queryFn: () => execute(GET_CLASS_TEMPLATE_BY_ID, { id: id! }),
     enabled: !!id,
-    select: (data) => data.classById,
+    select: (data) => data.classTemplateById,
   });
 
   const queryClient = useQueryClient();
-  const { mutate: updateStaff, isPending } = useMutation({
-    mutationKey: ["staff", "update", id],
-    mutationFn: (variables: UpdateClassMutationVariables) =>
-      execute(UPDATE_CLASS, variables),
+  const { mutate: updateClassTemplate, isPending } = useMutation({
+    mutationKey: ["classTemplates", "update", id],
+    mutationFn: (variables: UpdateClassTemplateMutationVariables) =>
+      execute(UPDATE_CLASS_TEMPLATE, variables),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["classes"] });
+      queryClient.invalidateQueries({ queryKey: ["classTemplates"] });
       toast.success("Success!", {
-        description: `Updated ${data.updateClass.name}'s data!`,
+        description: `Updated ${data.updateClassTemplate.name}'s data!`,
       });
       onClose();
     },
   });
-  const handleSubmit = (body: ClassFormData) =>
-    updateStaff({ id: id!, data: body });
+  const handleSubmit = (body: ClassTemplateFormData) =>
+    updateClassTemplate({ id: id!, input: body });
 
   if (data)
     return (
-      <UpdateClassDrawerWrapper
+      <UpdateClassTemplateDrawerWrapper
         id={id}
         data={{
           capacity: data.capacity,
@@ -82,7 +85,7 @@ export default function UpdateClassForm({
           gymId: data.gym?.id ?? "",
           instructorId: data.instructor?.id ?? "",
           name: data.name,
-          scheduleDateTime: data.scheduleDateTime,
+          recurrence: data.recurrence,
         }}
         onClose={onClose}
         onSubmit={handleSubmit}
@@ -91,34 +94,34 @@ export default function UpdateClassForm({
     );
 }
 
-type UpdateClassDrawerWrapperProps = UpdateClassDrawerProps & {
-  data: ClassFormData;
-  onSubmit: (data: ClassFormData) => void;
+type UpdateClassTemplateDrawerWrapperProps = UpdateClassTemplateDrawerProps & {
+  data: ClassTemplateFormData;
+  onSubmit: (data: ClassTemplateFormData) => void;
   isSubmitting: boolean;
 };
-function UpdateClassDrawerWrapper({
+function UpdateClassTemplateDrawerWrapper({
   id,
   data,
   onClose,
   onSubmit,
   isSubmitting,
-}: UpdateClassDrawerWrapperProps) {
+}: UpdateClassTemplateDrawerWrapperProps) {
   const form = useForm({
-    resolver: zodResolver(classSchema),
+    resolver: zodResolver(classTemplateSchema),
     defaultValues: data,
   });
 
-  function handleSubmit(data: ClassFormData) {
+  function handleSubmit(data: ClassTemplateFormData) {
     onSubmit(data);
   }
   return (
     <FormDrawer
-      title={`Edit ${data?.name ?? "Staff"}`}
-      description="Edit Staff information"
+      title={`Edit ${data?.name ?? "Class Template"}`}
+      description="Edit Class Template information"
       drawerProps={{ open: !!id, onClose }}
     >
       <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm">
-        <ClassForm
+        <ClassTemplateForm
           form={form}
           isSubmitting={isSubmitting}
           onSubmit={handleSubmit}

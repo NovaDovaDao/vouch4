@@ -1,8 +1,8 @@
 /* This file was automatically generated. DO NOT UPDATE MANUALLY. */
 import type { Resolvers } from "./types.generated.js";
-import { classById as Query_classById } from "./resolvers/Query/classById.js";
-import { classes as Query_classes } from "./resolvers/Query/classes.js";
-import { classesByDate as Query_classesByDate } from "./resolvers/Query/classesByDate.js";
+import { bookings as Query_bookings } from "./resolvers/Query/bookings.js";
+import { classTemplateById as Query_classTemplateById } from "./resolvers/Query/classTemplateById.js";
+import { classTemplates as Query_classTemplates } from "./resolvers/Query/classTemplates.js";
 import { contractById as Query_contractById } from "./resolvers/Query/contractById.js";
 import { contracts as Query_contracts } from "./resolvers/Query/contracts.js";
 import { gymById as Query_gymById } from "./resolvers/Query/gymById.js";
@@ -11,43 +11,46 @@ import { memberById as Query_memberById } from "./resolvers/Query/memberById.js"
 import { members as Query_members } from "./resolvers/Query/members.js";
 import { membershipById as Query_membershipById } from "./resolvers/Query/membershipById.js";
 import { memberships as Query_memberships } from "./resolvers/Query/memberships.js";
+import { scheduledClassById as Query_scheduledClassById } from "./resolvers/Query/scheduledClassById.js";
+import { scheduledClasses as Query_scheduledClasses } from "./resolvers/Query/scheduledClasses.js";
 import { staff as Query_staff } from "./resolvers/Query/staff.js";
 import { staffById as Query_staffById } from "./resolvers/Query/staffById.js";
 import { tenancy as Query_tenancy } from "./resolvers/Query/tenancy.js";
-import { createClass as Mutation_createClass } from "./resolvers/Mutation/createClass.js";
+import { createClassTemplate as Mutation_createClassTemplate } from "./resolvers/Mutation/createClassTemplate.js";
 import { createGym as Mutation_createGym } from "./resolvers/Mutation/createGym.js";
 import { createMember as Mutation_createMember } from "./resolvers/Mutation/createMember.js";
+import { createScheduledClass as Mutation_createScheduledClass } from "./resolvers/Mutation/createScheduledClass.js";
 import { createStaff as Mutation_createStaff } from "./resolvers/Mutation/createStaff.js";
 import { createTenancy as Mutation_createTenancy } from "./resolvers/Mutation/createTenancy.js";
-import { deleteClass as Mutation_deleteClass } from "./resolvers/Mutation/deleteClass.js";
+import { deleteClassTemplate as Mutation_deleteClassTemplate } from "./resolvers/Mutation/deleteClassTemplate.js";
 import { deleteGym as Mutation_deleteGym } from "./resolvers/Mutation/deleteGym.js";
 import { deleteMember as Mutation_deleteMember } from "./resolvers/Mutation/deleteMember.js";
+import { deleteScheduledClass as Mutation_deleteScheduledClass } from "./resolvers/Mutation/deleteScheduledClass.js";
 import { deleteStaff as Mutation_deleteStaff } from "./resolvers/Mutation/deleteStaff.js";
 import { setInitialPassword as Mutation_setInitialPassword } from "./resolvers/Mutation/setInitialPassword.js";
-import { updateClass as Mutation_updateClass } from "./resolvers/Mutation/updateClass.js";
+import { updateClassTemplate as Mutation_updateClassTemplate } from "./resolvers/Mutation/updateClassTemplate.js";
 import { updateGym as Mutation_updateGym } from "./resolvers/Mutation/updateGym.js";
 import { updateMember as Mutation_updateMember } from "./resolvers/Mutation/updateMember.js";
+import { updateScheduledClass as Mutation_updateScheduledClass } from "./resolvers/Mutation/updateScheduledClass.js";
 import { updateStaff as Mutation_updateStaff } from "./resolvers/Mutation/updateStaff.js";
 import { updateTenancy as Mutation_updateTenancy } from "./resolvers/Mutation/updateTenancy.js";
 import { Booking } from "./resolvers/Booking.js";
 import { CheckIn } from "./resolvers/CheckIn.js";
-import { Class } from "./resolvers/Class.js";
-import { ClassesByDate } from "./resolvers/ClassesByDate.js";
+import { ClassTemplate } from "./resolvers/ClassTemplate.js";
 import { Gym } from "./resolvers/Gym.js";
 import { GymAddress } from "./resolvers/GymAddress.js";
-import { InvitationToken } from "./resolvers/InvitationToken.js";
 import { MembershipNFT } from "./resolvers/MembershipNFT.js";
+import { ScheduledClass } from "./resolvers/ScheduledClass.js";
 import { Tenancy } from "./resolvers/Tenancy.js";
 import { User } from "./resolvers/User.js";
-import { UserGymAssociation } from "./resolvers/UserGymAssociation.js";
 import { UserTenancyAgreement } from "./resolvers/UserTenancyAgreement.js";
 import { Json } from "./resolvers/Json.js";
 import { DateTimeResolver } from "graphql-scalars";
 export const resolvers: Resolvers = {
   Query: {
-    classById: Query_classById,
-    classes: Query_classes,
-    classesByDate: Query_classesByDate,
+    bookings: Query_bookings,
+    classTemplateById: Query_classTemplateById,
+    classTemplates: Query_classTemplates,
     contractById: Query_contractById,
     contracts: Query_contracts,
     gymById: Query_gymById,
@@ -56,39 +59,42 @@ export const resolvers: Resolvers = {
     members: Query_members,
     membershipById: Query_membershipById,
     memberships: Query_memberships,
+    scheduledClassById: Query_scheduledClassById,
+    scheduledClasses: Query_scheduledClasses,
     staff: Query_staff,
     staffById: Query_staffById,
     tenancy: Query_tenancy,
   },
   Mutation: {
-    createClass: Mutation_createClass,
+    createClassTemplate: Mutation_createClassTemplate,
     createGym: Mutation_createGym,
     createMember: Mutation_createMember,
+    createScheduledClass: Mutation_createScheduledClass,
     createStaff: Mutation_createStaff,
     createTenancy: Mutation_createTenancy,
-    deleteClass: Mutation_deleteClass,
+    deleteClassTemplate: Mutation_deleteClassTemplate,
     deleteGym: Mutation_deleteGym,
     deleteMember: Mutation_deleteMember,
+    deleteScheduledClass: Mutation_deleteScheduledClass,
     deleteStaff: Mutation_deleteStaff,
     setInitialPassword: Mutation_setInitialPassword,
-    updateClass: Mutation_updateClass,
+    updateClassTemplate: Mutation_updateClassTemplate,
     updateGym: Mutation_updateGym,
     updateMember: Mutation_updateMember,
+    updateScheduledClass: Mutation_updateScheduledClass,
     updateStaff: Mutation_updateStaff,
     updateTenancy: Mutation_updateTenancy,
   },
 
   Booking: Booking,
   CheckIn: CheckIn,
-  Class: Class,
-  ClassesByDate: ClassesByDate,
+  ClassTemplate: ClassTemplate,
   Gym: Gym,
   GymAddress: GymAddress,
-  InvitationToken: InvitationToken,
   MembershipNFT: MembershipNFT,
+  ScheduledClass: ScheduledClass,
   Tenancy: Tenancy,
   User: User,
-  UserGymAssociation: UserGymAssociation,
   UserTenancyAgreement: UserTenancyAgreement,
   Json: Json,
   DateTime: DateTimeResolver,

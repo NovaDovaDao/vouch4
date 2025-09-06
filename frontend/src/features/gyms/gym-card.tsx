@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/card";
 import type { Gym } from "@/graphql/graphql";
 import { IconClipboardData, IconMap2 } from "@tabler/icons-react";
-import { formatDistanceToNow } from "date-fns";
 import type { ComponentProps, PropsWithChildren } from "react";
 
 export default function GymCard({
@@ -16,7 +15,7 @@ export default function GymCard({
   cardProps,
 }: PropsWithChildren<{
   cardProps?: ComponentProps<typeof Card>;
-  gym: Pick<Gym, "name" | "legalDocsUrl" | "address" | "updatedAt">;
+  gym: Pick<Gym, "name" | "legalDocsUrl" | "address" | "legalEntityName">;
 }>) {
   return (
     <Card className="@container/card" {...cardProps}>
@@ -37,9 +36,7 @@ export default function GymCard({
           {gym.address?.street1}, {gym.address?.city}{" "}
           <IconMap2 className="size-4" />
         </div>
-        <div className="text-muted-foreground">
-          Updated {formatDistanceToNow(gym.updatedAt)}
-        </div>
+        <div className="text-muted-foreground">{gym.legalEntityName}</div>
       </CardFooter>
     </Card>
   );

@@ -25,6 +25,9 @@ export const BreadcrumbsProvider = (props: PropsWithChildren) => {
       case "/classes":
         label = "Classes";
         break;
+      case "/bookings":
+        label = "Bookings";
+        break;
       case "/gyms":
         label = "Gyms";
         break;

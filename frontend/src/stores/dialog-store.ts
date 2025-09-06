@@ -3,7 +3,7 @@ import { create } from "zustand";
 export type DialogPayload =
   | { type: "createStaff" }
   | { type: "createMember" }
-  | { type: "createClass" }
+  | { type: "createClassTemplate" }
   | { type: "createGym" }
   | { type: "search" }
   | { type: "help" }

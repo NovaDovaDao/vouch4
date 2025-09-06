@@ -1,17 +1,8 @@
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
-import { Controller, type UseFormReturn } from "react-hook-form";
-import type { ClassFormData } from "./class.schema";
+import { type UseFormReturn } from "react-hook-form";
+import type { ClassTemplateFormData } from "./class-template.schema";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import { ChevronDownIcon } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
-import { useState } from "react";
 import {
   Select,
   SelectContent,
@@ -23,15 +14,15 @@ import { graphql } from "@/graphql";
 import { useQuery } from "@tanstack/react-query";
 import { execute } from "@/graphql/execute";
 
-interface ClassFormProps {
-  form: UseFormReturn<ClassFormData>; // Pass the useForm hook's return value
-  onSubmit: (data: ClassFormData) => void;
+interface ClassTemplateFormProps {
+  form: UseFormReturn<ClassTemplateFormData>; // Pass the useForm hook's return value
+  onSubmit: (data: ClassTemplateFormData) => void;
   isLoading?: boolean;
   isSubmitting: boolean;
 }
 
-const CLASS_FORM_OPTIONS = graphql(`
-  query ClassOptions {
+const CLASS_TEMPLATE_FORM_OPTIONS = graphql(`
+  query ClassTemplateOptions {
     staff {
       id
       firstName
@@ -45,16 +36,18 @@ const CLASS_FORM_OPTIONS = graphql(`
   }
 `);
 
-export default function ClassForm({ form, onSubmit }: ClassFormProps) {
+export default function ClassTemplateForm({
+  form,
+  onSubmit,
+}: ClassTemplateFormProps) {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = form;
-  const [openCal, setOpenCal] = useState(false);
   const { data: options, isFetching: isFetchingOptions } = useQuery({
-    queryKey: ["class", "options"],
-    queryFn: () => execute(CLASS_FORM_OPTIONS),
+    queryKey: ["classTemplate", "options"],
+    queryFn: () => execute(CLASS_TEMPLATE_FORM_OPTIONS),
   });
 
   return (
@@ -80,44 +73,13 @@ export default function ClassForm({ form, onSubmit }: ClassFormProps) {
         />
       </div>
       <div className="flex flex-col gap-3">
-        <Label htmlFor="scheduled-date">Scheduled Date</Label>
-        <Controller
-          name="scheduleDateTime"
-          defaultValue=""
-          control={form.control}
-          render={({ field }) => {
-            return (
-              <Popover open={openCal} onOpenChange={setOpenCal}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    id="date"
-                    className="w-48 justify-between font-normal"
-                  >
-                    {field.value
-                      ? new Date(field.value).toLocaleDateString()
-                      : "Select date"}
-                    <ChevronDownIcon />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent
-                  className="w-auto overflow-hidden p-0"
-                  align="start"
-                >
-                  <Calendar
-                    mode="single"
-                    selected={new Date(field.value)}
-                    captionLayout="dropdown"
-                    onSelect={(date) => {
-                      field.onChange(date);
-                      setOpenCal(false);
-                    }}
-                  />
-                </PopoverContent>
-              </Popover>
-            );
-          }}
-        ></Controller>
+        <Label htmlFor="recurrence">Recurrence</Label>
+        <Input id="recurrence" {...register("recurrence")} />
+        {errors.recurrence && (
+          <p className="text-red-500 text-sm mt-1">
+            {errors.recurrence.message}
+          </p>
+        )}
       </div>
       <div className="flex flex-col gap-3">
         <Label htmlFor="gym">Gym</Label>

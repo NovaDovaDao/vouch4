@@ -26,6 +26,7 @@ import ReportsContractsPage from "./pages/reports-contracts-page.tsx";
 import ReportsMembershipsPage from "./pages/reports-memberships-page.tsx";
 import GymsPage from "./pages/gyms-page.tsx";
 import MembersPage from "./pages/members-page.tsx";
+import BookingsPage from "./pages/bookings-page.tsx";
 import { AuthLayout } from "./layouts/auth-layout.tsx";
 
 const queryClient = new QueryClient();
@@ -42,6 +43,7 @@ function App() {
                 <Route path="staff" element={<StaffPage />} />
                 <Route path="members" element={<MembersPage />} />
                 <Route path="classes" element={<ClassesPage />} />
+                <Route path="bookings" element={<BookingsPage />} />
                 <Route path="gyms" element={<GymsPage />} />
 
                 <Route path="reports">
