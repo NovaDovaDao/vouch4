@@ -38,7 +38,6 @@ export default function MembersPage() {
   const [editMemberId, setEditMemberId] = useState<string | null>(null);
   const dialogStore = useDialogStore();
 
-  console.log(editMemberId);
   return (
     <Tabs
       defaultValue="outline"
