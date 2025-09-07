@@ -1,13 +1,21 @@
 {
   "name": "ale",
   "private": true,
+  "engines": {
+    "node": "^22.11.0",
+    "pnpm": "^10.15.1"
+  },
   "scripts": {
     "install:all": "pnpm install -r",
     "dev": "pnpm -r dev",
     "build": "pnpm -r build",
-    "codegen": "pnpm -r codegen"
+    "codegen": "pnpm -r codegen",
+    "postinstall": "npx prisma generate --schema backend/src/prisma/schema.prisma"
   },
   "devDependencies": {
-    "pnpm": "^9.15.0"
+    "pnpm": "^10.15.1"
+  },
+  "resolutions": {
+    "graphql": "16.10.0"
   }
 }

@@ -3,10 +3,6 @@
   "version": "1.0.0",
   "main": "dist/main.js",
   "type": "module",
-  "engines": {
-    "node": "22.11.0",
-    "pnpm": "^9.15.0"
-  },
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/main.ts",
@@ -15,8 +11,7 @@
     "prisma:seed": "tsx ./src/prisma/seed.ts",
     "prisma:reset": "npx prisma db push --force-reset --schema src/prisma/schema.prisma",
     "generate-token": "tsx jwt.ts",
-    "codegen": "npx graphql-codegen",
-    "postinstall": "prisma generate --schema src/prisma/schema.prisma"
+    "codegen": "npx graphql-codegen"
   },
   "keywords": [],
   "author": "",

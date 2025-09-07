@@ -1,15 +1,8 @@
 {
   "name": "@ale/frontend",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
-  "resolutions": {
-    "graphql": "16.10.0"
-  },
-  "engines": {
-    "node": "22.11.0",
-    "pnpm": "^9.15.0"
-  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
