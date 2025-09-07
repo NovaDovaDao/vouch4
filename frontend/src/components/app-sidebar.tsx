@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useEffect } from "react";
 import {
   IconCamera,
   IconDashboard,
@@ -26,13 +26,21 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { useDialogStore } from "@/stores/dialog-store";
 import Logo from "./ui/logo";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const dialogStore = useDialogStore();
+  const location = useLocation();
+  const { setOpenMobile } = useSidebar();
+
+  useEffect(() => {
+    setOpenMobile(false);
+  }, [location]);
+
   const data = {
     navMain: [
       {
