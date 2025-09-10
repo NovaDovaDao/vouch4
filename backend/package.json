@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "main": "dist/main.js",
   "type": "module",
+  "engines": {
+    "node": "^22.11.0",
+    "pnpm": "^10.15.1"
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/main.ts",
