@@ -39,7 +39,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   useEffect(() => {
     setOpenMobile(false);
-  }, [location]);
+  }, [location, setOpenMobile]);
 
   const data = {
     navMain: [

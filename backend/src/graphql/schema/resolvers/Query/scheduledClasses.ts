@@ -23,12 +23,20 @@ export const scheduledClasses: NonNullable<
           instructor: true,
         },
       },
+      bookings: {
+        include: {
+          user: true,
+        },
+      },
     },
   });
 
   return results.map((r) => {
     return {
-      bookings: [],
+      bookings: r.bookings.map((b) => ({
+        ...b,
+        member: b.user,
+      })),
       startTime: r.startTime,
       endTime: r.endTime,
       gym: r.classTemplate.gym,

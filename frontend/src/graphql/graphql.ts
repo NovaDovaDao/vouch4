@@ -454,6 +454,20 @@ export type CreateClassTemplateMutationVariables = Exact<{
 
 export type CreateClassTemplateMutation = { __typename?: 'Mutation', createClassTemplate: { __typename?: 'ClassTemplate', id: string, name: string } };
 
+export type GetScheduledClassByIdQueryVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type GetScheduledClassByIdQuery = { __typename?: 'Query', scheduledClassById: { __typename?: 'ScheduledClass', name: string, description?: string | null, startTime: any, endTime: any, instructor?: { __typename?: 'User', name?: string | null } | null, bookings: Array<{ __typename?: 'Booking', id: string, member: { __typename?: 'User', id: string, name?: string | null, isActive: boolean } }>, gym: { __typename?: 'Gym', id: string, name: string } } };
+
+export type DeleteScheduledClassMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type DeleteScheduledClassMutation = { __typename?: 'Mutation', deleteScheduledClass: boolean };
+
 export type GetClassTemplateByIdQueryVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
@@ -557,7 +571,7 @@ export type GetScheduledClassesQueryVariables = Exact<{
 }>;
 
 
-export type GetScheduledClassesQuery = { __typename?: 'Query', scheduledClasses: Array<{ __typename?: 'ScheduledClass', id: string, name: string, startTime: any, endTime: any, gym: { __typename?: 'Gym', name: string }, instructor?: { __typename?: 'User', name?: string | null } | null }> };
+export type GetScheduledClassesQuery = { __typename?: 'Query', scheduledClasses: Array<{ __typename?: 'ScheduledClass', id: string, name: string, startTime: any, endTime: any, gym: { __typename?: 'Gym', name: string }, instructor?: { __typename?: 'User', name?: string | null } | null, bookings: Array<{ __typename?: 'Booking', id: string }> }> };
 
 export type GetClassTemplatesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -637,6 +651,36 @@ export const CreateClassTemplateDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<CreateClassTemplateMutation, CreateClassTemplateMutationVariables>;
+export const GetScheduledClassByIdDocument = new TypedDocumentString(`
+    query GetScheduledClassById($id: ID!) {
+  scheduledClassById(id: $id) {
+    name
+    description
+    startTime
+    endTime
+    instructor {
+      name
+    }
+    bookings {
+      id
+      member {
+        id
+        name
+        isActive
+      }
+    }
+    gym {
+      id
+      name
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetScheduledClassByIdQuery, GetScheduledClassByIdQueryVariables>;
+export const DeleteScheduledClassDocument = new TypedDocumentString(`
+    mutation DeleteScheduledClass($id: ID!) {
+  deleteScheduledClass(id: $id)
+}
+    `) as unknown as TypedDocumentString<DeleteScheduledClassMutation, DeleteScheduledClassMutationVariables>;
 export const GetClassTemplateByIdDocument = new TypedDocumentString(`
     query GetClassTemplateById($id: ID!) {
   classTemplateById(id: $id) {
@@ -784,6 +828,9 @@ export const GetScheduledClassesDocument = new TypedDocumentString(`
     }
     instructor {
       name
+    }
+    bookings {
+      id
     }
   }
 }

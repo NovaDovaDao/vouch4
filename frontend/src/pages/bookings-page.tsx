@@ -15,13 +15,12 @@ import {
   CalendarTodayTrigger,
   CalendarViewTrigger,
   CalendarWeekView,
-  CalendarYearView,
   useCalendar,
 } from "@/components/ui/full-calendar";
 import { useQuery } from "@tanstack/react-query";
 import { graphql } from "@/graphql";
 import { execute } from "@/graphql/execute";
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import {
   endOfDay,
@@ -33,6 +32,7 @@ import {
   startOfWeek,
   startOfYear,
 } from "date-fns";
+import ScheduledClassDetails from "@/features/classes/scheduled-class-details";
 
 const GET_GYMS = graphql(`
   query GetGymOptions {
@@ -56,12 +56,16 @@ const GET_SCHEDULED_CLASSES = graphql(`
       instructor {
         name
       }
+      bookings {
+        id
+      }
     }
   }
 `);
 
 function CalendarWrapper() {
   const { view, date, setEvents } = useCalendar();
+
   const range = useMemo(() => {
     let startDate = date;
     let endDate = date;
@@ -111,7 +115,7 @@ function CalendarWrapper() {
         end: new Date(sc.endTime),
         start: new Date(sc.startTime),
         title: sc.name,
-        color: "green",
+        color: sc.bookings.length ? "green" : "purple",
       })) ?? [],
     );
   }, [data?.scheduledClasses, setEvents]);
@@ -157,12 +161,6 @@ function CalendarWrapper() {
             >
               Month
             </CalendarViewTrigger>
-            <CalendarViewTrigger
-              view="year"
-              className="aria-[current=true]:bg-accent"
-            >
-              Year
-            </CalendarViewTrigger>
           </div>
         </div>
 
@@ -190,16 +188,23 @@ function CalendarWrapper() {
         <CalendarDayView />
         <CalendarWeekView />
         <CalendarMonthView />
-        <CalendarYearView />
       </div>
     </div>
   );
 }
 
 export default function BookingPage() {
+  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+
   return (
-    <Calendar>
-      <CalendarWrapper />
-    </Calendar>
+    <Fragment>
+      <Calendar view="week" onEventClick={(ev) => setSelectedEventId(ev.id)}>
+        <CalendarWrapper />
+      </Calendar>
+      <ScheduledClassDetails
+        id={selectedEventId}
+        onClose={() => setSelectedEventId(null)}
+      />
+    </Fragment>
   );
 }

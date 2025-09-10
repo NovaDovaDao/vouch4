@@ -196,6 +196,7 @@ const EventGroup = ({
   events: CalendarEvent[];
   hour: Date;
 }) => {
+  const { onEventClick } = useCalendar();
   return (
     <div className="h-20 border-t last:border-b">
       {events
@@ -206,19 +207,20 @@ const EventGroup = ({
           const startPosition = event.start.getMinutes() / 60;
 
           return (
-            <div
+            <button
               key={event.id}
               className={cn(
-                "relative",
+                "relative text-left",
                 dayEventVariants({ variant: event.color }),
               )}
               style={{
                 top: `${startPosition * 100}%`,
                 height: `${hoursDifference * 100}%`,
               }}
+              onClick={() => onEventClick!(event)}
             >
               {event.title}
-            </div>
+            </button>
           );
         })}
     </div>
@@ -327,7 +329,7 @@ const CalendarWeekView = () => {
 };
 
 const CalendarMonthView = () => {
-  const { date, view, events, locale } = useCalendar();
+  const { date, view, events, locale, onEventClick } = useCalendar();
 
   const monthDates = useMemo(() => getDaysInMonth(date), [date]);
   const weekDays = useMemo(() => generateWeekdays(locale), [locale]);
@@ -374,9 +376,10 @@ const CalendarMonthView = () => {
 
               {currentEvents.map((event) => {
                 return (
-                  <div
+                  <button
                     key={event.id}
                     className="px-1 rounded text-sm flex items-center gap-1"
+                    onClick={() => onEventClick!(event)}
                   >
                     <div
                       className={cn(
@@ -388,7 +391,7 @@ const CalendarMonthView = () => {
                     <time className="tabular-nums text-muted-foreground/50 text-xs">
                       {format(event.start, "HH:mm")}
                     </time>
-                  </div>
+                  </button>
                 );
               })}
             </div>
