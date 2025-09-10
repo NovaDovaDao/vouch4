@@ -15,7 +15,8 @@
     "prisma:seed": "tsx ./src/prisma/seed.ts",
     "prisma:reset": "npx prisma db push --force-reset --schema src/prisma/schema.prisma",
     "generate-token": "tsx jwt.ts",
-    "codegen": "npx graphql-codegen"
+    "codegen": "npx graphql-codegen",
+    "postinstall": "npx prisma generate --schema ./src/prisma/schema.prisma"
   },
   "keywords": [],
   "author": "",
@@ -44,5 +45,8 @@
     "koa": "^3.0.1",
     "resend": "^6.0.1",
     "zod": "^4.1.5"
+  },
+  "resolutions": {
+    "graphql": "16.10.0"
   }
 }
