@@ -1,0 +1,13 @@
+{
+  "name": "ale",
+  "private": true,
+  "scripts": {
+    "install:all": "pnpm install -r",
+    "dev": "pnpm -r dev",
+    "build": "pnpm -r build",
+    "codegen": "pnpm -r codegen"
+  },
+  "devDependencies": {
+    "pnpm": "^9.15.0"
+  }
+}

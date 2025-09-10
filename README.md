@@ -4,16 +4,22 @@
 
 ## Commands
 
-### Development
+### Install
+
 ```bash
-# Start frontend development server (Vite on port 1337)
-cd frontend && pnpm dev
+pnpm install:all
+```
 
-# Start backend development server (GraphQL Yoga on port 8080)
-cd backend && pnpm dev
+### Run
 
-# Start both in development (from root)
-npm run dev
+```bash
+pnpm dev
+```
+
+### Build
+
+```bash
+pnpm build
 ```
 
 ### Build & Production
