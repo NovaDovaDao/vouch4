@@ -13,6 +13,7 @@ import { membershipById as Query_membershipById } from "./resolvers/Query/member
 import { memberships as Query_memberships } from "./resolvers/Query/memberships.js";
 import { scheduledClassById as Query_scheduledClassById } from "./resolvers/Query/scheduledClassById.js";
 import { scheduledClasses as Query_scheduledClasses } from "./resolvers/Query/scheduledClasses.js";
+import { search as Query_search } from "./resolvers/Query/search.js";
 import { staff as Query_staff } from "./resolvers/Query/staff.js";
 import { staffById as Query_staffById } from "./resolvers/Query/staffById.js";
 import { tenancy as Query_tenancy } from "./resolvers/Query/tenancy.js";
@@ -39,10 +40,11 @@ import { CheckIn } from "./resolvers/CheckIn.js";
 import { ClassTemplate } from "./resolvers/ClassTemplate.js";
 import { Gym } from "./resolvers/Gym.js";
 import { GymAddress } from "./resolvers/GymAddress.js";
+import { Member } from "./resolvers/Member.js";
 import { MembershipNFT } from "./resolvers/MembershipNFT.js";
 import { ScheduledClass } from "./resolvers/ScheduledClass.js";
+import { Staff } from "./resolvers/Staff.js";
 import { Tenancy } from "./resolvers/Tenancy.js";
-import { User } from "./resolvers/User.js";
 import { UserTenancyAgreement } from "./resolvers/UserTenancyAgreement.js";
 import { Json } from "./resolvers/Json.js";
 import { DateTimeResolver } from "graphql-scalars";
@@ -61,6 +63,7 @@ export const resolvers: Resolvers = {
     memberships: Query_memberships,
     scheduledClassById: Query_scheduledClassById,
     scheduledClasses: Query_scheduledClasses,
+    search: Query_search,
     staff: Query_staff,
     staffById: Query_staffById,
     tenancy: Query_tenancy,
@@ -91,10 +94,11 @@ export const resolvers: Resolvers = {
   ClassTemplate: ClassTemplate,
   Gym: Gym,
   GymAddress: GymAddress,
+  Member: Member,
   MembershipNFT: MembershipNFT,
   ScheduledClass: ScheduledClass,
+  Staff: Staff,
   Tenancy: Tenancy,
-  User: User,
   UserTenancyAgreement: UserTenancyAgreement,
   Json: Json,
   DateTime: DateTimeResolver,

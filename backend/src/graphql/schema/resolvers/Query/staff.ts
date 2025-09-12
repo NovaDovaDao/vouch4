@@ -9,6 +9,6 @@ export const staff: NonNullable<QueryResolvers['staff']> = (
   if (!ctx.user?.tenancyId) throw errors.missingTenant();
 
   return ctx.db.user.findMany({
-    where: { category: "STAFF" },
+    where: { category: "STAFF", tenancyId: ctx.user.tenancyId },
   });
 };

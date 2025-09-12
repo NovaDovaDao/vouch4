@@ -24,20 +24,26 @@ export const yogaServer = createYoga<ParameterizedContext>({
   }) as any,
   logging: "debug",
   context: async ({ request, params }) => {
-    const session = await auth.api.getSession({ headers: request.headers });
+    let user = null;
+    let isInternal = false;
 
-    if (!session) {
-      const internalAccessToken = await verifyJWT(
+    const [internalAccessToken, session] = await Promise.all([
+      verifyJWT(
         request.headers.get("authorization")?.split("bearer").at(1)?.trim() ??
           "",
-      );
-      if (!internalAccessToken) throw errors.notAuthenticated();
-    }
+      ).catch(console.error),
+      auth.api.getSession({ headers: request.headers }).catch(console.error),
+    ]);
+
+    user = session?.user;
+    isInternal = !!internalAccessToken?.sub;
+
+    if (!session && !internalAccessToken) throw errors.notAuthenticated();
 
     return {
       db,
-      user: session?.user,
-      isInternal: !session?.user,
+      user,
+      isInternal,
       request,
       params,
     };

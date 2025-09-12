@@ -3,6 +3,17 @@ import {
   GraphQLScalarType,
   type GraphQLScalarTypeConfig,
 } from "graphql";
+import type {
+  Booking as BookingModel,
+  CheckIn as CheckInModel,
+  ClassTemplate as ClassTemplateModel,
+  Gym as GymModel,
+  User as UserModel,
+  MembershipNFT as MembershipNFTModel,
+  ScheduledClass as ScheduledClassModel,
+  Tenancy as TenancyModel,
+  UserTenancyAgreement as UserTenancyAgreementModel,
+} from "../../prisma/generated/client.js";
 export type Maybe<T> = T | null | undefined;
 export type InputMaybe<T> = T | null | undefined;
 export type Exact<T extends { [key: string]: unknown }> = {
@@ -23,7 +34,6 @@ export type Incremental<T> =
   | {
       [P in keyof T]?: P extends " $fragmentName" | "__typename" ? T[P] : never;
     };
-export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type EnumResolverSignature<T, AllowedValues = any> = {
   [key in keyof T]?: AllowedValues;
 };
@@ -53,7 +63,7 @@ export type Booking = {
   __typename?: "Booking";
   bookedAt: Scalars["DateTime"]["output"];
   id: Scalars["String"]["output"];
-  member: User;
+  member: Member;
 };
 
 export type BookingsArgs = {
@@ -63,7 +73,7 @@ export type BookingsArgs = {
 export type CheckIn = {
   __typename?: "CheckIn";
   id: Scalars["String"]["output"];
-  member: User;
+  member: Member;
   timestamp: Scalars["DateTime"]["output"];
 };
 
@@ -73,7 +83,7 @@ export type ClassTemplate = {
   description?: Maybe<Scalars["String"]["output"]>;
   gym: Gym;
   id: Scalars["ID"]["output"];
-  instructor?: Maybe<User>;
+  instructor?: Maybe<Staff>;
   name: Scalars["String"]["output"];
   recurrence: Scalars["String"]["output"];
 };
@@ -136,11 +146,24 @@ export type GymUpdateInput = {
   name?: InputMaybe<Scalars["String"]["input"]>;
 };
 
+export type Member = Person & {
+  __typename?: "Member";
+  checkins?: Maybe<Array<CheckIn>>;
+  email: Scalars["String"]["output"];
+  firstName: Scalars["String"]["output"];
+  id: Scalars["ID"]["output"];
+  isActive: Scalars["Boolean"]["output"];
+  lastName: Scalars["String"]["output"];
+  membership?: Maybe<MembershipNFT>;
+  name?: Maybe<Scalars["String"]["output"]>;
+  phoneNumber?: Maybe<Scalars["String"]["output"]>;
+  walletAddress?: Maybe<Scalars["String"]["output"]>;
+};
+
 export type MemberCreateInput = {
   email: Scalars["String"]["input"];
   firstName: Scalars["String"]["input"];
   isActive?: InputMaybe<Scalars["Boolean"]["input"]>;
-  isSuperUser?: InputMaybe<Scalars["Boolean"]["input"]>;
   lastName: Scalars["String"]["input"];
   phoneNumber?: InputMaybe<Scalars["String"]["input"]>;
   walletAddress?: InputMaybe<Scalars["String"]["input"]>;
@@ -150,7 +173,6 @@ export type MemberUpdateInput = {
   email?: InputMaybe<Scalars["String"]["input"]>;
   firstName?: InputMaybe<Scalars["String"]["input"]>;
   isActive?: InputMaybe<Scalars["Boolean"]["input"]>;
-  isSuperUser?: InputMaybe<Scalars["Boolean"]["input"]>;
   lastName?: InputMaybe<Scalars["String"]["input"]>;
   phoneNumber?: InputMaybe<Scalars["String"]["input"]>;
   walletAddress?: InputMaybe<Scalars["String"]["input"]>;
@@ -162,29 +184,29 @@ export type MembershipNFT = {
   id: Scalars["ID"]["output"];
   isActive: Scalars["Boolean"]["output"];
   isCurrentlyRented: Scalars["Boolean"]["output"];
-  renterUser?: Maybe<User>;
-  user: User;
+  renterUser?: Maybe<Member>;
+  user: Member;
 };
 
 export type Mutation = {
   __typename?: "Mutation";
   createClassTemplate: ClassTemplate;
   createGym: Gym;
-  createMember: User;
+  createMember: Member;
   createScheduledClass: ScheduledClass;
-  createStaff: User;
+  createStaff: Staff;
   createTenancy: Tenancy;
   deleteClassTemplate: Scalars["Boolean"]["output"];
   deleteGym: Scalars["Boolean"]["output"];
   deleteMember: Scalars["Boolean"]["output"];
   deleteScheduledClass: Scalars["Boolean"]["output"];
   deleteStaff: Scalars["Boolean"]["output"];
-  setInitialPassword: User;
+  setInitialPassword: StaffOrMember;
   updateClassTemplate: ClassTemplate;
   updateGym: Gym;
-  updateMember: User;
+  updateMember: Member;
   updateScheduledClass: ScheduledClass;
-  updateStaff: User;
+  updateStaff: Staff;
   updateTenancy: Tenancy;
 };
 
@@ -267,6 +289,17 @@ export type MutationupdateTenancyArgs = {
   input: TenancyUpdateInput;
 };
 
+export type Person = {
+  email: Scalars["String"]["output"];
+  firstName: Scalars["String"]["output"];
+  id: Scalars["ID"]["output"];
+  isActive: Scalars["Boolean"]["output"];
+  lastName: Scalars["String"]["output"];
+  name?: Maybe<Scalars["String"]["output"]>;
+  phoneNumber?: Maybe<Scalars["String"]["output"]>;
+  walletAddress?: Maybe<Scalars["String"]["output"]>;
+};
+
 export type Query = {
   __typename?: "Query";
   bookings: Array<Booking>;
@@ -276,14 +309,15 @@ export type Query = {
   contracts: Array<UserTenancyAgreement>;
   gymById?: Maybe<Gym>;
   gyms: Array<Gym>;
-  memberById: User;
-  members: Array<User>;
+  memberById: Member;
+  members: Array<Member>;
   membershipById: MembershipNFT;
   memberships: Array<MembershipNFT>;
   scheduledClassById: ScheduledClass;
   scheduledClasses: Array<ScheduledClass>;
-  staff: Array<User>;
-  staffById: User;
+  search: Array<SearchResult>;
+  staff: Array<Staff>;
+  staffById: Staff;
   tenancy: Tenancy;
 };
 
@@ -319,6 +353,10 @@ export type QueryscheduledClassesArgs = {
   args: ScheduledClassesArgs;
 };
 
+export type QuerysearchArgs = {
+  input: SearchInput;
+};
+
 export type QuerystaffByIdArgs = {
   id: Scalars["ID"]["input"];
 };
@@ -330,7 +368,7 @@ export type ScheduledClass = {
   endTime: Scalars["DateTime"]["output"];
   gym: Gym;
   id: Scalars["ID"]["output"];
-  instructor?: Maybe<User>;
+  instructor?: Maybe<Staff>;
   name: Scalars["String"]["output"];
   startTime: Scalars["DateTime"]["output"];
 };
@@ -354,6 +392,32 @@ export type ScheduledClassesArgs = {
   startDate?: InputMaybe<Scalars["DateTime"]["input"]>;
 };
 
+export type SearchInput = {
+  limit?: InputMaybe<Scalars["Int"]["input"]>;
+  query: Scalars["String"]["input"];
+};
+
+export type SearchResult =
+  | ClassTemplate
+  | Gym
+  | Member
+  | ScheduledClass
+  | Staff;
+
+export type Staff = Person & {
+  __typename?: "Staff";
+  email: Scalars["String"]["output"];
+  firstName: Scalars["String"]["output"];
+  id: Scalars["ID"]["output"];
+  isActive: Scalars["Boolean"]["output"];
+  isSuperUser: Scalars["Boolean"]["output"];
+  lastName: Scalars["String"]["output"];
+  name?: Maybe<Scalars["String"]["output"]>;
+  phoneNumber?: Maybe<Scalars["String"]["output"]>;
+  roles?: Maybe<Array<UserAtGymRole>>;
+  walletAddress?: Maybe<Scalars["String"]["output"]>;
+};
+
 export type StaffCreateInput = {
   email: Scalars["String"]["input"];
   firstName: Scalars["String"]["input"];
@@ -363,6 +427,8 @@ export type StaffCreateInput = {
   phoneNumber?: InputMaybe<Scalars["String"]["input"]>;
   walletAddress?: InputMaybe<Scalars["String"]["input"]>;
 };
+
+export type StaffOrMember = Member | Staff;
 
 export type StaffUpdateInput = {
   email?: InputMaybe<Scalars["String"]["input"]>;
@@ -392,19 +458,6 @@ export type TenancyUpdateInput = {
   contactEmail?: InputMaybe<Scalars["String"]["input"]>;
   legalName?: InputMaybe<Scalars["String"]["input"]>;
   name?: InputMaybe<Scalars["String"]["input"]>;
-};
-
-export type User = {
-  __typename?: "User";
-  email: Scalars["String"]["output"];
-  firstName: Scalars["String"]["output"];
-  id: Scalars["ID"]["output"];
-  isActive: Scalars["Boolean"]["output"];
-  isSuperUser: Scalars["Boolean"]["output"];
-  lastName: Scalars["String"]["output"];
-  name?: Maybe<Scalars["String"]["output"]>;
-  phoneNumber?: Maybe<Scalars["String"]["output"]>;
-  walletAddress?: Maybe<Scalars["String"]["output"]>;
 };
 
 export type UserAtGymRole =
@@ -529,6 +582,19 @@ export type DirectiveResolverFn<
   info: GraphQLResolveInfo,
 ) => TResult | Promise<TResult>;
 
+/** Mapping of union types */
+export type ResolversUnionTypes<_RefType extends Record<string, unknown>> = {
+  SearchResult:
+    | (ClassTemplateModel & { __typename: "ClassTemplate" })
+    | (GymModel & { __typename: "Gym" })
+    | (UserModel & { __typename: "Member" })
+    | (ScheduledClassModel & { __typename: "ScheduledClass" })
+    | (UserModel & { __typename: "Staff" });
+  StaffOrMember:
+    | (UserModel & { __typename: "Member" })
+    | (UserModel & { __typename: "Staff" });
+};
+
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   AgreementStatus: ResolverTypeWrapper<
@@ -537,38 +603,47 @@ export type ResolversTypes = {
   AgreementType: ResolverTypeWrapper<
     "WAIVER" | "TERMS_OF_SERVICE" | "PRIVACY_POLICY"
   >;
-  Booking: ResolverTypeWrapper<Booking>;
+  Booking: ResolverTypeWrapper<BookingModel>;
   String: ResolverTypeWrapper<Scalars["String"]["output"]>;
   BookingsArgs: BookingsArgs;
   ID: ResolverTypeWrapper<Scalars["ID"]["output"]>;
-  CheckIn: ResolverTypeWrapper<CheckIn>;
-  ClassTemplate: ResolverTypeWrapper<ClassTemplate>;
+  CheckIn: ResolverTypeWrapper<CheckInModel>;
+  ClassTemplate: ResolverTypeWrapper<ClassTemplateModel>;
   Int: ResolverTypeWrapper<Scalars["Int"]["output"]>;
   ClassTemplateCreateInput: ClassTemplateCreateInput;
   ClassTemplateUpdateInput: ClassTemplateUpdateInput;
   DateTime: ResolverTypeWrapper<Scalars["DateTime"]["output"]>;
-  Gym: ResolverTypeWrapper<Gym>;
+  Gym: ResolverTypeWrapper<GymModel>;
   GymAddress: ResolverTypeWrapper<GymAddress>;
   GymAddressInput: GymAddressInput;
   GymCreateInput: GymCreateInput;
   GymUpdateInput: GymUpdateInput;
   Json: ResolverTypeWrapper<Scalars["Json"]["output"]>;
-  MemberCreateInput: MemberCreateInput;
+  Member: ResolverTypeWrapper<UserModel>;
   Boolean: ResolverTypeWrapper<Scalars["Boolean"]["output"]>;
+  MemberCreateInput: MemberCreateInput;
   MemberUpdateInput: MemberUpdateInput;
-  MembershipNFT: ResolverTypeWrapper<MembershipNFT>;
+  MembershipNFT: ResolverTypeWrapper<MembershipNFTModel>;
   Mutation: ResolverTypeWrapper<{}>;
+  Person: ResolverTypeWrapper<UserModel>;
   Query: ResolverTypeWrapper<{}>;
-  ScheduledClass: ResolverTypeWrapper<ScheduledClass>;
+  ScheduledClass: ResolverTypeWrapper<ScheduledClassModel>;
   ScheduledClassCreateInput: ScheduledClassCreateInput;
   ScheduledClassUpdateInput: ScheduledClassUpdateInput;
   ScheduledClassesArgs: ScheduledClassesArgs;
+  SearchInput: SearchInput;
+  SearchResult: ResolverTypeWrapper<
+    ResolversUnionTypes<ResolversTypes>["SearchResult"]
+  >;
+  Staff: ResolverTypeWrapper<UserModel>;
   StaffCreateInput: StaffCreateInput;
+  StaffOrMember: ResolverTypeWrapper<
+    ResolversUnionTypes<ResolversTypes>["StaffOrMember"]
+  >;
   StaffUpdateInput: StaffUpdateInput;
-  Tenancy: ResolverTypeWrapper<Tenancy>;
+  Tenancy: ResolverTypeWrapper<TenancyModel>;
   TenancyCreateInput: TenancyCreateInput;
   TenancyUpdateInput: TenancyUpdateInput;
-  User: ResolverTypeWrapper<User>;
   UserAtGymRole: ResolverTypeWrapper<
     | "MANAGER"
     | "TRAINER"
@@ -576,49 +651,49 @@ export type ResolversTypes = {
     | "FRONT_DESK_STAFF"
     | "CLEANING_STAFF"
   >;
-  UserTenancyAgreement: ResolverTypeWrapper<
-    Omit<UserTenancyAgreement, "status" | "type"> & {
-      status: ResolversTypes["AgreementStatus"];
-      type: ResolversTypes["AgreementType"];
-    }
-  >;
+  UserTenancyAgreement: ResolverTypeWrapper<UserTenancyAgreementModel>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
-  Booking: Booking;
+  Booking: BookingModel;
   String: Scalars["String"]["output"];
   BookingsArgs: BookingsArgs;
   ID: Scalars["ID"]["output"];
-  CheckIn: CheckIn;
-  ClassTemplate: ClassTemplate;
+  CheckIn: CheckInModel;
+  ClassTemplate: ClassTemplateModel;
   Int: Scalars["Int"]["output"];
   ClassTemplateCreateInput: ClassTemplateCreateInput;
   ClassTemplateUpdateInput: ClassTemplateUpdateInput;
   DateTime: Scalars["DateTime"]["output"];
-  Gym: Gym;
+  Gym: GymModel;
   GymAddress: GymAddress;
   GymAddressInput: GymAddressInput;
   GymCreateInput: GymCreateInput;
   GymUpdateInput: GymUpdateInput;
   Json: Scalars["Json"]["output"];
-  MemberCreateInput: MemberCreateInput;
+  Member: UserModel;
   Boolean: Scalars["Boolean"]["output"];
+  MemberCreateInput: MemberCreateInput;
   MemberUpdateInput: MemberUpdateInput;
-  MembershipNFT: MembershipNFT;
+  MembershipNFT: MembershipNFTModel;
   Mutation: {};
+  Person: UserModel;
   Query: {};
-  ScheduledClass: ScheduledClass;
+  ScheduledClass: ScheduledClassModel;
   ScheduledClassCreateInput: ScheduledClassCreateInput;
   ScheduledClassUpdateInput: ScheduledClassUpdateInput;
   ScheduledClassesArgs: ScheduledClassesArgs;
+  SearchInput: SearchInput;
+  SearchResult: ResolversUnionTypes<ResolversParentTypes>["SearchResult"];
+  Staff: UserModel;
   StaffCreateInput: StaffCreateInput;
+  StaffOrMember: ResolversUnionTypes<ResolversParentTypes>["StaffOrMember"];
   StaffUpdateInput: StaffUpdateInput;
-  Tenancy: Tenancy;
+  Tenancy: TenancyModel;
   TenancyCreateInput: TenancyCreateInput;
   TenancyUpdateInput: TenancyUpdateInput;
-  User: User;
-  UserTenancyAgreement: UserTenancyAgreement;
+  UserTenancyAgreement: UserTenancyAgreementModel;
 };
 
 export type AgreementStatusResolvers = EnumResolverSignature<
@@ -638,7 +713,7 @@ export type BookingResolvers<
 > = {
   bookedAt?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
   id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
-  member?: Resolver<ResolversTypes["User"], ParentType, ContextType>;
+  member?: Resolver<ResolversTypes["Member"], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -648,7 +723,7 @@ export type CheckInResolvers<
     ResolversParentTypes["CheckIn"] = ResolversParentTypes["CheckIn"],
 > = {
   id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
-  member?: Resolver<ResolversTypes["User"], ParentType, ContextType>;
+  member?: Resolver<ResolversTypes["Member"], ParentType, ContextType>;
   timestamp?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -666,7 +741,11 @@ export type ClassTemplateResolvers<
   >;
   gym?: Resolver<ResolversTypes["Gym"], ParentType, ContextType>;
   id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>;
-  instructor?: Resolver<Maybe<ResolversTypes["User"]>, ParentType, ContextType>;
+  instructor?: Resolver<
+    Maybe<ResolversTypes["Staff"]>,
+    ParentType,
+    ContextType
+  >;
   name?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   recurrence?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -715,6 +794,40 @@ export interface JsonScalarConfig
   name: "Json";
 }
 
+export type MemberResolvers<
+  ContextType = any,
+  ParentType extends
+    ResolversParentTypes["Member"] = ResolversParentTypes["Member"],
+> = {
+  checkins?: Resolver<
+    Maybe<Array<ResolversTypes["CheckIn"]>>,
+    ParentType,
+    ContextType
+  >;
+  email?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  firstName?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>;
+  isActive?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
+  lastName?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  membership?: Resolver<
+    Maybe<ResolversTypes["MembershipNFT"]>,
+    ParentType,
+    ContextType
+  >;
+  name?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
+  phoneNumber?: Resolver<
+    Maybe<ResolversTypes["String"]>,
+    ParentType,
+    ContextType
+  >;
+  walletAddress?: Resolver<
+    Maybe<ResolversTypes["String"]>,
+    ParentType,
+    ContextType
+  >;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type MembershipNFTResolvers<
   ContextType = any,
   ParentType extends
@@ -732,8 +845,12 @@ export type MembershipNFTResolvers<
     ParentType,
     ContextType
   >;
-  renterUser?: Resolver<Maybe<ResolversTypes["User"]>, ParentType, ContextType>;
-  user?: Resolver<ResolversTypes["User"], ParentType, ContextType>;
+  renterUser?: Resolver<
+    Maybe<ResolversTypes["Member"]>,
+    ParentType,
+    ContextType
+  >;
+  user?: Resolver<ResolversTypes["Member"], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -755,7 +872,7 @@ export type MutationResolvers<
     RequireFields<MutationcreateGymArgs, "data">
   >;
   createMember?: Resolver<
-    ResolversTypes["User"],
+    ResolversTypes["Member"],
     ParentType,
     ContextType,
     RequireFields<MutationcreateMemberArgs, "data">
@@ -767,7 +884,7 @@ export type MutationResolvers<
     RequireFields<MutationcreateScheduledClassArgs, "input">
   >;
   createStaff?: Resolver<
-    ResolversTypes["User"],
+    ResolversTypes["Staff"],
     ParentType,
     ContextType,
     RequireFields<MutationcreateStaffArgs, "data">
@@ -809,7 +926,7 @@ export type MutationResolvers<
     RequireFields<MutationdeleteStaffArgs, "id">
   >;
   setInitialPassword?: Resolver<
-    ResolversTypes["User"],
+    ResolversTypes["StaffOrMember"],
     ParentType,
     ContextType,
     RequireFields<MutationsetInitialPasswordArgs, "password" | "token">
@@ -827,7 +944,7 @@ export type MutationResolvers<
     RequireFields<MutationupdateGymArgs, "data" | "id">
   >;
   updateMember?: Resolver<
-    ResolversTypes["User"],
+    ResolversTypes["Member"],
     ParentType,
     ContextType,
     RequireFields<MutationupdateMemberArgs, "id" | "input">
@@ -839,7 +956,7 @@ export type MutationResolvers<
     RequireFields<MutationupdateScheduledClassArgs, "id" | "input">
   >;
   updateStaff?: Resolver<
-    ResolversTypes["User"],
+    ResolversTypes["Staff"],
     ParentType,
     ContextType,
     RequireFields<MutationupdateStaffArgs, "id" | "input">
@@ -849,6 +966,30 @@ export type MutationResolvers<
     ParentType,
     ContextType,
     RequireFields<MutationupdateTenancyArgs, "id" | "input">
+  >;
+};
+
+export type PersonResolvers<
+  ContextType = any,
+  ParentType extends
+    ResolversParentTypes["Person"] = ResolversParentTypes["Person"],
+> = {
+  __resolveType?: TypeResolveFn<"Member" | "Staff", ParentType, ContextType>;
+  email?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  firstName?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>;
+  isActive?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
+  lastName?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
+  phoneNumber?: Resolver<
+    Maybe<ResolversTypes["String"]>,
+    ParentType,
+    ContextType
+  >;
+  walletAddress?: Resolver<
+    Maybe<ResolversTypes["String"]>,
+    ParentType,
+    ContextType
   >;
 };
 
@@ -893,12 +1034,12 @@ export type QueryResolvers<
   >;
   gyms?: Resolver<Array<ResolversTypes["Gym"]>, ParentType, ContextType>;
   memberById?: Resolver<
-    ResolversTypes["User"],
+    ResolversTypes["Member"],
     ParentType,
     ContextType,
     RequireFields<QuerymemberByIdArgs, "id">
   >;
-  members?: Resolver<Array<ResolversTypes["User"]>, ParentType, ContextType>;
+  members?: Resolver<Array<ResolversTypes["Member"]>, ParentType, ContextType>;
   membershipById?: Resolver<
     ResolversTypes["MembershipNFT"],
     ParentType,
@@ -922,9 +1063,15 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryscheduledClassesArgs, "args">
   >;
-  staff?: Resolver<Array<ResolversTypes["User"]>, ParentType, ContextType>;
+  search?: Resolver<
+    Array<ResolversTypes["SearchResult"]>,
+    ParentType,
+    ContextType,
+    RequireFields<QuerysearchArgs, "input">
+  >;
+  staff?: Resolver<Array<ResolversTypes["Staff"]>, ParentType, ContextType>;
   staffById?: Resolver<
-    ResolversTypes["User"],
+    ResolversTypes["Staff"],
     ParentType,
     ContextType,
     RequireFields<QuerystaffByIdArgs, "id">
@@ -950,10 +1097,64 @@ export type ScheduledClassResolvers<
   endTime?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
   gym?: Resolver<ResolversTypes["Gym"], ParentType, ContextType>;
   id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>;
-  instructor?: Resolver<Maybe<ResolversTypes["User"]>, ParentType, ContextType>;
+  instructor?: Resolver<
+    Maybe<ResolversTypes["Staff"]>,
+    ParentType,
+    ContextType
+  >;
   name?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   startTime?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type SearchResultResolvers<
+  ContextType = any,
+  ParentType extends
+    ResolversParentTypes["SearchResult"] = ResolversParentTypes["SearchResult"],
+> = {
+  __resolveType?: TypeResolveFn<
+    "ClassTemplate" | "Gym" | "Member" | "ScheduledClass" | "Staff",
+    ParentType,
+    ContextType
+  >;
+};
+
+export type StaffResolvers<
+  ContextType = any,
+  ParentType extends
+    ResolversParentTypes["Staff"] = ResolversParentTypes["Staff"],
+> = {
+  email?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  firstName?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>;
+  isActive?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
+  isSuperUser?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
+  lastName?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
+  phoneNumber?: Resolver<
+    Maybe<ResolversTypes["String"]>,
+    ParentType,
+    ContextType
+  >;
+  roles?: Resolver<
+    Maybe<Array<ResolversTypes["UserAtGymRole"]>>,
+    ParentType,
+    ContextType
+  >;
+  walletAddress?: Resolver<
+    Maybe<ResolversTypes["String"]>,
+    ParentType,
+    ContextType
+  >;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type StaffOrMemberResolvers<
+  ContextType = any,
+  ParentType extends
+    ResolversParentTypes["StaffOrMember"] = ResolversParentTypes["StaffOrMember"],
+> = {
+  __resolveType?: TypeResolveFn<"Member" | "Staff", ParentType, ContextType>;
 };
 
 export type TenancyResolvers<
@@ -969,31 +1170,6 @@ export type TenancyResolvers<
     ContextType
   >;
   name?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type UserResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes["User"] = ResolversParentTypes["User"],
-> = {
-  email?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
-  firstName?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>;
-  isActive?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
-  isSuperUser?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
-  lastName?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
-  name?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
-  phoneNumber?: Resolver<
-    Maybe<ResolversTypes["String"]>,
-    ParentType,
-    ContextType
-  >;
-  walletAddress?: Resolver<
-    Maybe<ResolversTypes["String"]>,
-    ParentType,
-    ContextType
-  >;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1044,12 +1220,16 @@ export type Resolvers<ContextType = any> = {
   Gym?: GymResolvers<ContextType>;
   GymAddress?: GymAddressResolvers<ContextType>;
   Json?: GraphQLScalarType;
+  Member?: MemberResolvers<ContextType>;
   MembershipNFT?: MembershipNFTResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
+  Person?: PersonResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   ScheduledClass?: ScheduledClassResolvers<ContextType>;
+  SearchResult?: SearchResultResolvers<ContextType>;
+  Staff?: StaffResolvers<ContextType>;
+  StaffOrMember?: StaffOrMemberResolvers<ContextType>;
   Tenancy?: TenancyResolvers<ContextType>;
-  User?: UserResolvers<ContextType>;
   UserAtGymRole?: UserAtGymRoleResolvers;
   UserTenancyAgreement?: UserTenancyAgreementResolvers<ContextType>;
 };

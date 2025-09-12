@@ -1,4 +1,3 @@
-import { db } from "../../../../db.js";
 import type { CustomContext } from "../../../../server.js";
 import { errors } from "../../../errors.js";
 import type { QueryResolvers } from "./../../types.generated.js";
@@ -8,5 +7,6 @@ export const gyms: NonNullable<QueryResolvers['gyms']> = (
   ctx: CustomContext,
 ) => {
   if (!ctx.user?.tenancyId) throw errors.missingTenant();
-  return db.gym.findMany({ where: { tenancyId: ctx.user.tenancyId } });
+
+  return ctx.db.gym.findMany({ where: { tenancyId: ctx.user.tenancyId } });
 };

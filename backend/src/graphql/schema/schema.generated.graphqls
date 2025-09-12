@@ -14,7 +14,7 @@ enum AgreementType {
 type Booking {
   bookedAt: DateTime!
   id: String!
-  member: User!
+  member: Member!
 }
 
 input BookingsArgs {
@@ -23,7 +23,7 @@ input BookingsArgs {
 
 type CheckIn {
   id: String!
-  member: User!
+  member: Member!
   timestamp: DateTime!
 }
 
@@ -32,7 +32,7 @@ type ClassTemplate {
   description: String
   gym: Gym!
   id: ID!
-  instructor: User
+  instructor: Staff
   name: String!
   recurrence: String!
 }
@@ -97,11 +97,23 @@ input GymUpdateInput {
 
 scalar Json
 
+type Member implements Person {
+  checkins: [CheckIn!]
+  email: String!
+  firstName: String!
+  id: ID!
+  isActive: Boolean!
+  lastName: String!
+  membership: MembershipNFT
+  name: String
+  phoneNumber: String
+  walletAddress: String
+}
+
 input MemberCreateInput {
   email: String!
   firstName: String!
   isActive: Boolean
-  isSuperUser: Boolean
   lastName: String!
   phoneNumber: String
   walletAddress: String
@@ -111,7 +123,6 @@ input MemberUpdateInput {
   email: String
   firstName: String
   isActive: Boolean
-  isSuperUser: Boolean
   lastName: String
   phoneNumber: String
   walletAddress: String
@@ -122,29 +133,40 @@ type MembershipNFT {
   id: ID!
   isActive: Boolean!
   isCurrentlyRented: Boolean!
-  renterUser: User
-  user: User!
+  renterUser: Member
+  user: Member!
 }
 
 type Mutation {
   createClassTemplate(data: ClassTemplateCreateInput!): ClassTemplate!
   createGym(data: GymCreateInput!): Gym!
-  createMember(data: MemberCreateInput!): User!
+  createMember(data: MemberCreateInput!): Member!
   createScheduledClass(input: ScheduledClassCreateInput!): ScheduledClass!
-  createStaff(data: StaffCreateInput!): User!
+  createStaff(data: StaffCreateInput!): Staff!
   createTenancy(data: TenancyCreateInput!): Tenancy!
   deleteClassTemplate(id: ID!): Boolean!
   deleteGym(id: ID!): Boolean!
   deleteMember(id: ID!): Boolean!
   deleteScheduledClass(id: ID!): Boolean!
   deleteStaff(id: ID!): Boolean!
-  setInitialPassword(password: String!, token: String!): User!
+  setInitialPassword(password: String!, token: String!): StaffOrMember!
   updateClassTemplate(id: ID!, input: ClassTemplateUpdateInput!): ClassTemplate!
   updateGym(data: GymUpdateInput!, id: ID!): Gym!
-  updateMember(id: ID!, input: MemberUpdateInput!): User!
+  updateMember(id: ID!, input: MemberUpdateInput!): Member!
   updateScheduledClass(id: ID!, input: ScheduledClassUpdateInput!): ScheduledClass!
-  updateStaff(id: ID!, input: StaffUpdateInput!): User!
+  updateStaff(id: ID!, input: StaffUpdateInput!): Staff!
   updateTenancy(id: ID!, input: TenancyUpdateInput!): Tenancy!
+}
+
+interface Person {
+  email: String!
+  firstName: String!
+  id: ID!
+  isActive: Boolean!
+  lastName: String!
+  name: String
+  phoneNumber: String
+  walletAddress: String
 }
 
 type Query {
@@ -155,14 +177,15 @@ type Query {
   contracts: [UserTenancyAgreement!]!
   gymById(id: ID!): Gym
   gyms: [Gym!]!
-  memberById(id: ID!): User!
-  members: [User!]!
+  memberById(id: ID!): Member!
+  members: [Member!]!
   membershipById(id: ID!): MembershipNFT!
   memberships: [MembershipNFT!]!
   scheduledClassById(id: ID!): ScheduledClass!
   scheduledClasses(args: ScheduledClassesArgs!): [ScheduledClass!]!
-  staff: [User!]!
-  staffById(id: ID!): User!
+  search(input: SearchInput!): [SearchResult!]!
+  staff: [Staff!]!
+  staffById(id: ID!): Staff!
   tenancy: Tenancy!
 }
 
@@ -172,7 +195,7 @@ type ScheduledClass {
   endTime: DateTime!
   gym: Gym!
   id: ID!
-  instructor: User
+  instructor: Staff
   name: String!
   startTime: DateTime!
 }
@@ -196,6 +219,26 @@ input ScheduledClassesArgs {
   startDate: DateTime
 }
 
+input SearchInput {
+  limit: Int
+  query: String!
+}
+
+union SearchResult = ClassTemplate | Gym | Member | ScheduledClass | Staff
+
+type Staff implements Person {
+  email: String!
+  firstName: String!
+  id: ID!
+  isActive: Boolean!
+  isSuperUser: Boolean!
+  lastName: String!
+  name: String
+  phoneNumber: String
+  roles: [UserAtGymRole!]
+  walletAddress: String
+}
+
 input StaffCreateInput {
   email: String!
   firstName: String!
@@ -205,6 +248,8 @@ input StaffCreateInput {
   phoneNumber: String
   walletAddress: String
 }
+
+union StaffOrMember = Member | Staff
 
 input StaffUpdateInput {
   email: String
@@ -233,18 +278,6 @@ input TenancyUpdateInput {
   contactEmail: String
   legalName: String
   name: String
-}
-
-type User {
-  email: String!
-  firstName: String!
-  id: ID!
-  isActive: Boolean!
-  isSuperUser: Boolean!
-  lastName: String!
-  name: String
-  phoneNumber: String
-  walletAddress: String
 }
 
 enum UserAtGymRole {

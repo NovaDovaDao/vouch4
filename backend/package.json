@@ -9,12 +9,12 @@
   },
   "scripts": {
     "build": "tsc",
-    "dev": "tsx src/main.ts",
+    "dev": "tsx src/main.ts --watch",
     "db:seed": "tsx src/prisma/seed.ts",
     "start": "node ./dist/main.js",
     "prisma:seed": "tsx ./src/prisma/seed.ts",
     "prisma:reset": "npx prisma db push --force-reset --schema src/prisma/schema.prisma",
-    "generate-token": "tsx jwt.ts",
+    "generate-token": "tsx ./src/jwt.ts",
     "codegen": "npx graphql-codegen",
     "postinstall": "npx prisma generate --schema ./src/prisma/schema.prisma"
   },

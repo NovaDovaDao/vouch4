@@ -13,7 +13,9 @@ import PasswordInput from "@/components/ui/password-input";
 const setPasswordMutation = graphql(/* GraphQL */ `
   mutation SetInitialPassword($token: String!, $password: String!) {
     setInitialPassword(token: $token, password: $password) {
-      id
+      ... on Person {
+        id
+      }
     }
   }
 `);

@@ -15,7 +15,7 @@ import * as types from './graphql';
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 type Documents = {
-    "\n  mutation SetInitialPassword($token: String!, $password: String!) {\n    setInitialPassword(token: $token, password: $password) {\n      id\n    }\n  }\n": typeof types.SetInitialPasswordDocument,
+    "\n  mutation SetInitialPassword($token: String!, $password: String!) {\n    setInitialPassword(token: $token, password: $password) {\n      ... on Person {\n        id\n      }\n    }\n  }\n": typeof types.SetInitialPasswordDocument,
     "\n  query ClassTemplateOptions {\n    staff {\n      id\n      firstName\n      lastName\n    }\n    gyms {\n      id\n      name\n      legalEntityName\n    }\n  }\n": typeof types.ClassTemplateOptionsDocument,
     "\n  mutation CreateClassTemplate($data: ClassTemplateCreateInput!) {\n    createClassTemplate(data: $data) {\n      id\n      name\n    }\n  }\n": typeof types.CreateClassTemplateDocument,
     "\n  query GetScheduledClassById($id: ID!) {\n    scheduledClassById(id: $id) {\n      name\n      description\n      startTime\n      endTime\n      instructor {\n        name\n      }\n      bookings {\n        id\n        member {\n          id\n          name\n          isActive\n        }\n      }\n      gym {\n        id\n        name\n      }\n    }\n  }\n": typeof types.GetScheduledClassByIdDocument,
@@ -29,6 +29,7 @@ type Documents = {
     "\n  mutation CreateMember($data: MemberCreateInput!) {\n    createMember(data: $data) {\n      id\n      firstName\n    }\n  }\n": typeof types.CreateMemberDocument,
     "\n  query GetMemberById($id: ID!) {\n    memberById(id: $id) {\n      email\n      firstName\n      id\n      isActive\n      lastName\n      walletAddress\n      phoneNumber\n    }\n  }\n": typeof types.GetMemberByIdDocument,
     "\n  mutation UpdateMember($id: ID!, $input: MemberUpdateInput!) {\n    updateMember(id: $id, input: $input) {\n      id\n      firstName\n    }\n  }\n": typeof types.UpdateMemberDocument,
+    "\n  query Search($input: SearchInput!) {\n    search(input: $input) {\n      ... on Person {\n        __typename\n        id\n        personName: name\n      }\n      ... on Gym {\n        __typename\n        id\n        gymName: name\n      }\n      ... on ClassTemplate {\n        __typename\n        id\n        className: name\n      }\n    }\n  }\n": typeof types.SearchDocument,
     "\n  mutation CreateStaff($data: StaffCreateInput!) {\n    createStaff(data: $data) {\n      id\n      firstName\n    }\n  }\n": typeof types.CreateStaffDocument,
     "\n  query GetStaffById($id: ID!) {\n    staffById(id: $id) {\n      email\n      firstName\n      id\n      isActive\n      lastName\n      walletAddress\n      phoneNumber\n    }\n  }\n": typeof types.GetStaffByIdDocument,
     "\n  mutation UpdateStaff($id: ID!, $input: StaffUpdateInput!) {\n    updateStaff(id: $id, input: $input) {\n      id\n      firstName\n    }\n  }\n": typeof types.UpdateStaffDocument,
@@ -43,7 +44,7 @@ type Documents = {
     "\n  query GetStaff {\n    staff {\n      id\n      email\n      phoneNumber\n      firstName\n      lastName\n      isActive\n    }\n  }\n": typeof types.GetStaffDocument,
 };
 const documents: Documents = {
-    "\n  mutation SetInitialPassword($token: String!, $password: String!) {\n    setInitialPassword(token: $token, password: $password) {\n      id\n    }\n  }\n": types.SetInitialPasswordDocument,
+    "\n  mutation SetInitialPassword($token: String!, $password: String!) {\n    setInitialPassword(token: $token, password: $password) {\n      ... on Person {\n        id\n      }\n    }\n  }\n": types.SetInitialPasswordDocument,
     "\n  query ClassTemplateOptions {\n    staff {\n      id\n      firstName\n      lastName\n    }\n    gyms {\n      id\n      name\n      legalEntityName\n    }\n  }\n": types.ClassTemplateOptionsDocument,
     "\n  mutation CreateClassTemplate($data: ClassTemplateCreateInput!) {\n    createClassTemplate(data: $data) {\n      id\n      name\n    }\n  }\n": types.CreateClassTemplateDocument,
     "\n  query GetScheduledClassById($id: ID!) {\n    scheduledClassById(id: $id) {\n      name\n      description\n      startTime\n      endTime\n      instructor {\n        name\n      }\n      bookings {\n        id\n        member {\n          id\n          name\n          isActive\n        }\n      }\n      gym {\n        id\n        name\n      }\n    }\n  }\n": types.GetScheduledClassByIdDocument,
@@ -57,6 +58,7 @@ const documents: Documents = {
     "\n  mutation CreateMember($data: MemberCreateInput!) {\n    createMember(data: $data) {\n      id\n      firstName\n    }\n  }\n": types.CreateMemberDocument,
     "\n  query GetMemberById($id: ID!) {\n    memberById(id: $id) {\n      email\n      firstName\n      id\n      isActive\n      lastName\n      walletAddress\n      phoneNumber\n    }\n  }\n": types.GetMemberByIdDocument,
     "\n  mutation UpdateMember($id: ID!, $input: MemberUpdateInput!) {\n    updateMember(id: $id, input: $input) {\n      id\n      firstName\n    }\n  }\n": types.UpdateMemberDocument,
+    "\n  query Search($input: SearchInput!) {\n    search(input: $input) {\n      ... on Person {\n        __typename\n        id\n        personName: name\n      }\n      ... on Gym {\n        __typename\n        id\n        gymName: name\n      }\n      ... on ClassTemplate {\n        __typename\n        id\n        className: name\n      }\n    }\n  }\n": types.SearchDocument,
     "\n  mutation CreateStaff($data: StaffCreateInput!) {\n    createStaff(data: $data) {\n      id\n      firstName\n    }\n  }\n": types.CreateStaffDocument,
     "\n  query GetStaffById($id: ID!) {\n    staffById(id: $id) {\n      email\n      firstName\n      id\n      isActive\n      lastName\n      walletAddress\n      phoneNumber\n    }\n  }\n": types.GetStaffByIdDocument,
     "\n  mutation UpdateStaff($id: ID!, $input: StaffUpdateInput!) {\n    updateStaff(id: $id, input: $input) {\n      id\n      firstName\n    }\n  }\n": types.UpdateStaffDocument,
@@ -74,7 +76,7 @@ const documents: Documents = {
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  mutation SetInitialPassword($token: String!, $password: String!) {\n    setInitialPassword(token: $token, password: $password) {\n      id\n    }\n  }\n"): typeof import('./graphql').SetInitialPasswordDocument;
+export function graphql(source: "\n  mutation SetInitialPassword($token: String!, $password: String!) {\n    setInitialPassword(token: $token, password: $password) {\n      ... on Person {\n        id\n      }\n    }\n  }\n"): typeof import('./graphql').SetInitialPasswordDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -127,6 +129,10 @@ export function graphql(source: "\n  query GetMemberById($id: ID!) {\n    member
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation UpdateMember($id: ID!, $input: MemberUpdateInput!) {\n    updateMember(id: $id, input: $input) {\n      id\n      firstName\n    }\n  }\n"): typeof import('./graphql').UpdateMemberDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query Search($input: SearchInput!) {\n    search(input: $input) {\n      ... on Person {\n        __typename\n        id\n        personName: name\n      }\n      ... on Gym {\n        __typename\n        id\n        gymName: name\n      }\n      ... on ClassTemplate {\n        __typename\n        id\n        className: name\n      }\n    }\n  }\n"): typeof import('./graphql').SearchDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

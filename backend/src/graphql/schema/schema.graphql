@@ -22,6 +22,22 @@ enum AgreementStatus {
   REVOKED
 }
 
+# --- INTERFACES ---
+interface Person {
+  id: ID!
+  email: String!
+  firstName: String!
+  lastName: String!
+  name: String
+  isActive: Boolean!
+  walletAddress: String
+  phoneNumber: String
+}
+
+# --- UNIONS ---
+union SearchResult = Staff | Member | ClassTemplate | ScheduledClass | Gym
+union StaffOrMember = Staff | Member
+
 # --- OBJECTS ---
 
 type Tenancy {
@@ -47,22 +63,36 @@ type Gym {
   legalDocsUrl: String
 }
 
-type User {
+type Staff implements Person {
   id: ID!
   email: String!
   firstName: String!
   lastName: String!
   name: String
-  isSuperUser: Boolean!
   isActive: Boolean!
   walletAddress: String
   phoneNumber: String
+  isSuperUser: Boolean!
+  roles: [UserAtGymRole!]
+}
+
+type Member implements Person {
+  id: ID!
+  email: String!
+  firstName: String!
+  lastName: String!
+  name: String
+  isActive: Boolean!
+  walletAddress: String
+  phoneNumber: String
+  membership: MembershipNFT
+  checkins: [CheckIn!]
 }
 
 type MembershipNFT {
   id: ID!
-  user: User!
-  renterUser: User
+  user: Member!
+  renterUser: Member
   expiresAt: DateTime
   isActive: Boolean!
   isCurrentlyRented: Boolean!
@@ -80,7 +110,7 @@ type UserTenancyAgreement {
 type Booking {
   id: String!
   bookedAt: DateTime!
-  member: User!
+  member: Member!
 }
 
 type ClassTemplate {
@@ -89,7 +119,7 @@ type ClassTemplate {
   description: String
   capacity: Int!
   gym: Gym!
-  instructor: User
+  instructor: Staff
   recurrence: String!
 }
 
@@ -101,13 +131,13 @@ type ScheduledClass {
   endTime: DateTime!
   bookings: [Booking!]!
   gym: Gym!
-  instructor: User
+  instructor: Staff
 }
 
 type CheckIn {
   id: String!
   timestamp: DateTime!
-  member: User!
+  member: Member!
 }
 
 # --- INPUTS ---
@@ -186,7 +216,6 @@ input MemberCreateInput {
   email: String!
   firstName: String!
   lastName: String!
-  isSuperUser: Boolean
   isActive: Boolean
   walletAddress: String
   phoneNumber: String
@@ -196,7 +225,6 @@ input MemberUpdateInput {
   email: String
   firstName: String
   lastName: String
-  isSuperUser: Boolean
   isActive: Boolean
   walletAddress: String
   phoneNumber: String
@@ -226,10 +254,16 @@ input BookingsArgs {
   gymId: ID
 }
 
+input SearchInput {
+  query: String!
+  limit: Int
+}
+
 # --- QUERIES ---
 type Query {
-  staff: [User!]!
-  staffById(id: ID!): User!
+  search(input: SearchInput!): [SearchResult!]!
+  staff: [Staff!]!
+  staffById(id: ID!): Staff!
 
   classTemplates: [ClassTemplate!]!
   classTemplateById(id: ID!): ClassTemplate!
@@ -241,8 +275,8 @@ type Query {
   contracts: [UserTenancyAgreement!]!
   contractById(id: ID!): UserTenancyAgreement!
 
-  members: [User!]!
-  memberById(id: ID!): User!
+  members: [Member!]!
+  memberById(id: ID!): Member!
 
   memberships: [MembershipNFT!]!
   membershipById(id: ID!): MembershipNFT!
@@ -272,12 +306,12 @@ type Mutation {
   ): ScheduledClass!
   deleteScheduledClass(id: ID!): Boolean!
 
-  createStaff(data: StaffCreateInput!): User!
-  updateStaff(id: ID!, input: StaffUpdateInput!): User!
+  createStaff(data: StaffCreateInput!): Staff!
+  updateStaff(id: ID!, input: StaffUpdateInput!): Staff!
   deleteStaff(id: ID!): Boolean!
 
-  createMember(data: MemberCreateInput!): User!
-  updateMember(id: ID!, input: MemberUpdateInput!): User!
+  createMember(data: MemberCreateInput!): Member!
+  updateMember(id: ID!, input: MemberUpdateInput!): Member!
   deleteMember(id: ID!): Boolean!
-  setInitialPassword(token: String!, password: String!): User!
+  setInitialPassword(token: String!, password: String!): StaffOrMember!
 }

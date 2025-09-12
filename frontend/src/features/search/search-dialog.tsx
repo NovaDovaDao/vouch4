@@ -12,8 +12,34 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { searchSchema, type SearchFormData } from "./search.schema";
 import { useQuery } from "@tanstack/react-query";
-import { Fragment, useState } from "react";
+import { useMemo, useState } from "react";
 import SearchForm from "./search-form";
+import { graphql } from "@/graphql";
+import { execute } from "@/graphql/execute";
+import { SearchQuery } from "@/graphql/graphql";
+import { IconBuilding, IconListDetails, IconUsers } from "@tabler/icons-react";
+
+const SEARCH = graphql(`
+  query Search($input: SearchInput!) {
+    search(input: $input) {
+      ... on Person {
+        __typename
+        id
+        personName: name
+      }
+      ... on Gym {
+        __typename
+        id
+        gymName: name
+      }
+      ... on ClassTemplate {
+        __typename
+        id
+        className: name
+      }
+    }
+  }
+`);
 
 export default function SearchDialog({
   handleOpen,
@@ -29,10 +55,10 @@ export default function SearchDialog({
   });
 
   const [searchInput, setSearchInput] = useState("");
-  const { data, isLoading } = useQuery({
+  const { data: results, isLoading } = useQuery({
     queryKey: ["search", searchInput],
-    queryFn: () => {},
-    select: () => [],
+    queryFn: () => execute(SEARCH, { input: { query: searchInput } }),
+    select: (data) => data.search,
   });
 
   const handleSubmit = (data: SearchFormData) => setSearchInput(data.input);
@@ -51,12 +77,11 @@ export default function SearchDialog({
           onSubmit={handleSubmit}
           isSubmitting={isLoading}
         />
-        {data?.length && (
-          <Fragment>
-            <h4>Search results:</h4>
-            {data?.length}
-          </Fragment>
-        )}
+        <div className="space-y-2">
+          {results?.map((item, i) => (
+            <SearchResultItem key={i} item={item} />
+          ))}
+        </div>
         <DialogFooter>
           <DialogClose asChild>
             <Button variant="outline">Cancel</Button>
@@ -67,3 +92,41 @@ export default function SearchDialog({
     </Dialog>
   );
 }
+
+const SearchResultItem = ({ item }: { item: SearchQuery["search"][0] }) => {
+  const [name, Icon] = useMemo(() => {
+    switch (item.__typename) {
+      case "ClassTemplate":
+        return [item.className, IconListDetails];
+      case "Gym":
+        return [item.gymName, IconBuilding];
+      case "Member":
+      case "Staff":
+        return [item.personName, IconUsers];
+      case "ScheduledClass":
+      default:
+        return ["Unknown"];
+    }
+  }, [item]);
+
+  return (
+    <Button
+      variant="secondary"
+      className="w-full justify-start h-12"
+      size="default"
+    >
+      <div className="flex items-center gap-4">
+        <span
+          data-slot="avatar"
+          className="relative flex items-center justify-center size-8 shrink-0 overflow-hidden rounded-full bg-background"
+        >
+          {Icon && <Icon className="size-4" />}
+        </span>
+        <div className="text-left text-xs">
+          <p className="leading-none font-medium">{name}</p>
+          <p className="text-muted-foreground text-sm">{item.__typename}</p>
+        </div>
+      </div>
+    </Button>
+  );
+};

@@ -20,12 +20,9 @@ export const createTenancy: NonNullable<
   if (ctx.user) {
     // TODO: update user session
     const authContext = await auth.$context;
-    const updatedUser = await authContext.internalAdapter.updateUser(
-      ctx.user.id,
-      {
-        tenancyId: tenancy.id,
-      },
-    );
+    await authContext.internalAdapter.updateUser(ctx.user.id, {
+      tenancyId: tenancy.id,
+    });
   }
 
   return tenancy;

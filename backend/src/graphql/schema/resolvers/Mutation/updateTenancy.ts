@@ -1,7 +1,7 @@
 import type { CustomContext } from "../../../../server.js";
 import { errors } from "../../../errors.js";
 import type { MutationResolvers } from "./../../types.generated.js";
-export const updateTenancy: NonNullable<MutationResolvers["updateTenancy"]> = (
+export const updateTenancy: NonNullable<MutationResolvers['updateTenancy']> = (
   _parent,
   arg,
   ctx: CustomContext,

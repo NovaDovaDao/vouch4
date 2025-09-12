@@ -1,6 +1,7 @@
 import { type JWTPayload, jwtVerify, SignJWT } from "jose";
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET_KEY);
+console.log("process.env.JWT_SECRET_KEY", process.env.JWT_SECRET_KEY);
 
 export async function createJWT(payload: JWTPayload): Promise<string> {
   const jwt = await new SignJWT(payload)

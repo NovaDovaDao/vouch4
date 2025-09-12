@@ -2,7 +2,7 @@ import type { CustomContext } from "../../../../server.js";
 import { errors } from "../../../errors.js";
 import type { QueryResolvers } from "./../../types.generated.js";
 
-export const bookings: NonNullable<QueryResolvers["bookings"]> = async (
+export const bookings: NonNullable<QueryResolvers['bookings']> = async (
   _parent,
   _args,
   ctx: CustomContext,

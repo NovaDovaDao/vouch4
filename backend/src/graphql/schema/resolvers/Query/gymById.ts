@@ -1,10 +1,12 @@
-import { db } from "../../../../db.js";
-import type { Gym } from "../../types.generated.js";
+import type { CustomContext } from "../../../../server.js";
+import { errors } from "../../../errors.js";
 import type { QueryResolvers } from "./../../types.generated.js";
 export const gymById: NonNullable<QueryResolvers['gymById']> = (
   _parent,
   arg,
-  _ctx
+  ctx: CustomContext,
 ) => {
-  return db.gym.findUniqueOrThrow({ where: { id: arg.id } }) as Promise<Gym>;
+  if (!ctx.user?.tenancyId) throw errors.missingTenant();
+
+  return ctx.db.gym.findUniqueOrThrow({ where: { id: arg.id } });
 };
