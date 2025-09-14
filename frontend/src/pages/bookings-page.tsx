@@ -35,7 +35,7 @@ import {
 import ScheduledClassDetails from "@/features/classes/scheduled-class-details";
 
 const GET_GYMS = graphql(`
-  query GetGymOptions {
+  query GetGymOptions3 {
     gyms {
       id
       name

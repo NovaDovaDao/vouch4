@@ -27,6 +27,7 @@ import ReportsContractsPage from "./pages/reports-contracts-page.tsx";
 import ReportsMembershipsPage from "./pages/reports-memberships-page.tsx";
 import GymsPage from "./pages/gyms-page.tsx";
 import MembersPage from "./pages/members-page.tsx";
+import MemberDetailsPage from "./pages/member-details-page.tsx";
 import BookingsPage from "./pages/bookings-page.tsx";
 import { AuthLayout } from "./layouts/auth-layout.tsx";
 
@@ -43,6 +44,7 @@ function App() {
                 <Route index element={<DashboardPage />} />
                 <Route path="staff" element={<StaffPage />} />
                 <Route path="members" element={<MembersPage />} />
+                <Route path="members/:id" element={<MemberDetailsPage />} />
                 <Route path="classes" element={<ClassesPage />} />
                 <Route path="bookings" element={<BookingsPage />} />
                 <Route path="gyms" element={<GymsPage />} />

@@ -22,8 +22,10 @@ type Documents = {
     "\n  mutation DeleteScheduledClass($id: ID!) {\n    deleteScheduledClass(id: $id)\n  }\n": typeof types.DeleteScheduledClassDocument,
     "\n  query GetClassTemplateById($id: ID!) {\n    classTemplateById(id: $id) {\n      name\n      description\n      capacity\n      gym {\n        id\n        name\n      }\n      instructor {\n        id\n        name\n      }\n      recurrence\n    }\n  }\n": typeof types.GetClassTemplateByIdDocument,
     "\n  mutation UpdateClassTemplate($id: ID!, $input: ClassTemplateUpdateInput!) {\n    updateClassTemplate(id: $id, input: $input) {\n      id\n      name\n    }\n  }\n": typeof types.UpdateClassTemplateDocument,
+    "\n  query GetProducts {\n    products {\n      id\n      name\n      price {\n        amount\n        currency\n      }\n      description\n    }\n  }\n": typeof types.GetProductsDocument,
+    "\n  mutation CreateEntitlement($input: CreateEntitlementInput!) {\n    createEntitlement(input: $input) {\n      id\n    }\n  }\n": typeof types.CreateEntitlementDocument,
     "\n  mutation CreateGym($data: GymCreateInput!) {\n    createGym(data: $data) {\n      id\n      name\n    }\n  }\n": typeof types.CreateGymDocument,
-    "\n  query GetGymOptions {\n    gyms {\n      id\n      name\n    }\n  }\n": typeof types.GetGymOptionsDocument,
+    "\n  query GetGymOptions1 {\n    gyms {\n      id\n      name\n    }\n  }\n": typeof types.GetGymOptions1Document,
     "\n  query GetGymById($id: ID!) {\n    gymById(id: $id) {\n      name\n      address\n      legalDocsUrl\n      legalEntityName\n    }\n  }\n": typeof types.GetGymByIdDocument,
     "\n  mutation UpdateGym($id: ID!, $data: GymUpdateInput!) {\n    updateGym(id: $id, data: $data) {\n      id\n      name\n    }\n  }\n": typeof types.UpdateGymDocument,
     "\n  mutation CreateMember($data: MemberCreateInput!) {\n    createMember(data: $data) {\n      id\n      firstName\n    }\n  }\n": typeof types.CreateMemberDocument,
@@ -37,11 +39,12 @@ type Documents = {
     "\n  mutation UpdateStaff($id: ID!, $input: StaffUpdateInput!) {\n    updateStaff(id: $id, input: $input) {\n      id\n      firstName\n    }\n  }\n": typeof types.UpdateStaffDocument,
     "\n  query GetTenancy {\n    tenancy {\n      id\n      contactEmail\n      legalName\n      name\n    }\n  }\n": typeof types.GetTenancyDocument,
     "\n  mutation CreateTenancy($data: TenancyCreateInput!) {\n    createTenancy(data: $data) {\n      id\n    }\n  }\n": typeof types.CreateTenancyDocument,
+    "\n  query GetGymOptions3 {\n    gyms {\n      id\n      name\n    }\n  }\n": typeof types.GetGymOptions3Document,
     "\n  query GetScheduledClasses($args: ScheduledClassesArgs!) {\n    scheduledClasses(args: $args) {\n      id\n      name\n      startTime\n      endTime\n      gym {\n        name\n      }\n      instructor {\n        name\n      }\n      bookings {\n        id\n      }\n    }\n  }\n": typeof types.GetScheduledClassesDocument,
     "\n  query GetClassTemplates {\n    classTemplates {\n      id\n      name\n      capacity\n      description\n      gym {\n        id\n        name\n      }\n      instructor {\n        id\n        name\n      }\n      recurrence\n    }\n  }\n": typeof types.GetClassTemplatesDocument,
-    "\n  query GetGyms {\n    gyms {\n      id\n      address\n      name\n      legalDocsUrl\n      legalEntityName\n    }\n  }\n": typeof types.GetGymsDocument,
-    "\n  query GetMembers {\n    members {\n      id\n      firstName\n      lastName\n      email\n      isActive\n      phoneNumber\n    }\n  }\n": typeof types.GetMembersDocument,
-    "\n  query GetProducts {\n    products {\n      id\n      name\n      price {\n        amount\n        currency\n      }\n      description\n    }\n  }\n": typeof types.GetProductsDocument,
+    "\n  query GetGyms1 {\n    gyms {\n      id\n      address\n      name\n      legalDocsUrl\n      legalEntityName\n    }\n  }\n": typeof types.GetGyms1Document,
+    "\n  query GetMemberByIdForDetails($id: ID!) {\n    memberById(id: $id) {\n      id\n      firstName\n      lastName\n      email\n      isActive\n      phoneNumber\n\n      entitlements {\n        id\n        product {\n          id\n          name\n        }\n        validFrom\n        expiresAt\n        usesLeft\n      }\n    }\n  }\n": typeof types.GetMemberByIdForDetailsDocument,
+    "\n  query GetMembers1 {\n    members {\n      id\n      firstName\n      lastName\n      email\n      isActive\n      phoneNumber\n    }\n  }\n": typeof types.GetMembers1Document,
     "\n  query GetContracts {\n    contracts {\n      id\n    }\n  }\n": typeof types.GetContractsDocument,
     "\n  query GetStaff {\n    staff {\n      id\n      firstName\n      lastName\n      isActive\n      roles\n    }\n  }\n": typeof types.GetStaffDocument,
 };
@@ -53,8 +56,10 @@ const documents: Documents = {
     "\n  mutation DeleteScheduledClass($id: ID!) {\n    deleteScheduledClass(id: $id)\n  }\n": types.DeleteScheduledClassDocument,
     "\n  query GetClassTemplateById($id: ID!) {\n    classTemplateById(id: $id) {\n      name\n      description\n      capacity\n      gym {\n        id\n        name\n      }\n      instructor {\n        id\n        name\n      }\n      recurrence\n    }\n  }\n": types.GetClassTemplateByIdDocument,
     "\n  mutation UpdateClassTemplate($id: ID!, $input: ClassTemplateUpdateInput!) {\n    updateClassTemplate(id: $id, input: $input) {\n      id\n      name\n    }\n  }\n": types.UpdateClassTemplateDocument,
+    "\n  query GetProducts {\n    products {\n      id\n      name\n      price {\n        amount\n        currency\n      }\n      description\n    }\n  }\n": types.GetProductsDocument,
+    "\n  mutation CreateEntitlement($input: CreateEntitlementInput!) {\n    createEntitlement(input: $input) {\n      id\n    }\n  }\n": types.CreateEntitlementDocument,
     "\n  mutation CreateGym($data: GymCreateInput!) {\n    createGym(data: $data) {\n      id\n      name\n    }\n  }\n": types.CreateGymDocument,
-    "\n  query GetGymOptions {\n    gyms {\n      id\n      name\n    }\n  }\n": types.GetGymOptionsDocument,
+    "\n  query GetGymOptions1 {\n    gyms {\n      id\n      name\n    }\n  }\n": types.GetGymOptions1Document,
     "\n  query GetGymById($id: ID!) {\n    gymById(id: $id) {\n      name\n      address\n      legalDocsUrl\n      legalEntityName\n    }\n  }\n": types.GetGymByIdDocument,
     "\n  mutation UpdateGym($id: ID!, $data: GymUpdateInput!) {\n    updateGym(id: $id, data: $data) {\n      id\n      name\n    }\n  }\n": types.UpdateGymDocument,
     "\n  mutation CreateMember($data: MemberCreateInput!) {\n    createMember(data: $data) {\n      id\n      firstName\n    }\n  }\n": types.CreateMemberDocument,
@@ -68,11 +73,12 @@ const documents: Documents = {
     "\n  mutation UpdateStaff($id: ID!, $input: StaffUpdateInput!) {\n    updateStaff(id: $id, input: $input) {\n      id\n      firstName\n    }\n  }\n": types.UpdateStaffDocument,
     "\n  query GetTenancy {\n    tenancy {\n      id\n      contactEmail\n      legalName\n      name\n    }\n  }\n": types.GetTenancyDocument,
     "\n  mutation CreateTenancy($data: TenancyCreateInput!) {\n    createTenancy(data: $data) {\n      id\n    }\n  }\n": types.CreateTenancyDocument,
+    "\n  query GetGymOptions3 {\n    gyms {\n      id\n      name\n    }\n  }\n": types.GetGymOptions3Document,
     "\n  query GetScheduledClasses($args: ScheduledClassesArgs!) {\n    scheduledClasses(args: $args) {\n      id\n      name\n      startTime\n      endTime\n      gym {\n        name\n      }\n      instructor {\n        name\n      }\n      bookings {\n        id\n      }\n    }\n  }\n": types.GetScheduledClassesDocument,
     "\n  query GetClassTemplates {\n    classTemplates {\n      id\n      name\n      capacity\n      description\n      gym {\n        id\n        name\n      }\n      instructor {\n        id\n        name\n      }\n      recurrence\n    }\n  }\n": types.GetClassTemplatesDocument,
-    "\n  query GetGyms {\n    gyms {\n      id\n      address\n      name\n      legalDocsUrl\n      legalEntityName\n    }\n  }\n": types.GetGymsDocument,
-    "\n  query GetMembers {\n    members {\n      id\n      firstName\n      lastName\n      email\n      isActive\n      phoneNumber\n    }\n  }\n": types.GetMembersDocument,
-    "\n  query GetProducts {\n    products {\n      id\n      name\n      price {\n        amount\n        currency\n      }\n      description\n    }\n  }\n": types.GetProductsDocument,
+    "\n  query GetGyms1 {\n    gyms {\n      id\n      address\n      name\n      legalDocsUrl\n      legalEntityName\n    }\n  }\n": types.GetGyms1Document,
+    "\n  query GetMemberByIdForDetails($id: ID!) {\n    memberById(id: $id) {\n      id\n      firstName\n      lastName\n      email\n      isActive\n      phoneNumber\n\n      entitlements {\n        id\n        product {\n          id\n          name\n        }\n        validFrom\n        expiresAt\n        usesLeft\n      }\n    }\n  }\n": types.GetMemberByIdForDetailsDocument,
+    "\n  query GetMembers1 {\n    members {\n      id\n      firstName\n      lastName\n      email\n      isActive\n      phoneNumber\n    }\n  }\n": types.GetMembers1Document,
     "\n  query GetContracts {\n    contracts {\n      id\n    }\n  }\n": types.GetContractsDocument,
     "\n  query GetStaff {\n    staff {\n      id\n      firstName\n      lastName\n      isActive\n      roles\n    }\n  }\n": types.GetStaffDocument,
 };
@@ -108,11 +114,19 @@ export function graphql(source: "\n  mutation UpdateClassTemplate($id: ID!, $inp
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function graphql(source: "\n  query GetProducts {\n    products {\n      id\n      name\n      price {\n        amount\n        currency\n      }\n      description\n    }\n  }\n"): typeof import('./graphql').GetProductsDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation CreateEntitlement($input: CreateEntitlementInput!) {\n    createEntitlement(input: $input) {\n      id\n    }\n  }\n"): typeof import('./graphql').CreateEntitlementDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: "\n  mutation CreateGym($data: GymCreateInput!) {\n    createGym(data: $data) {\n      id\n      name\n    }\n  }\n"): typeof import('./graphql').CreateGymDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query GetGymOptions {\n    gyms {\n      id\n      name\n    }\n  }\n"): typeof import('./graphql').GetGymOptionsDocument;
+export function graphql(source: "\n  query GetGymOptions1 {\n    gyms {\n      id\n      name\n    }\n  }\n"): typeof import('./graphql').GetGymOptions1Document;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -168,6 +182,10 @@ export function graphql(source: "\n  mutation CreateTenancy($data: TenancyCreate
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function graphql(source: "\n  query GetGymOptions3 {\n    gyms {\n      id\n      name\n    }\n  }\n"): typeof import('./graphql').GetGymOptions3Document;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: "\n  query GetScheduledClasses($args: ScheduledClassesArgs!) {\n    scheduledClasses(args: $args) {\n      id\n      name\n      startTime\n      endTime\n      gym {\n        name\n      }\n      instructor {\n        name\n      }\n      bookings {\n        id\n      }\n    }\n  }\n"): typeof import('./graphql').GetScheduledClassesDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
@@ -176,15 +194,15 @@ export function graphql(source: "\n  query GetClassTemplates {\n    classTemplat
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query GetGyms {\n    gyms {\n      id\n      address\n      name\n      legalDocsUrl\n      legalEntityName\n    }\n  }\n"): typeof import('./graphql').GetGymsDocument;
+export function graphql(source: "\n  query GetGyms1 {\n    gyms {\n      id\n      address\n      name\n      legalDocsUrl\n      legalEntityName\n    }\n  }\n"): typeof import('./graphql').GetGyms1Document;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query GetMembers {\n    members {\n      id\n      firstName\n      lastName\n      email\n      isActive\n      phoneNumber\n    }\n  }\n"): typeof import('./graphql').GetMembersDocument;
+export function graphql(source: "\n  query GetMemberByIdForDetails($id: ID!) {\n    memberById(id: $id) {\n      id\n      firstName\n      lastName\n      email\n      isActive\n      phoneNumber\n\n      entitlements {\n        id\n        product {\n          id\n          name\n        }\n        validFrom\n        expiresAt\n        usesLeft\n      }\n    }\n  }\n"): typeof import('./graphql').GetMemberByIdForDetailsDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query GetProducts {\n    products {\n      id\n      name\n      price {\n        amount\n        currency\n      }\n      description\n    }\n  }\n"): typeof import('./graphql').GetProductsDocument;
+export function graphql(source: "\n  query GetMembers1 {\n    members {\n      id\n      firstName\n      lastName\n      email\n      isActive\n      phoneNumber\n    }\n  }\n"): typeof import('./graphql').GetMembers1Document;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

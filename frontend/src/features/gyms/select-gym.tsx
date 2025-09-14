@@ -14,7 +14,7 @@ import { useEffect } from "react";
 import { Fragment } from "react/jsx-runtime";
 
 const GET_GYM_OPTIONS = graphql(`
-  query GetGymOptions {
+  query GetGymOptions1 {
     gyms {
       id
       name

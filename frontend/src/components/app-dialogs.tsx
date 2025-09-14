@@ -1,6 +1,7 @@
 import CreateClassTemplateDialog from "@/features/classes/create-class-template-dialog";
 import CreateGymDialog from "@/features/gyms/create-gym-dialog";
 import CreateProductDialog from "@/features/products/create-product-dialog";
+import GrantEntitlementDialog from "@/features/entitlements/grant-entitlement-dialog";
 import CreateMemberDialog from "@/features/members/create-member-dialog";
 import SearchDialog from "@/features/search/search-dialog";
 import CreateStaffDialog from "@/features/staff/create-staff-dialog";
@@ -21,6 +22,13 @@ export default function AppDialogs() {
       return <CreateGymDialog handleOpen={closeDialog} />;
     case "createProduct":
       return <CreateProductDialog handleOpen={closeDialog} />;
+    case "grantEntitlement":
+      return (
+        <GrantEntitlementDialog
+          handleOpen={closeDialog}
+          memberId={currentDialog.memberId}
+        />
+      );
     case "search":
       return <SearchDialog handleOpen={closeDialog} />;
     case "help":

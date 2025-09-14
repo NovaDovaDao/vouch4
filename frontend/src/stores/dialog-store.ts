@@ -6,6 +6,7 @@ export type DialogPayload =
   | { type: "createClassTemplate" }
   | { type: "createGym" }
   | { type: "createProduct" }
+  | { type: "grantEntitlement"; memberId: string }
   | { type: "search" }
   | { type: "help" }
   | { type: null }; // Represents no Dialog being open

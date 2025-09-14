@@ -11,7 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
 const GET_GYMS = graphql(`
-  query GetGyms {
+  query GetGyms1 {
     gyms {
       id
       address

@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { DataTable } from "@/components/common/data-table";
 import MoreDropDown from "@/components/common/more-dropdown";
 import { Badge } from "@/components/ui/badge";
@@ -5,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import UpdateMemberForm from "@/features/members/update-member-form";
-import { graphql } from "@/graphql";
 import { execute } from "@/graphql/execute";
 import { useDialogStore } from "@/stores/dialog-store";
 import {
@@ -15,9 +15,10 @@ import {
 } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { graphql } from "@/graphql";
 
 const GET_MEMBERS = graphql(`
-  query GetMembers {
+  query GetMembers1 {
     members {
       id
       firstName
@@ -69,6 +70,11 @@ export default function MembersPage() {
             {
               accessorKey: "firstName",
               header: "First Name",
+              cell: ({ row }) => (
+                <Link to={`/members/${row.original.id}`}>
+                  {row.original.firstName}
+                </Link>
+              ),
             },
             {
               accessorKey: "lastName",

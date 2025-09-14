@@ -601,6 +601,18 @@ export type UpdateClassTemplateMutationVariables = Exact<{
 
 export type UpdateClassTemplateMutation = { __typename?: 'Mutation', updateClassTemplate: { __typename?: 'ClassTemplate', id: string, name: string } };
 
+export type GetProductsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetProductsQuery = { __typename?: 'Query', products: Array<{ __typename?: 'Product', id: string, name: string, description?: string | null, price?: { __typename?: 'Price', amount?: string | null, currency?: string | null } | null }> };
+
+export type CreateEntitlementMutationVariables = Exact<{
+  input: CreateEntitlementInput;
+}>;
+
+
+export type CreateEntitlementMutation = { __typename?: 'Mutation', createEntitlement: { __typename?: 'Entitlement', id: string } };
+
 export type CreateGymMutationVariables = Exact<{
   data: GymCreateInput;
 }>;
@@ -608,10 +620,10 @@ export type CreateGymMutationVariables = Exact<{
 
 export type CreateGymMutation = { __typename?: 'Mutation', createGym: { __typename?: 'Gym', id: string, name: string } };
 
-export type GetGymOptionsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetGymOptions1QueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetGymOptionsQuery = { __typename?: 'Query', gyms: Array<{ __typename?: 'Gym', id: string, name: string }> };
+export type GetGymOptions1Query = { __typename?: 'Query', gyms: Array<{ __typename?: 'Gym', id: string, name: string }> };
 
 export type GetGymByIdQueryVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -706,6 +718,11 @@ export type CreateTenancyMutationVariables = Exact<{
 
 export type CreateTenancyMutation = { __typename?: 'Mutation', createTenancy: { __typename?: 'Tenancy', id: string } };
 
+export type GetGymOptions3QueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetGymOptions3Query = { __typename?: 'Query', gyms: Array<{ __typename?: 'Gym', id: string, name: string }> };
+
 export type GetScheduledClassesQueryVariables = Exact<{
   args: ScheduledClassesArgs;
 }>;
@@ -718,20 +735,22 @@ export type GetClassTemplatesQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetClassTemplatesQuery = { __typename?: 'Query', classTemplates: Array<{ __typename?: 'ClassTemplate', id: string, name: string, capacity: number, description?: string | null, recurrence: string, gym: { __typename?: 'Gym', id: string, name: string }, instructor?: { __typename?: 'Staff', id: string, name?: string | null } | null }> };
 
-export type GetGymsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetGyms1QueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetGymsQuery = { __typename?: 'Query', gyms: Array<{ __typename?: 'Gym', id: string, address?: any | null, name: string, legalDocsUrl?: string | null, legalEntityName?: string | null }> };
+export type GetGyms1Query = { __typename?: 'Query', gyms: Array<{ __typename?: 'Gym', id: string, address?: any | null, name: string, legalDocsUrl?: string | null, legalEntityName?: string | null }> };
 
-export type GetMembersQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetMembersQuery = { __typename?: 'Query', members: Array<{ __typename?: 'Member', id: string, firstName: string, lastName: string, email: string, isActive: boolean, phoneNumber?: string | null }> };
-
-export type GetProductsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetMemberByIdForDetailsQueryVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
 
 
-export type GetProductsQuery = { __typename?: 'Query', products: Array<{ __typename?: 'Product', id: string, name: string, description?: string | null, price?: { __typename?: 'Price', amount?: string | null, currency?: string | null } | null }> };
+export type GetMemberByIdForDetailsQuery = { __typename?: 'Query', memberById: { __typename?: 'Member', id: string, firstName: string, lastName: string, email: string, isActive: boolean, phoneNumber?: string | null, entitlements: Array<{ __typename?: 'Entitlement', id: string, validFrom: any, expiresAt?: any | null, usesLeft?: number | null, product: { __typename?: 'Product', id: string, name: string } }> } };
+
+export type GetMembers1QueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetMembers1Query = { __typename?: 'Query', members: Array<{ __typename?: 'Member', id: string, firstName: string, lastName: string, email: string, isActive: boolean, phoneNumber?: string | null }> };
 
 export type GetContractsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -849,6 +868,26 @@ export const UpdateClassTemplateDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<UpdateClassTemplateMutation, UpdateClassTemplateMutationVariables>;
+export const GetProductsDocument = new TypedDocumentString(`
+    query GetProducts {
+  products {
+    id
+    name
+    price {
+      amount
+      currency
+    }
+    description
+  }
+}
+    `) as unknown as TypedDocumentString<GetProductsQuery, GetProductsQueryVariables>;
+export const CreateEntitlementDocument = new TypedDocumentString(`
+    mutation CreateEntitlement($input: CreateEntitlementInput!) {
+  createEntitlement(input: $input) {
+    id
+  }
+}
+    `) as unknown as TypedDocumentString<CreateEntitlementMutation, CreateEntitlementMutationVariables>;
 export const CreateGymDocument = new TypedDocumentString(`
     mutation CreateGym($data: GymCreateInput!) {
   createGym(data: $data) {
@@ -857,14 +896,14 @@ export const CreateGymDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<CreateGymMutation, CreateGymMutationVariables>;
-export const GetGymOptionsDocument = new TypedDocumentString(`
-    query GetGymOptions {
+export const GetGymOptions1Document = new TypedDocumentString(`
+    query GetGymOptions1 {
   gyms {
     id
     name
   }
 }
-    `) as unknown as TypedDocumentString<GetGymOptionsQuery, GetGymOptionsQueryVariables>;
+    `) as unknown as TypedDocumentString<GetGymOptions1Query, GetGymOptions1QueryVariables>;
 export const GetGymByIdDocument = new TypedDocumentString(`
     query GetGymById($id: ID!) {
   gymById(id: $id) {
@@ -999,6 +1038,14 @@ export const CreateTenancyDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<CreateTenancyMutation, CreateTenancyMutationVariables>;
+export const GetGymOptions3Document = new TypedDocumentString(`
+    query GetGymOptions3 {
+  gyms {
+    id
+    name
+  }
+}
+    `) as unknown as TypedDocumentString<GetGymOptions3Query, GetGymOptions3QueryVariables>;
 export const GetScheduledClassesDocument = new TypedDocumentString(`
     query GetScheduledClasses($args: ScheduledClassesArgs!) {
   scheduledClasses(args: $args) {
@@ -1037,8 +1084,8 @@ export const GetClassTemplatesDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<GetClassTemplatesQuery, GetClassTemplatesQueryVariables>;
-export const GetGymsDocument = new TypedDocumentString(`
-    query GetGyms {
+export const GetGyms1Document = new TypedDocumentString(`
+    query GetGyms1 {
   gyms {
     id
     address
@@ -1047,9 +1094,31 @@ export const GetGymsDocument = new TypedDocumentString(`
     legalEntityName
   }
 }
-    `) as unknown as TypedDocumentString<GetGymsQuery, GetGymsQueryVariables>;
-export const GetMembersDocument = new TypedDocumentString(`
-    query GetMembers {
+    `) as unknown as TypedDocumentString<GetGyms1Query, GetGyms1QueryVariables>;
+export const GetMemberByIdForDetailsDocument = new TypedDocumentString(`
+    query GetMemberByIdForDetails($id: ID!) {
+  memberById(id: $id) {
+    id
+    firstName
+    lastName
+    email
+    isActive
+    phoneNumber
+    entitlements {
+      id
+      product {
+        id
+        name
+      }
+      validFrom
+      expiresAt
+      usesLeft
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetMemberByIdForDetailsQuery, GetMemberByIdForDetailsQueryVariables>;
+export const GetMembers1Document = new TypedDocumentString(`
+    query GetMembers1 {
   members {
     id
     firstName
@@ -1059,20 +1128,7 @@ export const GetMembersDocument = new TypedDocumentString(`
     phoneNumber
   }
 }
-    `) as unknown as TypedDocumentString<GetMembersQuery, GetMembersQueryVariables>;
-export const GetProductsDocument = new TypedDocumentString(`
-    query GetProducts {
-  products {
-    id
-    name
-    price {
-      amount
-      currency
-    }
-    description
-  }
-}
-    `) as unknown as TypedDocumentString<GetProductsQuery, GetProductsQueryVariables>;
+    `) as unknown as TypedDocumentString<GetMembers1Query, GetMembers1QueryVariables>;
 export const GetContractsDocument = new TypedDocumentString(`
     query GetContracts {
   contracts {
