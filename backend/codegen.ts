@@ -13,8 +13,9 @@ const config: CodegenConfig = {
             "../../prisma/generated/client.js#ClassTemplate as ClassTemplateModel",
           Gym: "../../prisma/generated/client.js#Gym as GymModel",
           Member: "../../prisma/generated/client.js#User as UserModel",
-          MembershipNFT:
-            "../../prisma/generated/client.js#MembershipNFT as MembershipNFTModel",
+          Entitlement:
+            "../../prisma/generated/client.js#Entitlement as EntitlementModel",
+          Product: "../../prisma/generated/client.js#Product as ProductModel",
           Person: "../../prisma/generated/client.js#User as UserModel",
           ScheduledClass:
             "../../prisma/generated/client.js#ScheduledClass as ScheduledClassModel",

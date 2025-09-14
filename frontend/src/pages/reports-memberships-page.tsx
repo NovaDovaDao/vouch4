@@ -1,46 +1,29 @@
 import { DataTable } from "@/components/common/data-table";
-import MoreDropDown from "@/components/common/more-dropdown";
-import { Badge } from "@/components/ui/badge";
+// import MoreDropDown from "@/components/common/more-dropdown";
+// import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
-import { graphql } from "@/graphql";
-import { execute } from "@/graphql/execute";
+// import { graphql } from "@/graphql";
+// import { execute } from "@/graphql/execute";
 import { useDialogStore } from "@/stores/dialog-store";
 import {
-  IconCircleCheckFilled,
-  IconLoader,
+  // IconCircleCheckFilled,
+  // IconLoader,
   IconPlus,
 } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
-import { formatDistanceToNow } from "date-fns";
-import { useState } from "react";
-
-const GET_MEMBERS = graphql(`
-  query GetMemberships {
-    memberships {
-      id
-      expiresAt
-      isActive
-      isCurrentlyRented
-      renterUser {
-        id
-      }
-      user {
-        id
-      }
-    }
-  }
-`);
+// import { formatDistanceToNow } from "date-fns";
+// import { useState } from "react";
 
 export default function ReportsMembershipsPage() {
   const { data: memberships, isLoading } = useQuery({
     queryKey: ["members"],
-    queryFn: () => execute(GET_MEMBERS),
-    select: (data) => data.memberships,
+    queryFn: () => {},
+    select: (data) => data,
   });
 
-  const [, setEditMembershipId] = useState<string | null>(null);
+  // const [, setEditMembershipId] = useState<string | null>(null);
   const dialogStore = useDialogStore();
 
   return (
@@ -79,50 +62,50 @@ export default function ReportsMembershipsPage() {
               accessorKey: "isCurrentlyRented",
               header: "Rented",
             },
-            {
-              accessorKey: "isActive",
-              header: "Status",
-              cell: ({ row }) => (
-                <Badge
-                  variant="outline"
-                  className="text-muted-foreground px-1.5"
-                >
-                  {row.original.id ? (
-                    <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
-                  ) : (
-                    <IconLoader />
-                  )}
-                  {row.original.id ? "Active" : "Inactive"}
-                </Badge>
-              ),
-            },
-            {
-              accessorKey: "expiresAt",
-              header: "Expiration",
-              cell: ({ row }) =>
-                formatDistanceToNow(row.original.expiresAt, {
-                  addSuffix: true,
-                }),
-            },
-            {
-              id: "actions",
-              cell: ({ row }) => (
-                <MoreDropDown
-                  items={[
-                    [
-                      {
-                        children: "Edit",
-                        onClick: () => setEditMembershipId(row.original.id),
-                      },
-                      {
-                        children: "Check in",
-                      },
-                    ],
-                    [{ children: "Delete", variant: "destructive" }],
-                  ]}
-                />
-              ),
-            },
+            // {
+            //   accessorKey: "isActive",
+            //   header: "Status",
+            //   cell: ({ row }) => (
+            //     <Badge
+            //       variant="outline"
+            //       className="text-muted-foreground px-1.5"
+            //     >
+            //       {row.original.id ? (
+            //         <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
+            //       ) : (
+            //         <IconLoader />
+            //       )}
+            //       {row.original.id ? "Active" : "Inactive"}
+            //     </Badge>
+            //   ),
+            // },
+            // {
+            //   accessorKey: "expiresAt",
+            //   header: "Expiration",
+            //   cell: ({ row }) =>
+            //     formatDistanceToNow(row.original.expiresAt, {
+            //       addSuffix: true,
+            //     }),
+            // },
+            // {
+            //   id: "actions",
+            //   cell: ({ row }) => (
+            //     <MoreDropDown
+            //       items={[
+            //         [
+            //           {
+            //             children: "Edit",
+            //             onClick: () => setEditMembershipId(row.original.id),
+            //           },
+            //           {
+            //             children: "Check in",
+            //           },
+            //         ],
+            //         [{ children: "Delete", variant: "destructive" }],
+            //       ]}
+            //     />
+            //   ),
+            // },
           ]}
         />
       </TabsContent>

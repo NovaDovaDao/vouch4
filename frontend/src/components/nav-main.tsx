@@ -3,12 +3,12 @@ import { type Icon } from "@tabler/icons-react";
 import {
   SidebarGroup,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { Link, useLocation } from "react-router-dom";
-import NavQuickCreate from "./nav-quick-create";
 
 type Item = {
   title: string;
@@ -21,11 +21,7 @@ export function NavMain({ items }: { items: Item[] }) {
   return (
     <SidebarGroup>
       <SidebarGroupContent className="flex flex-col gap-2">
-        <SidebarMenu>
-          <SidebarMenuItem className="flex items-center gap-2">
-            <NavQuickCreate />
-          </SidebarMenuItem>
-        </SidebarMenu>
+        <SidebarGroupLabel>Home</SidebarGroupLabel>
         <SidebarMenu>
           {items.map((item, i) => (
             <Link to={item.url} key={i}>

@@ -22,6 +22,7 @@ import StaffPage from "./pages/staff-page.tsx";
 import AccountPage from "./pages/account-page.tsx";
 import AccountBillingPage from "./pages/account-billing-page.tsx";
 import AccountNotificationsPage from "./pages/account-notifications-page.tsx";
+import ProductsPage from "./pages/products-page.tsx";
 import ReportsContractsPage from "./pages/reports-contracts-page.tsx";
 import ReportsMembershipsPage from "./pages/reports-memberships-page.tsx";
 import GymsPage from "./pages/gyms-page.tsx";
@@ -45,6 +46,7 @@ function App() {
                 <Route path="classes" element={<ClassesPage />} />
                 <Route path="bookings" element={<BookingsPage />} />
                 <Route path="gyms" element={<GymsPage />} />
+                <Route path="products" element={<ProductsPage />} />
 
                 <Route path="reports">
                   <Route path="contracts" element={<ReportsContractsPage />} />

@@ -9,13 +9,14 @@ import type {
   ClassTemplate as ClassTemplateModel,
   Gym as GymModel,
   User as UserModel,
-  MembershipNFT as MembershipNFTModel,
+  Entitlement as EntitlementModel,
+  Product as ProductModel,
   ScheduledClass as ScheduledClassModel,
   Tenancy as TenancyModel,
   UserTenancyAgreement as UserTenancyAgreementModel,
 } from "../../prisma/generated/client.js";
 export type Maybe<T> = T | null | undefined;
-export type InputMaybe<T> = T | null | undefined;
+export type InputMaybe<T> = undefined | T;
 export type Exact<T extends { [key: string]: unknown }> = {
   [K in keyof T]: T[K];
 };
@@ -106,6 +107,36 @@ export type ClassTemplateUpdateInput = {
   recurrence?: InputMaybe<Scalars["String"]["input"]>;
 };
 
+export type CreateEntitlementInput = {
+  expiresAt?: InputMaybe<Scalars["DateTime"]["input"]>;
+  ownerId: Scalars["ID"]["input"];
+  productId: Scalars["ID"]["input"];
+  usesLeft?: InputMaybe<Scalars["Int"]["input"]>;
+  validFrom?: InputMaybe<Scalars["DateTime"]["input"]>;
+};
+
+export type CreateProductInput = {
+  active?: InputMaybe<Scalars["Boolean"]["input"]>;
+  contractAddress?: InputMaybe<Scalars["String"]["input"]>;
+  description?: InputMaybe<Scalars["String"]["input"]>;
+  isNft?: InputMaybe<Scalars["Boolean"]["input"]>;
+  name: Scalars["String"]["input"];
+  rules: Scalars["Json"]["input"];
+};
+
+export type Entitlement = {
+  __typename?: "Entitlement";
+  expiresAt?: Maybe<Scalars["DateTime"]["output"]>;
+  id: Scalars["ID"]["output"];
+  isRented: Scalars["Boolean"]["output"];
+  owner: Member;
+  product: Product;
+  renter?: Maybe<Member>;
+  tokenId?: Maybe<Scalars["String"]["output"]>;
+  usesLeft?: Maybe<Scalars["Int"]["output"]>;
+  validFrom: Scalars["DateTime"]["output"];
+};
+
 export type Gym = {
   __typename?: "Gym";
   address?: Maybe<Scalars["Json"]["output"]>;
@@ -150,11 +181,11 @@ export type Member = Person & {
   __typename?: "Member";
   checkins?: Maybe<Array<CheckIn>>;
   email: Scalars["String"]["output"];
+  entitlements: Array<Entitlement>;
   firstName: Scalars["String"]["output"];
   id: Scalars["ID"]["output"];
   isActive: Scalars["Boolean"]["output"];
   lastName: Scalars["String"]["output"];
-  membership?: Maybe<MembershipNFT>;
   name?: Maybe<Scalars["String"]["output"]>;
   phoneNumber?: Maybe<Scalars["String"]["output"]>;
   walletAddress?: Maybe<Scalars["String"]["output"]>;
@@ -178,21 +209,13 @@ export type MemberUpdateInput = {
   walletAddress?: InputMaybe<Scalars["String"]["input"]>;
 };
 
-export type MembershipNFT = {
-  __typename?: "MembershipNFT";
-  expiresAt?: Maybe<Scalars["DateTime"]["output"]>;
-  id: Scalars["ID"]["output"];
-  isActive: Scalars["Boolean"]["output"];
-  isCurrentlyRented: Scalars["Boolean"]["output"];
-  renterUser?: Maybe<Member>;
-  user: Member;
-};
-
 export type Mutation = {
   __typename?: "Mutation";
   createClassTemplate: ClassTemplate;
+  createEntitlement: Entitlement;
   createGym: Gym;
   createMember: Member;
+  createProduct: Product;
   createScheduledClass: ScheduledClass;
   createStaff: Staff;
   createTenancy: Tenancy;
@@ -205,6 +228,7 @@ export type Mutation = {
   updateClassTemplate: ClassTemplate;
   updateGym: Gym;
   updateMember: Member;
+  updateProduct: Product;
   updateScheduledClass: ScheduledClass;
   updateStaff: Staff;
   updateTenancy: Tenancy;
@@ -214,12 +238,20 @@ export type MutationcreateClassTemplateArgs = {
   data: ClassTemplateCreateInput;
 };
 
+export type MutationcreateEntitlementArgs = {
+  input: CreateEntitlementInput;
+};
+
 export type MutationcreateGymArgs = {
   data: GymCreateInput;
 };
 
 export type MutationcreateMemberArgs = {
   data: MemberCreateInput;
+};
+
+export type MutationcreateProductArgs = {
+  input: CreateProductInput;
 };
 
 export type MutationcreateScheduledClassArgs = {
@@ -274,6 +306,11 @@ export type MutationupdateMemberArgs = {
   input: MemberUpdateInput;
 };
 
+export type MutationupdateProductArgs = {
+  id: Scalars["ID"]["input"];
+  input: UpdateProductInput;
+};
+
 export type MutationupdateScheduledClassArgs = {
   id: Scalars["ID"]["input"];
   input: ScheduledClassUpdateInput;
@@ -300,6 +337,25 @@ export type Person = {
   walletAddress?: Maybe<Scalars["String"]["output"]>;
 };
 
+export type Price = {
+  __typename?: "Price";
+  amount?: Maybe<Scalars["String"]["output"]>;
+  currency?: Maybe<Scalars["String"]["output"]>;
+};
+
+export type Product = {
+  __typename?: "Product";
+  active: Scalars["Boolean"]["output"];
+  contractAddress?: Maybe<Scalars["String"]["output"]>;
+  description?: Maybe<Scalars["String"]["output"]>;
+  entitlements: Array<Entitlement>;
+  id: Scalars["ID"]["output"];
+  isNft: Scalars["Boolean"]["output"];
+  name: Scalars["String"]["output"];
+  price?: Maybe<Price>;
+  rules: Scalars["Json"]["output"];
+};
+
 export type Query = {
   __typename?: "Query";
   bookings: Array<Booking>;
@@ -307,12 +363,14 @@ export type Query = {
   classTemplates: Array<ClassTemplate>;
   contractById: UserTenancyAgreement;
   contracts: Array<UserTenancyAgreement>;
+  entitlementById?: Maybe<Entitlement>;
+  entitlements: Array<Entitlement>;
   gymById?: Maybe<Gym>;
   gyms: Array<Gym>;
   memberById: Member;
   members: Array<Member>;
-  membershipById: MembershipNFT;
-  memberships: Array<MembershipNFT>;
+  productById?: Maybe<Product>;
+  products: Array<Product>;
   scheduledClassById: ScheduledClass;
   scheduledClasses: Array<ScheduledClass>;
   search: Array<SearchResult>;
@@ -333,6 +391,14 @@ export type QuerycontractByIdArgs = {
   id: Scalars["ID"]["input"];
 };
 
+export type QueryentitlementByIdArgs = {
+  id: Scalars["ID"]["input"];
+};
+
+export type QueryentitlementsArgs = {
+  memberId: Scalars["ID"]["input"];
+};
+
 export type QuerygymByIdArgs = {
   id: Scalars["ID"]["input"];
 };
@@ -341,7 +407,7 @@ export type QuerymemberByIdArgs = {
   id: Scalars["ID"]["input"];
 };
 
-export type QuerymembershipByIdArgs = {
+export type QueryproductByIdArgs = {
   id: Scalars["ID"]["input"];
 };
 
@@ -458,6 +524,15 @@ export type TenancyUpdateInput = {
   contactEmail?: InputMaybe<Scalars["String"]["input"]>;
   legalName?: InputMaybe<Scalars["String"]["input"]>;
   name?: InputMaybe<Scalars["String"]["input"]>;
+};
+
+export type UpdateProductInput = {
+  active?: InputMaybe<Scalars["Boolean"]["input"]>;
+  contractAddress?: InputMaybe<Scalars["String"]["input"]>;
+  description?: InputMaybe<Scalars["String"]["input"]>;
+  isNft?: InputMaybe<Scalars["Boolean"]["input"]>;
+  name?: InputMaybe<Scalars["String"]["input"]>;
+  rules?: InputMaybe<Scalars["Json"]["input"]>;
 };
 
 export type UserAtGymRole =
@@ -612,7 +687,11 @@ export type ResolversTypes = {
   Int: ResolverTypeWrapper<Scalars["Int"]["output"]>;
   ClassTemplateCreateInput: ClassTemplateCreateInput;
   ClassTemplateUpdateInput: ClassTemplateUpdateInput;
+  CreateEntitlementInput: CreateEntitlementInput;
+  CreateProductInput: CreateProductInput;
+  Boolean: ResolverTypeWrapper<Scalars["Boolean"]["output"]>;
   DateTime: ResolverTypeWrapper<Scalars["DateTime"]["output"]>;
+  Entitlement: ResolverTypeWrapper<EntitlementModel>;
   Gym: ResolverTypeWrapper<GymModel>;
   GymAddress: ResolverTypeWrapper<GymAddress>;
   GymAddressInput: GymAddressInput;
@@ -620,12 +699,12 @@ export type ResolversTypes = {
   GymUpdateInput: GymUpdateInput;
   Json: ResolverTypeWrapper<Scalars["Json"]["output"]>;
   Member: ResolverTypeWrapper<UserModel>;
-  Boolean: ResolverTypeWrapper<Scalars["Boolean"]["output"]>;
   MemberCreateInput: MemberCreateInput;
   MemberUpdateInput: MemberUpdateInput;
-  MembershipNFT: ResolverTypeWrapper<MembershipNFTModel>;
   Mutation: ResolverTypeWrapper<{}>;
   Person: ResolverTypeWrapper<UserModel>;
+  Price: ResolverTypeWrapper<Price>;
+  Product: ResolverTypeWrapper<ProductModel>;
   Query: ResolverTypeWrapper<{}>;
   ScheduledClass: ResolverTypeWrapper<ScheduledClassModel>;
   ScheduledClassCreateInput: ScheduledClassCreateInput;
@@ -644,6 +723,7 @@ export type ResolversTypes = {
   Tenancy: ResolverTypeWrapper<TenancyModel>;
   TenancyCreateInput: TenancyCreateInput;
   TenancyUpdateInput: TenancyUpdateInput;
+  UpdateProductInput: UpdateProductInput;
   UserAtGymRole: ResolverTypeWrapper<
     | "MANAGER"
     | "TRAINER"
@@ -665,7 +745,11 @@ export type ResolversParentTypes = {
   Int: Scalars["Int"]["output"];
   ClassTemplateCreateInput: ClassTemplateCreateInput;
   ClassTemplateUpdateInput: ClassTemplateUpdateInput;
+  CreateEntitlementInput: CreateEntitlementInput;
+  CreateProductInput: CreateProductInput;
+  Boolean: Scalars["Boolean"]["output"];
   DateTime: Scalars["DateTime"]["output"];
+  Entitlement: EntitlementModel;
   Gym: GymModel;
   GymAddress: GymAddress;
   GymAddressInput: GymAddressInput;
@@ -673,12 +757,12 @@ export type ResolversParentTypes = {
   GymUpdateInput: GymUpdateInput;
   Json: Scalars["Json"]["output"];
   Member: UserModel;
-  Boolean: Scalars["Boolean"]["output"];
   MemberCreateInput: MemberCreateInput;
   MemberUpdateInput: MemberUpdateInput;
-  MembershipNFT: MembershipNFTModel;
   Mutation: {};
   Person: UserModel;
+  Price: Price;
+  Product: ProductModel;
   Query: {};
   ScheduledClass: ScheduledClassModel;
   ScheduledClassCreateInput: ScheduledClassCreateInput;
@@ -693,6 +777,7 @@ export type ResolversParentTypes = {
   Tenancy: TenancyModel;
   TenancyCreateInput: TenancyCreateInput;
   TenancyUpdateInput: TenancyUpdateInput;
+  UpdateProductInput: UpdateProductInput;
   UserTenancyAgreement: UserTenancyAgreementModel;
 };
 
@@ -756,6 +841,27 @@ export interface DateTimeScalarConfig
   name: "DateTime";
 }
 
+export type EntitlementResolvers<
+  ContextType = any,
+  ParentType extends
+    ResolversParentTypes["Entitlement"] = ResolversParentTypes["Entitlement"],
+> = {
+  expiresAt?: Resolver<
+    Maybe<ResolversTypes["DateTime"]>,
+    ParentType,
+    ContextType
+  >;
+  id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>;
+  isRented?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
+  owner?: Resolver<ResolversTypes["Member"], ParentType, ContextType>;
+  product?: Resolver<ResolversTypes["Product"], ParentType, ContextType>;
+  renter?: Resolver<Maybe<ResolversTypes["Member"]>, ParentType, ContextType>;
+  tokenId?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
+  usesLeft?: Resolver<Maybe<ResolversTypes["Int"]>, ParentType, ContextType>;
+  validFrom?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type GymResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes["Gym"] = ResolversParentTypes["Gym"],
@@ -805,15 +911,15 @@ export type MemberResolvers<
     ContextType
   >;
   email?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  entitlements?: Resolver<
+    Array<ResolversTypes["Entitlement"]>,
+    ParentType,
+    ContextType
+  >;
   firstName?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>;
   isActive?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
   lastName?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
-  membership?: Resolver<
-    Maybe<ResolversTypes["MembershipNFT"]>,
-    ParentType,
-    ContextType
-  >;
   name?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
   phoneNumber?: Resolver<
     Maybe<ResolversTypes["String"]>,
@@ -828,32 +934,6 @@ export type MemberResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type MembershipNFTResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes["MembershipNFT"] = ResolversParentTypes["MembershipNFT"],
-> = {
-  expiresAt?: Resolver<
-    Maybe<ResolversTypes["DateTime"]>,
-    ParentType,
-    ContextType
-  >;
-  id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>;
-  isActive?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
-  isCurrentlyRented?: Resolver<
-    ResolversTypes["Boolean"],
-    ParentType,
-    ContextType
-  >;
-  renterUser?: Resolver<
-    Maybe<ResolversTypes["Member"]>,
-    ParentType,
-    ContextType
-  >;
-  user?: Resolver<ResolversTypes["Member"], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type MutationResolvers<
   ContextType = any,
   ParentType extends
@@ -864,6 +944,12 @@ export type MutationResolvers<
     ParentType,
     ContextType,
     RequireFields<MutationcreateClassTemplateArgs, "data">
+  >;
+  createEntitlement?: Resolver<
+    ResolversTypes["Entitlement"],
+    ParentType,
+    ContextType,
+    RequireFields<MutationcreateEntitlementArgs, "input">
   >;
   createGym?: Resolver<
     ResolversTypes["Gym"],
@@ -876,6 +962,12 @@ export type MutationResolvers<
     ParentType,
     ContextType,
     RequireFields<MutationcreateMemberArgs, "data">
+  >;
+  createProduct?: Resolver<
+    ResolversTypes["Product"],
+    ParentType,
+    ContextType,
+    RequireFields<MutationcreateProductArgs, "input">
   >;
   createScheduledClass?: Resolver<
     ResolversTypes["ScheduledClass"],
@@ -949,6 +1041,12 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationupdateMemberArgs, "id" | "input">
   >;
+  updateProduct?: Resolver<
+    ResolversTypes["Product"],
+    ParentType,
+    ContextType,
+    RequireFields<MutationupdateProductArgs, "id" | "input">
+  >;
   updateScheduledClass?: Resolver<
     ResolversTypes["ScheduledClass"],
     ParentType,
@@ -993,6 +1091,45 @@ export type PersonResolvers<
   >;
 };
 
+export type PriceResolvers<
+  ContextType = any,
+  ParentType extends
+    ResolversParentTypes["Price"] = ResolversParentTypes["Price"],
+> = {
+  amount?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
+  currency?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ProductResolvers<
+  ContextType = any,
+  ParentType extends
+    ResolversParentTypes["Product"] = ResolversParentTypes["Product"],
+> = {
+  active?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
+  contractAddress?: Resolver<
+    Maybe<ResolversTypes["String"]>,
+    ParentType,
+    ContextType
+  >;
+  description?: Resolver<
+    Maybe<ResolversTypes["String"]>,
+    ParentType,
+    ContextType
+  >;
+  entitlements?: Resolver<
+    Array<ResolversTypes["Entitlement"]>,
+    ParentType,
+    ContextType
+  >;
+  id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>;
+  isNft?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  price?: Resolver<Maybe<ResolversTypes["Price"]>, ParentType, ContextType>;
+  rules?: Resolver<ResolversTypes["Json"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type QueryResolvers<
   ContextType = any,
   ParentType extends
@@ -1026,6 +1163,18 @@ export type QueryResolvers<
     ParentType,
     ContextType
   >;
+  entitlementById?: Resolver<
+    Maybe<ResolversTypes["Entitlement"]>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryentitlementByIdArgs, "id">
+  >;
+  entitlements?: Resolver<
+    Array<ResolversTypes["Entitlement"]>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryentitlementsArgs, "memberId">
+  >;
   gymById?: Resolver<
     Maybe<ResolversTypes["Gym"]>,
     ParentType,
@@ -1040,14 +1189,14 @@ export type QueryResolvers<
     RequireFields<QuerymemberByIdArgs, "id">
   >;
   members?: Resolver<Array<ResolversTypes["Member"]>, ParentType, ContextType>;
-  membershipById?: Resolver<
-    ResolversTypes["MembershipNFT"],
+  productById?: Resolver<
+    Maybe<ResolversTypes["Product"]>,
     ParentType,
     ContextType,
-    RequireFields<QuerymembershipByIdArgs, "id">
+    RequireFields<QueryproductByIdArgs, "id">
   >;
-  memberships?: Resolver<
-    Array<ResolversTypes["MembershipNFT"]>,
+  products?: Resolver<
+    Array<ResolversTypes["Product"]>,
     ParentType,
     ContextType
   >;
@@ -1217,13 +1366,15 @@ export type Resolvers<ContextType = any> = {
   CheckIn?: CheckInResolvers<ContextType>;
   ClassTemplate?: ClassTemplateResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
+  Entitlement?: EntitlementResolvers<ContextType>;
   Gym?: GymResolvers<ContextType>;
   GymAddress?: GymAddressResolvers<ContextType>;
   Json?: GraphQLScalarType;
   Member?: MemberResolvers<ContextType>;
-  MembershipNFT?: MembershipNFTResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Person?: PersonResolvers<ContextType>;
+  Price?: PriceResolvers<ContextType>;
+  Product?: ProductResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   ScheduledClass?: ScheduledClassResolvers<ContextType>;
   SearchResult?: SearchResultResolvers<ContextType>;

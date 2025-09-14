@@ -28,18 +28,20 @@ import { Link } from "react-router-dom";
 
 export function NavDocuments({
   items,
+  title,
 }: {
   items: {
     name: string;
     url: string;
     icon: Icon;
   }[];
+  title: string;
 }) {
   const { isMobile } = useSidebar();
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel>Reports</SidebarGroupLabel>
+      <SidebarGroupLabel>{title}</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <SidebarMenuItem key={item.name}>

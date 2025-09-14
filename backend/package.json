@@ -9,7 +9,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "dev": "tsx src/main.ts --watch",
+    "dev": "tsx watch src/main.ts",
     "db:seed": "tsx src/prisma/seed.ts",
     "start": "node ./dist/main.js",
     "prisma:seed": "tsx ./src/prisma/seed.ts",

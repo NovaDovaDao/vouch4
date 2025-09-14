@@ -85,18 +85,42 @@ type Member implements Person {
   isActive: Boolean!
   walletAddress: String
   phoneNumber: String
-  membership: MembershipNFT
+  entitlements: [Entitlement!]!
   checkins: [CheckIn!]
 }
 
-type MembershipNFT {
-  id: ID!
-  user: Member!
-  renterUser: Member
-  expiresAt: DateTime
-  isActive: Boolean!
-  isCurrentlyRented: Boolean!
+# --- NEW PRODUCT & ENTITLEMENT SYSTEM ---
+
+type Price {
+  amount: String
+  currency: String
 }
+
+type Product {
+  id: ID!
+  name: String!
+  description: String
+  price: Price
+  active: Boolean!
+  rules: Json!
+  isNft: Boolean!
+  contractAddress: String
+  entitlements: [Entitlement!]!
+}
+
+type Entitlement {
+  id: ID!
+  product: Product!
+  owner: Member!
+  validFrom: DateTime!
+  expiresAt: DateTime
+  usesLeft: Int
+  tokenId: String
+  isRented: Boolean!
+  renter: Member
+}
+
+# --- END NEW SYSTEM ---
 
 type UserTenancyAgreement {
   id: ID!
@@ -141,6 +165,33 @@ type CheckIn {
 }
 
 # --- INPUTS ---
+
+input CreateProductInput {
+  name: String!
+  description: String
+  active: Boolean
+  rules: Json!
+  isNft: Boolean
+  contractAddress: String
+}
+
+input UpdateProductInput {
+  name: String
+  description: String
+  active: Boolean
+  rules: Json
+  isNft: Boolean
+  contractAddress: String
+}
+
+input CreateEntitlementInput {
+  productId: ID!
+  ownerId: ID!
+  validFrom: DateTime
+  expiresAt: DateTime
+  usesLeft: Int
+}
+
 input TenancyCreateInput {
   name: String!
   legalName: String
@@ -278,8 +329,10 @@ type Query {
   members: [Member!]!
   memberById(id: ID!): Member!
 
-  memberships: [MembershipNFT!]!
-  membershipById(id: ID!): MembershipNFT!
+  products: [Product!]!
+  productById(id: ID!): Product
+  entitlements(memberId: ID!): [Entitlement!]!
+  entitlementById(id: ID!): Entitlement
 
   gyms: [Gym!]!
   gymById(id: ID!): Gym
@@ -291,6 +344,10 @@ type Query {
 type Mutation {
   createTenancy(data: TenancyCreateInput!): Tenancy!
   updateTenancy(id: ID!, input: TenancyUpdateInput!): Tenancy!
+
+  createProduct(input: CreateProductInput!): Product!
+  updateProduct(id: ID!, input: UpdateProductInput!): Product!
+  createEntitlement(input: CreateEntitlementInput!): Entitlement!
 
   createGym(data: GymCreateInput!): Gym!
   updateGym(id: ID!, data: GymUpdateInput!): Gym!

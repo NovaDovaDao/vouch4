@@ -34,8 +34,7 @@ export const createStaff: NonNullable<MutationResolvers['createStaff']> = async 
     },
   });
 
-  // TODO: Make this URL configurable
-  const setPasswordUrl = `http://localhost:1337/set-password/${token}`;
+  const setPasswordUrl = `${process.env.FRONTEND_URL}/set-password/${token}`;
   await sendSetPasswordEmail(user.email, setPasswordUrl);
 
   return user;

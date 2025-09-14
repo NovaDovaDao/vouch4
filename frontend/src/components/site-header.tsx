@@ -1,6 +1,7 @@
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useBreadcrumbs } from "@/features/breadcrumbs/use-breadcrumbs";
+import NavQuickCreate from "./nav-quick-create";
 
 export function SiteHeader() {
   const { breadcrumbs } = useBreadcrumbs();
@@ -12,12 +13,15 @@ export function SiteHeader() {
           orientation="vertical"
           className="mx-2 data-[orientation=vertical]:h-4"
         />
-        <div>
+        <div className="flex-1">
           {breadcrumbs.map((crumb, i) => (
             <span key={i} className="text-base font-medium">
               {crumb.label}
             </span>
           ))}
+        </div>
+        <div>
+          <NavQuickCreate />
         </div>
       </div>
     </header>

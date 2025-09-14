@@ -6,7 +6,9 @@ import { faker } from "@faker-js/faker";
 
 async function main() {
   // Clear existing data
-  await db.membershipNFT.deleteMany({});
+  await db.entitlementUse.deleteMany({});
+  await db.entitlement.deleteMany({});
+  await db.product.deleteMany({});
   await db.invitationToken.deleteMany({});
   await db.booking.deleteMany({});
   await db.scheduledClass.deleteMany({});
@@ -199,21 +201,100 @@ async function main() {
     }
   }
 
-  // Create memberships
-  const contractAddress = faker.finance.ethereumAddress();
+  // --- Create Products ---
+  console.log("--- Creating Products ---");
+  const monthlySubProduct = await db.product.create({
+    data: {
+      tenancyId: tenancy.id,
+      name: "Gold Monthly Subscription",
+      meta: {
+        description: "Unlimited access for one month.",
+      },
+      rules: { type: "subscription", duration: "1_month" },
+    },
+  });
+
+  const punchPassProduct = await db.product.create({
+    data: {
+      tenancyId: tenancy.id,
+      name: "10-Visit Punch Pass",
+      meta: {
+        description: "10 visits with no expiration.",
+      },
+      rules: { type: "punch_card", uses: 10 },
+    },
+  });
+
+  const dayPassProduct = await db.product.create({
+    data: {
+      tenancyId: tenancy.id,
+      name: "Single Day Pass",
+      meta: {
+        description: "A single visit for one day.",
+      },
+      rules: { type: "single_use" },
+    },
+  });
+  console.log(`Created 3 products.`);
+
+  // --- Create Entitlements for members ---
+  console.log("--- Creating Entitlements ---");
+  const allProducts = [monthlySubProduct, punchPassProduct, dayPassProduct];
   for (const member of members) {
-    await db.membershipNFT.create({
+    // Give each member one random product entitlement
+    const randomProduct =
+      allProducts[Math.floor(Math.random() * allProducts.length)]!;
+
+    const entitlementData: {
+      productId: string;
+      ownerId: string;
+      validFrom: Date;
+      expiresAt?: Date;
+      usesLeft?: number;
+    } = {
+      productId: randomProduct.id,
+      ownerId: member.id,
+      validFrom: new Date(),
+    };
+
+    const rules = randomProduct.rules as {
+      type: string;
+      uses?: number;
+      duration?: string;
+    };
+
+    if (rules.type === "subscription") {
+      entitlementData.expiresAt = faker.date.future();
+    } else if (rules.type === "punch_card") {
+      entitlementData.usesLeft = rules.uses ?? 0;
+    } else {
+      // single_use
+      entitlementData.usesLeft = 1;
+    }
+
+    await db.entitlement.create({ data: entitlementData });
+    console.log(
+      `Created entitlement '${randomProduct.name}' for member ${member.id}`,
+    );
+  }
+
+  // --- Create a Rental Scenario ---
+  const ownerMember = members[0]!;
+  const renterMember = members[1]!;
+  if (ownerMember && renterMember) {
+    console.log(
+      `--- Creating Rental Scenario: ${ownerMember.firstName} rents to ${renterMember.firstName} ---`,
+    );
+    await db.entitlement.create({
       data: {
-        userId: member.id,
-        tenancyId: tenancy.id,
-        tokenId: faker.string.uuid(),
-        contractAddress,
-        transactionHash: faker.string.uuid(),
-        tokenType: faker.commerce.productName(),
-        expiresAt: faker.date.future(),
+        productId: dayPassProduct.id,
+        ownerId: ownerMember.id,
+        validFrom: new Date(),
+        usesLeft: 1,
+        renterId: renterMember.id,
       },
     });
-    console.log(`Membership created for member ${member.id}`);
+    console.log("Rental created.");
   }
 }
 

@@ -26,14 +26,14 @@ model Tenancy {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  gyms           Gym[] // A tenancy can have multiple gyms/locations
-  users          User[] // Users (members primarily, or staff whose primary affiliation is here)
-  membershipNFTs MembershipNFT[] // Memberships are tied to a tenancy
+  gyms                 Gym[] // A tenancy can have multiple gyms/locations
+  users                User[] // Users (members primarily, or staff whose primary affiliation is here)
+  products             Product[] // Products are defined at the tenancy level
+  UserTenancyAgreement UserTenancyAgreement[]
 
   // The User account that *is* the TENANCY_OWNER for this Tenancy
-  tenancyOwnerUser     User?                  @relation("TenancyOwnerAccount", fields: [tenancyOwnerUserId], references: [id])
-  tenancyOwnerUserId   String?                @unique
-  UserTenancyAgreement UserTenancyAgreement[]
+  tenancyOwnerUser   User?   @relation("TenancyOwnerAccount", fields: [tenancyOwnerUserId], references: [id])
+  tenancyOwnerUserId String? @unique
 
   @@map("tenants")
 }
@@ -62,8 +62,6 @@ model Gym {
 
 // --- User Model ---
 // Represents a single person with their core identity and all relevant attributes
-// This model now consolidates all attributes from the previous 'Member' model.
-// Their specific role/permissions at a gym are defined in UserGymAssociation.
 
 enum UserCategory {
   MEMBER // A user whose primary interaction is as a gym member
@@ -83,34 +81,26 @@ model User {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 
-  // Member-specific attributes (merged from your 'Member' model)
   walletAddress String? @unique // Optional, a user might link their wallet later
   phoneNumber   String?
 
-  // Multi-tenancy scoping:
-  // For MEMBERs, this is their primary Tenancy. For STAFF, it can be their primary employer Tenancy, or null if external.
   tenancyId String?
   tenancy   Tenancy? @relation(fields: [tenancyId], references: [id])
 
-  // Relationships defining specific roles/access within a Tenancy/Gym
   ownedTenancy Tenancy? @relation("TenancyOwnerAccount") // If this user IS the TENANCY_OWNER for a Tenancy
 
-  // User's associations with specific gyms (where per-gym roles and permissions are defined)
   userGymAssociations UserGymAssociation[]
 
-  // Activity-specific relations
   checkIns             CheckIn[]       @relation("UserCheckIns") // Check-ins performed by this user
   bookings             Booking[] // Class bookings made by this user
   classTemplatesTaught ClassTemplate[]
 
-  // Blockchain references for Memberships
-  membershipNFTs    MembershipNFT[] // Membership NFTs owned by this user
-  rentedMemberships MembershipNFT[] @relation("RentedMemberships") // Memberships this user is currently renting
+  // Entitlements (replaces MembershipNFTs)
+  entitlements       Entitlement[] @relation("OwnedEntitlements") // Entitlements owned by this user
+  rentedEntitlements Entitlement[] @relation("RentedEntitlements") // Entitlements this user is currently renting
 
-  // Invitation flow
   invitationToken InvitationToken?
 
-  // Agreements with different tenancies (e.g., waivers, terms of service)
   userTenancyAgreements UserTenancyAgreement[]
 
   name          String?
@@ -123,75 +113,114 @@ model User {
 }
 
 // --- Join Table for User-Gym Association (for Per-Gym Roles & Permissions) ---
-// This defines a user's specific role and permissions within a particular Gym.
 
 enum UserAtGymRole {
-  MANAGER // Manages operations within this specific gym
-  TRAINER // Teaches classes at this specific gym
-  ROUTE_SETTER // Sets routes at this specific gym
-  FRONT_DESK_STAFF // Works at the front desk of this specific gym
-  CLEANING_STAFF // Cleans at this specific gym
+  MANAGER
+  TRAINER
+  ROUTE_SETTER
+  FRONT_DESK_STAFF
+  CLEANING_STAFF
 
-  // MEMBER_AT_GYM is explicitly removed here, as membership status is handled by User.category and MembershipNFT.
   @@map("user_at_gym_role_enums")
 }
 
 model UserGymAssociation {
   userId        String
   gymId         String
-  roleAtGym     UserAtGymRole // The specific functional role this user has at THIS gym (primarily for STAFF category users)
-  permissions   Json? // JSONB array of strings: e.g., ["classes:create", "members:view-details"] for THIS gym
-  isActiveAtGym Boolean       @default(true) // If the user's access to this gym is currently active
+  roleAtGym     UserAtGymRole
+  permissions   Json?
+  isActiveAtGym Boolean       @default(true)
   assignedAt    DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 
   user User @relation(fields: [userId], references: [id])
   gym  Gym  @relation(fields: [gymId], references: [id])
 
-  // Composite primary key: A user has one association per gym
   @@id([userId, gymId])
   @@map("user_gym_associations")
 }
 
-// --- Check-In Model (Now references User directly) ---
+// --- Check-In Model ---
 
 model CheckIn {
-  id        String   @id @default(uuid()) // Changed to String for consistency with other IDs
-  userId    String   @map("user_id") // References the consolidated User model
-  gymId     String   @map("gym_id") // Check-in also belongs to a specific gym
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  gymId     String   @map("gym_id")
   timestamp DateTime @default(now())
   createdAt DateTime @default(now()) @map("created_at")
 
   user User @relation("UserCheckIns", fields: [userId], references: [id])
   gym  Gym  @relation(fields: [gymId], references: [id])
 
+  // If a check-in consumed a pass, this links to the record of that use
+  entitlementUse EntitlementUse?
+
   @@map("check_ins")
 }
 
-// --- Blockchain-Integrated Membership NFT ---
-// This model represents a cached view of an NFT membership on the blockchain.
-// The blockchain is the source of truth for its existence, ownership, and key properties.
+// --- NEW: Product & Entitlement System (Replaces MembershipNFT) ---
 
-model MembershipNFT {
-  id                String    @id @default(uuid())
-  userId            String // FK to User who owns the NFT (the 'Member' from old context)
-  tenancyId         String // FK to Tenancy this membership is for
-  tokenId           String    @unique // The unique NFT token ID on the blockchain
-  contractAddress   String // The address of the NFT smart contract
-  transactionHash   String    @unique // Hash of the transaction that minted/transferred this NFT
-  tokenType         String? // e.g., "Monthly Pass", "Annual Elite" - cached metadata
-  expiresAt         DateTime? // Cache of expiration timestamp from NFT metadata or smart contract
-  isActive          Boolean   @default(true) // Cached: derived from on-chain status (e.g., not expired, not burned)
-  isCurrentlyRented Boolean   @default(false) // Cached: indicates if the NFT is currently rented out
-  renterUserId      String? // FK to User who is currently renting this NFT (if applicable)
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+// A Product is a template for something a gym offers (e.g., "Gold Membership", "10-Visit Punch Card").
+model Product {
+  id        String  @id @default(uuid())
+  tenancyId String
+  tenancy   Tenancy @relation(fields: [tenancyId], references: [id])
 
-  user       User    @relation(fields: [userId], references: [id])
-  tenancy    Tenancy @relation(fields: [tenancyId], references: [id])
-  renterUser User?   @relation("RentedMemberships", fields: [renterUserId], references: [id])
+  name   String
+  meta   Json?
+  active Boolean @default(true) // Is this product available for purchase/granting?
 
-  @@map("memberships")
+  // Flexible rules engine defining what this product grants.
+  // e.g., { type: 'subscription', duration: '1_month' }
+  // e.g., { type: 'punch_card', uses: 10 }
+  // e.g., { type: 'access', amenity: 'sauna' }
+  rules Json
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  entitlements Entitlement[]
+
+  @@map("products")
+}
+
+// An Entitlement is an instance of a Product that a user owns.
+model Entitlement {
+  id        String  @id @default(uuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  ownerId String
+  owner   User   @relation("OwnedEntitlements", fields: [ownerId], references: [id])
+
+  // State of this specific entitlement
+  validFrom DateTime
+  expiresAt DateTime?
+  usesLeft  Int?
+  meta      Json?
+  renterId  String?
+  renter    User?     @relation("RentedEntitlements", fields: [renterId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  uses EntitlementUse[]
+
+  @@map("entitlements")
+}
+
+// A record of a single use of an Entitlement, usually linked to a CheckIn.
+model EntitlementUse {
+  id            String      @id @default(uuid())
+  entitlementId String
+  entitlement   Entitlement @relation(fields: [entitlementId], references: [id])
+
+  checkInId String  @unique
+  checkIn   CheckIn @relation(fields: [checkInId], references: [id])
+
+  usedAt DateTime @default(now())
+
+  @@map("entitlement_uses")
 }
 
 // --- Class Model ---

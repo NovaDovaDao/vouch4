@@ -1,10 +1,9 @@
 import { useEffect } from "react";
 import {
-  IconCamera,
+  IconBuildingStore,
+  IconTicket,
   IconDashboard,
   IconDatabase,
-  IconFileAi,
-  IconFileDescription,
   IconHelp,
   IconListDetails,
   IconReport,
@@ -49,19 +48,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         icon: IconDashboard,
       },
       {
-        title: "Staff",
-        url: "/staff",
-        icon: IconUsers,
-      },
-      {
         title: "Members",
         url: "/members",
         icon: IconUsers,
       },
       {
-        title: "Classes",
-        url: "/classes",
-        icon: IconListDetails,
+        title: "Staff",
+        url: "/staff",
+        icon: IconUsers,
       },
       {
         title: "Bookings",
@@ -69,57 +63,36 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         icon: IconCalendar,
       },
       {
+        title: "Classes",
+        url: "/classes",
+        icon: IconListDetails,
+      },
+      {
+        title: "Products",
+        url: "/products",
+        icon: IconBuildingStore,
+      },
+      {
         title: "Gyms",
         url: "/gyms",
         icon: IconBuilding,
       },
     ],
-    navClouds: [
+    navReports: [
       {
-        title: "Capture",
-        icon: IconCamera,
-        isActive: true,
-        url: "#",
-        items: [
-          {
-            title: "Active Proposals",
-            url: "#",
-          },
-          {
-            title: "Archived",
-            url: "#",
-          },
-        ],
+        name: "Contracts",
+        url: "/reports/contracts",
+        icon: IconDatabase,
       },
       {
-        title: "Proposal",
-        icon: IconFileDescription,
-        url: "#",
-        items: [
-          {
-            title: "Active Proposals",
-            url: "#",
-          },
-          {
-            title: "Archived",
-            url: "#",
-          },
-        ],
+        name: "Entitlements",
+        url: "/entitlements",
+        icon: IconTicket,
       },
       {
-        title: "Prompts",
-        icon: IconFileAi,
-        url: "#",
-        items: [
-          {
-            title: "Active Proposals",
-            url: "#",
-          },
-          {
-            title: "Archived",
-            url: "#",
-          },
-        ],
+        name: "Sales",
+        url: "/reports/sales",
+        icon: IconReport,
       },
     ],
     navSecondary: [
@@ -132,18 +105,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: "Search",
         icon: IconSearch,
         onClick: () => dialogStore.openDialog({ type: "search" }),
-      },
-    ],
-    documents: [
-      {
-        name: "Contracts",
-        url: "/reports/contracts",
-        icon: IconDatabase,
-      },
-      {
-        name: "Memberships",
-        url: "/reports/memberships",
-        icon: IconReport,
       },
     ],
   };
@@ -167,7 +128,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavDocuments items={data.documents} />
+        <NavDocuments title="Reports" items={data.navReports} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>

@@ -55,7 +55,36 @@ input ClassTemplateUpdateInput {
   recurrence: String
 }
 
+input CreateEntitlementInput {
+  expiresAt: DateTime
+  ownerId: ID!
+  productId: ID!
+  usesLeft: Int
+  validFrom: DateTime
+}
+
+input CreateProductInput {
+  active: Boolean
+  contractAddress: String
+  description: String
+  isNft: Boolean
+  name: String!
+  rules: Json!
+}
+
 scalar DateTime
+
+type Entitlement {
+  expiresAt: DateTime
+  id: ID!
+  isRented: Boolean!
+  owner: Member!
+  product: Product!
+  renter: Member
+  tokenId: String
+  usesLeft: Int
+  validFrom: DateTime!
+}
 
 type Gym {
   address: Json
@@ -100,11 +129,11 @@ scalar Json
 type Member implements Person {
   checkins: [CheckIn!]
   email: String!
+  entitlements: [Entitlement!]!
   firstName: String!
   id: ID!
   isActive: Boolean!
   lastName: String!
-  membership: MembershipNFT
   name: String
   phoneNumber: String
   walletAddress: String
@@ -128,19 +157,12 @@ input MemberUpdateInput {
   walletAddress: String
 }
 
-type MembershipNFT {
-  expiresAt: DateTime
-  id: ID!
-  isActive: Boolean!
-  isCurrentlyRented: Boolean!
-  renterUser: Member
-  user: Member!
-}
-
 type Mutation {
   createClassTemplate(data: ClassTemplateCreateInput!): ClassTemplate!
+  createEntitlement(input: CreateEntitlementInput!): Entitlement!
   createGym(data: GymCreateInput!): Gym!
   createMember(data: MemberCreateInput!): Member!
+  createProduct(input: CreateProductInput!): Product!
   createScheduledClass(input: ScheduledClassCreateInput!): ScheduledClass!
   createStaff(data: StaffCreateInput!): Staff!
   createTenancy(data: TenancyCreateInput!): Tenancy!
@@ -153,6 +175,7 @@ type Mutation {
   updateClassTemplate(id: ID!, input: ClassTemplateUpdateInput!): ClassTemplate!
   updateGym(data: GymUpdateInput!, id: ID!): Gym!
   updateMember(id: ID!, input: MemberUpdateInput!): Member!
+  updateProduct(id: ID!, input: UpdateProductInput!): Product!
   updateScheduledClass(id: ID!, input: ScheduledClassUpdateInput!): ScheduledClass!
   updateStaff(id: ID!, input: StaffUpdateInput!): Staff!
   updateTenancy(id: ID!, input: TenancyUpdateInput!): Tenancy!
@@ -169,18 +192,37 @@ interface Person {
   walletAddress: String
 }
 
+type Price {
+  amount: String
+  currency: String
+}
+
+type Product {
+  active: Boolean!
+  contractAddress: String
+  description: String
+  entitlements: [Entitlement!]!
+  id: ID!
+  isNft: Boolean!
+  name: String!
+  price: Price
+  rules: Json!
+}
+
 type Query {
   bookings(input: BookingsArgs): [Booking!]!
   classTemplateById(id: ID!): ClassTemplate!
   classTemplates: [ClassTemplate!]!
   contractById(id: ID!): UserTenancyAgreement!
   contracts: [UserTenancyAgreement!]!
+  entitlementById(id: ID!): Entitlement
+  entitlements(memberId: ID!): [Entitlement!]!
   gymById(id: ID!): Gym
   gyms: [Gym!]!
   memberById(id: ID!): Member!
   members: [Member!]!
-  membershipById(id: ID!): MembershipNFT!
-  memberships: [MembershipNFT!]!
+  productById(id: ID!): Product
+  products: [Product!]!
   scheduledClassById(id: ID!): ScheduledClass!
   scheduledClasses(args: ScheduledClassesArgs!): [ScheduledClass!]!
   search(input: SearchInput!): [SearchResult!]!
@@ -278,6 +320,15 @@ input TenancyUpdateInput {
   contactEmail: String
   legalName: String
   name: String
+}
+
+input UpdateProductInput {
+  active: Boolean
+  contractAddress: String
+  description: String
+  isNft: Boolean
+  name: String
+  rules: Json
 }
 
 enum UserAtGymRole {

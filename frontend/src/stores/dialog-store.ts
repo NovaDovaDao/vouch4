@@ -5,6 +5,7 @@ export type DialogPayload =
   | { type: "createMember" }
   | { type: "createClassTemplate" }
   | { type: "createGym" }
+  | { type: "createProduct" }
   | { type: "search" }
   | { type: "help" }
   | { type: null }; // Represents no Dialog being open

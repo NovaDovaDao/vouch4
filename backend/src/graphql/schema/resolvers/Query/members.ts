@@ -14,12 +14,14 @@ export const members: NonNullable<QueryResolvers['members']> = async (
       category: "MEMBER",
       OR: [
         {
-          tenancyId: tenancyId,
+          tenancyId,
         },
         {
-          membershipNFTs: {
+          entitlements: {
             some: {
-              tenancyId: tenancyId,
+              product: {
+                tenancyId,
+              },
             },
           },
         },
@@ -27,7 +29,7 @@ export const members: NonNullable<QueryResolvers['members']> = async (
           userGymAssociations: {
             some: {
               gym: {
-                tenancyId: tenancyId,
+                tenancyId,
               },
             },
           },

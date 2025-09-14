@@ -20,11 +20,10 @@ const GET_STAFF = graphql(`
   query GetStaff {
     staff {
       id
-      email
-      phoneNumber
       firstName
       lastName
       isActive
+      roles
     }
   }
 `);
@@ -75,8 +74,8 @@ export default function StaffPage() {
               header: "Last Name",
             },
             {
-              accessorKey: "email",
-              header: "Email",
+              accessorKey: "roles",
+              header: "Roles",
             },
             {
               accessorKey: "isActive",
@@ -94,10 +93,6 @@ export default function StaffPage() {
                   {row.original.isActive ? "Active" : "Inactive"}
                 </Badge>
               ),
-            },
-            {
-              accessorKey: "phoneNumber",
-              header: "Phone",
             },
             {
               id: "actions",
