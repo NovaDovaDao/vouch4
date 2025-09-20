@@ -53,6 +53,7 @@ import { ScheduledClass } from "./resolvers/ScheduledClass.js";
 import { Staff } from "./resolvers/Staff.js";
 import { Tenancy } from "./resolvers/Tenancy.js";
 import { UserTenancyAgreement } from "./resolvers/UserTenancyAgreement.js";
+import { DateOnly } from "./resolvers/DateOnly.js";
 import { Json } from "./resolvers/Json.js";
 import { DateTimeResolver } from "graphql-scalars";
 export const resolvers: Resolvers = {
@@ -114,6 +115,7 @@ export const resolvers: Resolvers = {
   Staff: Staff,
   Tenancy: Tenancy,
   UserTenancyAgreement: UserTenancyAgreement,
+  DateOnly: DateOnly,
   Json: Json,
   DateTime: DateTimeResolver,
 };

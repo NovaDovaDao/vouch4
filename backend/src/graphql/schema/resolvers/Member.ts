@@ -4,11 +4,20 @@ export const Member: MemberResolvers = {
   entitlements: (parent, _arg, ctx: CustomContext) =>
     ctx.db.entitlement.findMany({
       where: {
-        ownerId: parent.id,
-        renterId: parent.id,
-        product: {
-          tenancyId: ctx.user?.tenancyId!,
-        },
+        OR: [
+          {
+            ownerId: parent.id,
+            product: {
+              tenancyId: ctx.user?.tenancyId!,
+            },
+          },
+          {
+            renterId: parent.id,
+            product: {
+              tenancyId: ctx.user?.tenancyId!,
+            },
+          },
+        ],
       },
     }),
 };

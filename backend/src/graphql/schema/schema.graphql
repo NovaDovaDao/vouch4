@@ -1,5 +1,4 @@
-scalar DateTime
-scalar Json
+scalar DateOnly
 
 enum UserAtGymRole {
   MANAGER
@@ -110,10 +109,8 @@ type Product {
 
 type Entitlement {
   id: ID!
-  product: Product!
-  owner: Member!
-  validFrom: DateTime!
-  expiresAt: DateTime
+  validFrom: DateOnly!
+  expiresAt: DateOnly
   usesLeft: Int
   tokenId: String
   isRented: Boolean!
@@ -185,10 +182,8 @@ input UpdateProductInput {
 }
 
 input CreateEntitlementInput {
-  productId: ID!
-  ownerId: ID!
-  validFrom: DateTime
-  expiresAt: DateTime
+  validFrom: DateOnly
+  expiresAt: DateOnly
   usesLeft: Int
 }
 

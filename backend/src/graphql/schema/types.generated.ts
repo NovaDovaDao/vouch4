@@ -48,6 +48,7 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean };
   Int: { input: number; output: number };
   Float: { input: number; output: number };
+  DateOnly: { input: any; output: any };
   DateTime: { input: Date | string; output: Date | string };
   Json: { input: any; output: any };
 };
@@ -108,11 +109,11 @@ export type ClassTemplateUpdateInput = {
 };
 
 export type CreateEntitlementInput = {
-  expiresAt?: InputMaybe<Scalars["DateTime"]["input"]>;
+  expiresAt?: InputMaybe<Scalars["DateOnly"]["input"]>;
   ownerId: Scalars["ID"]["input"];
   productId: Scalars["ID"]["input"];
   usesLeft?: InputMaybe<Scalars["Int"]["input"]>;
-  validFrom?: InputMaybe<Scalars["DateTime"]["input"]>;
+  validFrom?: InputMaybe<Scalars["DateOnly"]["input"]>;
 };
 
 export type CreateProductInput = {
@@ -126,7 +127,7 @@ export type CreateProductInput = {
 
 export type Entitlement = {
   __typename?: "Entitlement";
-  expiresAt?: Maybe<Scalars["DateTime"]["output"]>;
+  expiresAt?: Maybe<Scalars["DateOnly"]["output"]>;
   id: Scalars["ID"]["output"];
   isRented: Scalars["Boolean"]["output"];
   owner: Member;
@@ -134,7 +135,7 @@ export type Entitlement = {
   renter?: Maybe<Member>;
   tokenId?: Maybe<Scalars["String"]["output"]>;
   usesLeft?: Maybe<Scalars["Int"]["output"]>;
-  validFrom: Scalars["DateTime"]["output"];
+  validFrom: Scalars["DateOnly"]["output"];
 };
 
 export type Gym = {
@@ -690,6 +691,7 @@ export type ResolversTypes = {
   CreateEntitlementInput: CreateEntitlementInput;
   CreateProductInput: CreateProductInput;
   Boolean: ResolverTypeWrapper<Scalars["Boolean"]["output"]>;
+  DateOnly: ResolverTypeWrapper<Scalars["DateOnly"]["output"]>;
   DateTime: ResolverTypeWrapper<Scalars["DateTime"]["output"]>;
   Entitlement: ResolverTypeWrapper<EntitlementModel>;
   Gym: ResolverTypeWrapper<GymModel>;
@@ -748,6 +750,7 @@ export type ResolversParentTypes = {
   CreateEntitlementInput: CreateEntitlementInput;
   CreateProductInput: CreateProductInput;
   Boolean: Scalars["Boolean"]["output"];
+  DateOnly: Scalars["DateOnly"]["output"];
   DateTime: Scalars["DateTime"]["output"];
   Entitlement: EntitlementModel;
   Gym: GymModel;
@@ -836,6 +839,11 @@ export type ClassTemplateResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export interface DateOnlyScalarConfig
+  extends GraphQLScalarTypeConfig<ResolversTypes["DateOnly"], any> {
+  name: "DateOnly";
+}
+
 export interface DateTimeScalarConfig
   extends GraphQLScalarTypeConfig<ResolversTypes["DateTime"], any> {
   name: "DateTime";
@@ -847,7 +855,7 @@ export type EntitlementResolvers<
     ResolversParentTypes["Entitlement"] = ResolversParentTypes["Entitlement"],
 > = {
   expiresAt?: Resolver<
-    Maybe<ResolversTypes["DateTime"]>,
+    Maybe<ResolversTypes["DateOnly"]>,
     ParentType,
     ContextType
   >;
@@ -858,7 +866,7 @@ export type EntitlementResolvers<
   renter?: Resolver<Maybe<ResolversTypes["Member"]>, ParentType, ContextType>;
   tokenId?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
   usesLeft?: Resolver<Maybe<ResolversTypes["Int"]>, ParentType, ContextType>;
-  validFrom?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
+  validFrom?: Resolver<ResolversTypes["DateOnly"], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1365,6 +1373,7 @@ export type Resolvers<ContextType = any> = {
   Booking?: BookingResolvers<ContextType>;
   CheckIn?: CheckInResolvers<ContextType>;
   ClassTemplate?: ClassTemplateResolvers<ContextType>;
+  DateOnly?: GraphQLScalarType;
   DateTime?: GraphQLScalarType;
   Entitlement?: EntitlementResolvers<ContextType>;
   Gym?: GymResolvers<ContextType>;

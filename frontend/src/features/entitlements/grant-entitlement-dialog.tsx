@@ -46,7 +46,6 @@ const CREATE_ENTITLEMENT_MUTATION = graphql(`
 
 const entitlementSchema = z.object({
   productId: z.string(),
-  price: z.coerce.number().min(0),
   validFrom: z.string(),
   expiresAt: z.string().optional(),
 });
@@ -81,7 +80,7 @@ export default function GrantEntitlementDialog({
       execute(CREATE_ENTITLEMENT_MUTATION, variables),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["entitlements", "member", memberId],
+        queryKey: ["members", memberId],
       });
       toast.success("Success!", {
         description: `Entitlement granted!`,
@@ -129,15 +128,6 @@ export default function GrantEntitlementDialog({
               type="hidden"
               {...form.register("productId", { value: selectedProduct.id })}
             />
-            <div>
-              <Label htmlFor="price">Price</Label>
-              <Input
-                id="price"
-                type="number"
-                {...form.register("price")}
-                defaultValue={selectedProduct.price?.amount ?? 0}
-              />
-            </div>
             <div>
               <Label htmlFor="validFrom">Valid From</Label>
               <Input

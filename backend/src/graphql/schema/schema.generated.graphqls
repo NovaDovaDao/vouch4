@@ -56,11 +56,11 @@ input ClassTemplateUpdateInput {
 }
 
 input CreateEntitlementInput {
-  expiresAt: DateTime
+  expiresAt: DateOnly
   ownerId: ID!
   productId: ID!
   usesLeft: Int
-  validFrom: DateTime
+  validFrom: DateOnly
 }
 
 input CreateProductInput {
@@ -72,10 +72,12 @@ input CreateProductInput {
   rules: Json!
 }
 
+scalar DateOnly
+
 scalar DateTime
 
 type Entitlement {
-  expiresAt: DateTime
+  expiresAt: DateOnly
   id: ID!
   isRented: Boolean!
   owner: Member!
@@ -83,7 +85,7 @@ type Entitlement {
   renter: Member
   tokenId: String
   usesLeft: Int
-  validFrom: DateTime!
+  validFrom: DateOnly!
 }
 
 type Gym {
