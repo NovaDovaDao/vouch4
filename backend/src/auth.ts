@@ -1,9 +1,9 @@
 import { betterAuth, type BetterAuthOptions } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { openAPI } from "better-auth/plugins";
+import { expo } from "@better-auth/expo";
 import { db } from "./db.js";
 import "dotenv/config";
-import type { User } from "./prisma/generated/client.js";
 import { sendVerificationEmail } from "./email.js";
 
 const config = {
@@ -18,7 +18,7 @@ const config = {
       update: true,
     },
   }),
-  plugins: [openAPI()],
+  plugins: [openAPI(), expo()],
   trustedOrigins: String(process.env.TRUSTED_ORIGINS).split(","),
   emailAndPassword: {
     enabled: true,
