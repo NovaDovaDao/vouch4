@@ -1,9 +1,10 @@
 import { Link, router } from "expo-router";
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
-import { Button, TextInput, View, Text } from "react-native";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import { ThemedTextInput } from "@/components/themed-text-input";
+import { ThemedButton } from "@/components/themed-button";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
@@ -39,28 +40,32 @@ export default function SignIn() {
 
   return (
     <ThemedView className="flex-1 justify-center items-center ">
-      <ThemedView className="w-4/5">
+      <ThemedView className="w-4/5 gap-4">
         <ThemedText type="title">Sign In</ThemedText>
-        {error && <Text className="text-red-500 text-center">{error}</Text>}
-        <TextInput
-          className="border border-gray-300 rounded-md p-2 mt-4 dark:border-neutral-500 dark:text-neutral-400"
+        {error && (
+          <ThemedText
+            darkColor="red"
+            lightColor="red"
+            className="text-center bg-red-800/20 rounded-xl p-4"
+          >
+            {error}
+          </ThemedText>
+        )}
+        <ThemedTextInput
           placeholder="Email"
           value={email}
           textContentType="emailAddress"
           onChangeText={setEmail}
         />
-        <TextInput
-          className="border border-gray-300 rounded-md p-2 mt-4 dark:border-neutral-500 dark:text-neutral-400"
+        <ThemedTextInput
           placeholder="Password"
           value={password}
           onChangeText={setPassword}
           secureTextEntry
         />
-        <Button
-          title={loading ? "Loading..." : "Login"}
-          onPress={handleLogin}
-          disabled={loading}
-        />
+        <ThemedButton onPress={handleLogin} disabled={loading}>
+          {loading ? "Loading..." : "Login"}
+        </ThemedButton>
         <ThemedView className="flex-row justify-between mt-4">
           <Link asChild href="/(auth)/sign-up">
             <ThemedText type="link">Sign Up</ThemedText>

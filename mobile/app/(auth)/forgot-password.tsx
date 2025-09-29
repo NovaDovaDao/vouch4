@@ -1,7 +1,9 @@
 import { Link } from "expo-router";
 import { authClient } from "@/lib/auth-client";
 import { useState } from "react";
-import { View, TextInput, Button, Text } from "react-native";
+import { TextInput, Button } from "react-native";
+import { ThemedView } from "@/components/themed-view";
+import { ThemedText } from "@/components/themed-text";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -22,14 +24,18 @@ export default function ForgotPassword() {
   };
 
   return (
-    <View className="flex-1 justify-center items-center">
-      <View className="w-4/5">
-        <Text className="text-2xl font-bold text-center">Forgot Password</Text>
-        {error && <Text className="text-red-500 text-center">{error}</Text>}
+    <ThemedView className="flex-1 justify-center items-center">
+      <ThemedView className="w-4/5">
+        <ThemedText className="text-2xl font-bold text-center">
+          Forgot Password
+        </ThemedText>
+        {error && (
+          <ThemedText className="text-red-500 text-center">{error}</ThemedText>
+        )}
         {sent ? (
-          <Text className="text-green-500 text-center mt-4">
+          <ThemedText className="text-green-500 text-center mt-4">
             Password reset email sent. Please check your inbox.
-          </Text>
+          </ThemedText>
         ) : (
           <>
             <TextInput
@@ -45,10 +51,12 @@ export default function ForgotPassword() {
             />
           </>
         )}
-        <View className="flex-row justify-center mt-4">
-          <Link href="/(auth)/sign-in">Back to Sign In</Link>
-        </View>
-      </View>
-    </View>
+        <ThemedView className="flex-row justify-center mt-4">
+          <Link href="/(auth)/sign-in" asChild>
+            <ThemedText type="link">Back to Sign In</ThemedText>
+          </Link>
+        </ThemedView>
+      </ThemedView>
+    </ThemedView>
   );
 }

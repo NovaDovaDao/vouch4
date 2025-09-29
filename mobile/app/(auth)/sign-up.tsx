@@ -1,7 +1,9 @@
 import { Link } from "expo-router";
 import { useState } from "react";
-import { View, TextInput, Button, Text } from "react-native";
+import { TextInput, Button } from "react-native";
 import { authClient } from "@/lib/auth-client";
+import { ThemedView } from "@/components/themed-view";
+import { ThemedText } from "@/components/themed-text";
 
 export default function SignUp() {
   const [email, setEmail] = useState("");
@@ -28,10 +30,12 @@ export default function SignUp() {
   };
 
   return (
-    <View className="flex-1 justify-center items-center">
-      <View className="w-4/5">
-        <Text className="text-2xl font-bold text-center">Sign Up</Text>
-        {error && <Text className="text-red-500 text-center">{error}</Text>}
+    <ThemedView className="flex-1 justify-center items-center">
+      <ThemedView className="w-4/5">
+        <ThemedText type="title">Sign Up</ThemedText>
+        {error && (
+          <ThemedText className="text-red-500 text-center">{error}</ThemedText>
+        )}
         <TextInput
           className="border border-gray-300 rounded-md p-2 mt-4"
           placeholder="Name"
@@ -56,10 +60,14 @@ export default function SignUp() {
           onPress={handleLogin}
           disabled={loading}
         />
-        <View className="flex-row justify-center mt-4">
-          <Link href="/(auth)/sign-in">Already have an account? Sign In</Link>
-        </View>
-      </View>
-    </View>
+        <ThemedView className="flex-row justify-center mt-4">
+          <Link href="/(auth)/sign-in" asChild>
+            <ThemedText type="link">
+              Already have an account? Sign In{" "}
+            </ThemedText>
+          </Link>
+        </ThemedView>
+      </ThemedView>
+    </ThemedView>
   );
 }

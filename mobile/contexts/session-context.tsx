@@ -5,10 +5,12 @@ const AuthContext = createContext<{
   signIn: (email: string, password: string) => void;
   signOut: () => void;
   session?: string | null;
+  loading: boolean;
 }>({
   signIn: () => null,
   signOut: () => null,
   session: null,
+  loading: false,
 });
 
 // This hook can be used to access the user info.
@@ -22,7 +24,7 @@ export function useSession() {
 }
 
 export default function SessionProvider({ children }: PropsWithChildren) {
-  const { data } = authClient.useSession();
+  const { data, isPending } = authClient.useSession();
 
   return (
     <AuthContext
@@ -34,6 +36,7 @@ export default function SessionProvider({ children }: PropsWithChildren) {
           }),
         signOut: authClient.signOut,
         session: data?.session.token,
+        loading: isPending,
       }}
     >
       {children}
