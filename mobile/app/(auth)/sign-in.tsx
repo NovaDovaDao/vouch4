@@ -1,10 +1,10 @@
 import { Link, router } from "expo-router";
 import { useState } from "react";
-import { authClient } from "@/lib/auth-client";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { ThemedTextInput } from "@/components/themed-text-input";
 import { ThemedButton } from "@/components/themed-button";
+import { useSession } from "@/contexts/session-context";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
@@ -12,6 +12,7 @@ export default function SignIn() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  const { signIn } = useSession();
   const handleLogin = async () => {
     try {
       setLoading(true);
@@ -20,16 +21,9 @@ export default function SignIn() {
       if (!email || !password)
         throw new Error("Email nor password can be empty");
 
-      const response = await authClient.signIn.email({
-        email,
-        password,
-      });
+      const response = await signIn(email, password);
 
-      console.log(response);
-
-      if (response.data) router.push("/(tabs)");
-
-      throw new Error("Unable to login", { cause: response.error });
+      if (response) router.push("/(tabs)");
     } catch (e) {
       console.info(e);
       setError(e instanceof Error ? e.message : String(e));

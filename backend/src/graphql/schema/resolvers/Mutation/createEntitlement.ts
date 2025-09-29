@@ -2,9 +2,7 @@ import type { CustomContext } from "../../../../server.js";
 import { errors } from "../../../errors.js";
 import { type MutationResolvers } from "../../types.generated.js";
 
-export const createEntitlement: NonNullable<
-  MutationResolvers["createEntitlement"]
-> = async (_parent, arg, ctx: CustomContext) => {
+export const createEntitlement: NonNullable<MutationResolvers['createEntitlement']> = async (_parent, arg, ctx: CustomContext) => {
   if (!ctx.user?.tenancyId) throw errors.missingTenant();
 
   const { productId, ownerId, usesLeft = 0 } = arg.input;

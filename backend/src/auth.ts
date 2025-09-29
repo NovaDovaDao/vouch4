@@ -1,6 +1,6 @@
 import { betterAuth, type BetterAuthOptions } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { openAPI } from "better-auth/plugins";
+import { openAPI, oneTimeToken } from "better-auth/plugins";
 import { expo } from "@better-auth/expo";
 import { db } from "./db.js";
 import "dotenv/config";
@@ -18,7 +18,13 @@ const config = {
       update: true,
     },
   }),
-  plugins: [openAPI(), expo()],
+  plugins: [
+    openAPI(),
+    oneTimeToken({
+      expiresIn: 1,
+    }),
+    expo(),
+  ],
   trustedOrigins: String(process.env.TRUSTED_ORIGINS).split(","),
   emailAndPassword: {
     enabled: true,

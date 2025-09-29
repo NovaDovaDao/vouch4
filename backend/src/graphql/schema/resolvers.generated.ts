@@ -32,6 +32,7 @@ import { deleteGym as Mutation_deleteGym } from "./resolvers/Mutation/deleteGym.
 import { deleteMember as Mutation_deleteMember } from "./resolvers/Mutation/deleteMember.js";
 import { deleteScheduledClass as Mutation_deleteScheduledClass } from "./resolvers/Mutation/deleteScheduledClass.js";
 import { deleteStaff as Mutation_deleteStaff } from "./resolvers/Mutation/deleteStaff.js";
+import { memberAccessToken as Mutation_memberAccessToken } from "./resolvers/Mutation/memberAccessToken.js";
 import { setInitialPassword as Mutation_setInitialPassword } from "./resolvers/Mutation/setInitialPassword.js";
 import { updateClassTemplate as Mutation_updateClassTemplate } from "./resolvers/Mutation/updateClassTemplate.js";
 import { updateGym as Mutation_updateGym } from "./resolvers/Mutation/updateGym.js";
@@ -92,6 +93,7 @@ export const resolvers: Resolvers = {
     deleteMember: Mutation_deleteMember,
     deleteScheduledClass: Mutation_deleteScheduledClass,
     deleteStaff: Mutation_deleteStaff,
+    memberAccessToken: Mutation_memberAccessToken,
     setInitialPassword: Mutation_setInitialPassword,
     updateClassTemplate: Mutation_updateClassTemplate,
     updateGym: Mutation_updateGym,

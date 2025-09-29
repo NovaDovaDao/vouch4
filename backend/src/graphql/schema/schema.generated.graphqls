@@ -173,6 +173,7 @@ type Mutation {
   deleteMember(id: ID!): Boolean!
   deleteScheduledClass(id: ID!): Boolean!
   deleteStaff(id: ID!): Boolean!
+  memberAccessToken: String!
   setInitialPassword(password: String!, token: String!): StaffOrMember!
   updateClassTemplate(id: ID!, input: ClassTemplateUpdateInput!): ClassTemplate!
   updateGym(data: GymUpdateInput!, id: ID!): Gym!
@@ -203,7 +204,6 @@ type Product {
   active: Boolean!
   contractAddress: String
   description: String
-  entitlements: [Entitlement!]!
   id: ID!
   isNft: Boolean!
   name: String!

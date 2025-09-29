@@ -225,6 +225,7 @@ export type Mutation = {
   deleteMember: Scalars["Boolean"]["output"];
   deleteScheduledClass: Scalars["Boolean"]["output"];
   deleteStaff: Scalars["Boolean"]["output"];
+  memberAccessToken: Scalars["String"]["output"];
   setInitialPassword: StaffOrMember;
   updateClassTemplate: ClassTemplate;
   updateGym: Gym;
@@ -349,7 +350,6 @@ export type Product = {
   active: Scalars["Boolean"]["output"];
   contractAddress?: Maybe<Scalars["String"]["output"]>;
   description?: Maybe<Scalars["String"]["output"]>;
-  entitlements: Array<Entitlement>;
   id: Scalars["ID"]["output"];
   isNft: Scalars["Boolean"]["output"];
   name: Scalars["String"]["output"];
@@ -1025,6 +1025,11 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationdeleteStaffArgs, "id">
   >;
+  memberAccessToken?: Resolver<
+    ResolversTypes["String"],
+    ParentType,
+    ContextType
+  >;
   setInitialPassword?: Resolver<
     ResolversTypes["StaffOrMember"],
     ParentType,
@@ -1122,11 +1127,6 @@ export type ProductResolvers<
   >;
   description?: Resolver<
     Maybe<ResolversTypes["String"]>,
-    ParentType,
-    ContextType
-  >;
-  entitlements?: Resolver<
-    Array<ResolversTypes["Entitlement"]>,
     ParentType,
     ContextType
   >;

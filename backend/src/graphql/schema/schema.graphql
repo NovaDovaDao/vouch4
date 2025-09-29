@@ -1,3 +1,5 @@
+scalar Json
+scalar DateTime
 scalar DateOnly
 
 enum UserAtGymRole {
@@ -104,7 +106,6 @@ type Product {
   rules: Json!
   isNft: Boolean!
   contractAddress: String
-  entitlements: [Entitlement!]!
 }
 
 type Entitlement {
@@ -114,7 +115,9 @@ type Entitlement {
   usesLeft: Int
   tokenId: String
   isRented: Boolean!
+  owner: Member!
   renter: Member
+  product: Product!
 }
 
 # --- END NEW SYSTEM ---
@@ -182,6 +185,8 @@ input UpdateProductInput {
 }
 
 input CreateEntitlementInput {
+  ownerId: ID!
+  productId: ID!
   validFrom: DateOnly
   expiresAt: DateOnly
   usesLeft: Int
@@ -366,4 +371,7 @@ type Mutation {
   updateMember(id: ID!, input: MemberUpdateInput!): Member!
   deleteMember(id: ID!): Boolean!
   setInitialPassword(token: String!, password: String!): StaffOrMember!
+
+  ### MEMBERS ###
+  memberAccessToken: String!
 }

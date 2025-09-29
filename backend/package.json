@@ -10,7 +10,6 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsx watch src/main.ts",
-    "db:seed": "tsx src/prisma/seed.ts",
     "start": "node ./dist/main.js",
     "prisma:seed": "tsx ./src/prisma/seed.ts",
     "prisma:reset": "npx prisma db push --force-reset --schema src/prisma/schema.prisma",
